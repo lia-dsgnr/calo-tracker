@@ -1,0 +1,143 @@
+---
+alwaysApply: true
+---
+# 1. The Golden Rule
+
+> **Treat the code like a campsite.** Always leave the code cleaner than you found it.
+
+If you touch a file to fix a bug and notice a variable named `x` or a messy indentation, fix it. Small, incremental improvements prevent technical debt.
+
+# 2. Naming Conventions
+
+Naming is documentation. If you struggle to name a variable, you might not fully understand what it does yet.
+
+## General Rules
+
+- **English Only:** Use British English consistently.
+- **No Abbreviations:** Use `userRepository`, not `userRepo`. Use `response`, not `resp`.
+- **Descriptive:** Names should explain _what_ the value is.
+
+## Casing Standards
+
+| Entity                 | Style           | Example                           |
+| :--------------------- | :-------------- | :-------------------------------- |
+| **Variables**          | camelCase       | `isLoading`, `currentUser`        |
+| **Functions**          | camelCase       | `calculateTotal()`, `fetchData()` |
+| **Classes/Components** | PascalCase      | `UserProfile`, `PaymentService`   |
+| **Constants**          | SCREAMING_SNAKE | `MAX_RETRY_LIMIT`, `API_URL`      |
+| **Files**              | kebab-case      | `user-profile.ts`, `utils.tsx`    |
+
+## Booleans
+
+Boolean variables must answer a question. Prefix them with `is`, `has`, `can`, or `should`.
+
+- **Bad:** `const open = true;` (Is it open? Make it open?)
+- **Good:** `const isOpen = true;`
+
+# 3. Writing Functions
+
+Functions should do one thing and do it well.
+
+- **Max Length:** Aim for under 30 lines. If it is longer, break it into sub-functions.
+- **Argument Limit:** Max 3 arguments. If you need more, pass an object (DTO).
+- **Guard Clauses:** Avoid nested `if/else` structures. Return early.
+
+```javascript
+// Bad
+if (user) {
+  if (user.isActive) {
+    // logic
+  }
+}
+
+// Good
+if (!user || !user.isActive) return
+// logic
+```
+# 4. Comments & Documentation
+
+## General rules
+- Before you write a single line of real code, write the logic out in plain English comments. This separates the "thinking" from the "coding".
+  Step 1: Write the plan
+  Step 2: Fill in the code: Once the logic is sound, write the code underneath each comment.
+  Step 3: Clean up: Delete the comments that are now obvious from the code itself. 
+  Step 4: Keep only the ones that explain rules.
+- **Focus on intent:** Explain _why_ the code exists, not _what_ the syntax does.
+- **No Redundancy:** Do not write comments that simply repeat the code.
+- **Refactor first:** If logic is hard to explain, try renaming variables before writing a comment.
+- **Explain Business Logic:** comment on why a specific business rule is being applied, especially if it seems counter-intuitive.
+- **Use tags:** Standardise on `TODO`, `FIXME`, and `HACK`.
+- **Delete dead code:** Never commit commented-out code blocks.
+
+---
+
+### 1\. The "Why" Rule
+Do not translate syntax into English. Assume the reader barely knows the programming language.
+
+- **Bad:** `// Check if count is greater than 5`
+- **Good:** `// Retry limit reached; trigger fallback protocol`
+
+### 2\. Self-Documenting Code
+Comments are often a deodorant for smelly code. Before adding a block comment, ask if a variable rename solves the problem.
+
+- **Instead of:**
+  ```javascript
+  // Check if user is 18+ and has a valid ID
+  if (age >= 18 && idStatus === 'VALID')
+  ```
+- **Do This:**
+  ```javascript
+  const isLegalAdult = age >= 18 && idStatus === 'VALID';
+  if (isLegalAdult)
+  ```
+
+### 3\. Standard Annotations
+Use specific keywords to make technical debt searchable.
+
+- `TODO`: Pending tasks. _Always add your initials._
+- `FIXME`: Broken or inefficient code that needs immediate attention.
+- `HACK`: Non-standard workarounds. Explain the constraint forcing the hack.
+- `NOTE`: Highlights edge cases or unintuitive behaviour.
+
+### 4\. Public API Documentation
+Use standard documentation formats (JSDoc, Docstrings) for functions or classes other teams will use. Define **inputs**, **outputs**, and **errors**.
+
+### 5\. Forbidden Practices
+- **No Dead Code:** Do not leave commented-out code blocks. Delete them. Git history is your backup.
+- **No Diaries:** Do not add names or dates (`// Added by Dave 2024`). Git `blame` handles authorship.
+- **No Closing Labels:** Avoid `} // end if`. If the block is that long, refactor it.
+
+# 5. File Organization
+- One Thing Per File: One component or class per file.
+- Import Order:
+  External Libraries (react, lodash)
+  Absolute/Internal Imports (@/components, src/utils)
+  Relative Imports (./styles, ./types)
+
+# 6. Source Control (Git)
+We follow Conventional Commits to keep our history clean and readable.
+Format: type(scope): description
+Types:
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation only changes
+- style: Formatting changes (white-space, missing semi-colons, etc)
+- refactor: A code change that neither fixes a bug nor adds a feature
+- test: Adding missing tests or correcting existing tests
+- chore: Changes to the build process or auxiliary tools
+Example: `feat(auth): implement jwt token refresh logic`
+
+# 7. Tooling
+- Do not argue about spacing or semicolons in Code Reviews.
+- Prettier: Formatting is automatic on save.
+- Linting: If the linter complains, fix it. Do not disable rules without a team discussion.
+
+# Code Style
+- Functions over 50 lines need refactoring
+- Max 3 levels of nesting - flatten if possible
+- Early returns over deep if/else chains
+
+# Testing Requirements
+- Every new function needs at least one test
+- Test edge cases, not just happy paths
+- Mock external dependencies

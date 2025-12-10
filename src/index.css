@@ -1,0 +1,74 @@
+/* Import Inter font for friendly, modern typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base layer: global reset and defaults for wellness-inspired design */
+@layer base {
+  :root {
+    /* CSS variables for easy theming and component access */
+    --background: 40 33% 97%;
+    --foreground: 20 12% 22%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 12% 22%;
+    --primary: 100 18% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 14 72% 67%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 30 10% 51%;
+    --muted-foreground: 30 10% 51%;
+    --border: 30 18% 90%;
+    --ring: 100 18% 52%;
+    --radius: 20px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Mobile-first: ensure minimum width support */
+    min-width: 320px;
+    /* Desktop: constrain content width for readability */
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  /* Ensure touch targets are accessible */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Utility classes for the design system */
+@layer utilities {
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area margin for mobile notches - adds to existing padding */
+  .safe-bottom {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Tap highlight removal for cleaner mobile UX */
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

@@ -1,0 +1,624 @@
+{
+  "foods": [
+    {
+      "id": "pho-bo-tai",
+      "name_vi": "Phở bò tái",
+      "name_en": "Rare beef pho",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 294, "protein": 20, "fat": 8, "carbs": 36 },
+        "M": { "kcal": 420, "protein": 28, "fat": 12, "carbs": 52 },
+        "L": { "kcal": 546, "protein": 36, "fat": 16, "carbs": 68 }
+      },
+      "serving": "1 bowl (450g)",
+      "confidence": 0.73
+    },
+    {
+      "id": "pho-ga",
+      "name_vi": "Phở gà",
+      "name_en": "Chicken pho",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 252, "protein": 19, "fat": 6, "carbs": 34 },
+        "M": { "kcal": 360, "protein": 27, "fat": 8, "carbs": 48 },
+        "L": { "kcal": 468, "protein": 35, "fat": 10, "carbs": 62 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.68
+    },
+    {
+      "id": "bun-bo-hue",
+      "name_vi": "Bún bò Huế",
+      "name_en": "Hue beef noodle soup",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 378, "protein": 22, "fat": 13, "carbs": 42 },
+        "M": { "kcal": 540, "protein": 32, "fat": 18, "carbs": 60 },
+        "L": { "kcal": 702, "protein": 42, "fat": 23, "carbs": 78 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.70
+    },
+    {
+      "id": "bun-thit-nuong",
+      "name_vi": "Bún thịt nướng",
+      "name_en": "Grilled pork vermicelli",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 434, "protein": 19, "fat": 17, "carbs": 49 },
+        "M": { "kcal": 620, "protein": 27, "fat": 24, "carbs": 70 },
+        "L": { "kcal": 806, "protein": 35, "fat": 31, "carbs": 91 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.62
+    },
+    {
+      "id": "hu-tieu-nam-vang",
+      "name_vi": "Hủ tiếu Nam Vang",
+      "name_en": "Phnom Penh noodle soup",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 315, "protein": 18, "fat": 7, "carbs": 39 },
+        "M": { "kcal": 450, "protein": 25, "fat": 10, "carbs": 55 },
+        "L": { "kcal": 585, "protein": 33, "fat": 13, "carbs": 72 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.65
+    },
+    {
+      "id": "mi-quang",
+      "name_vi": "Mì quảng",
+      "name_en": "Quang-style turmeric noodles",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 364, "protein": 20, "fat": 11, "carbs": 43 },
+        "M": { "kcal": 520, "protein": 28, "fat": 16, "carbs": 62 },
+        "L": { "kcal": 676, "protein": 36, "fat": 21, "carbs": 81 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.60
+    },
+    {
+      "id": "bun-rieu",
+      "name_vi": "Bún riêu",
+      "name_en": "Crab tomato noodle soup",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 294, "protein": 15, "fat": 7, "carbs": 42 },
+        "M": { "kcal": 420, "protein": 22, "fat": 10, "carbs": 60 },
+        "L": { "kcal": 546, "protein": 29, "fat": 13, "carbs": 78 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.58
+    },
+    {
+      "id": "mi-tron-xa-xiu",
+      "name_vi": "Mì trộn xá xíu",
+      "name_en": "Dry noodles with char siu",
+      "category": "noodles",
+      "portions": {
+        "S": { "kcal": 385, "protein": 21, "fat": 11, "carbs": 50 },
+        "M": { "kcal": 550, "protein": 30, "fat": 15, "carbs": 72 },
+        "L": { "kcal": 715, "protein": 39, "fat": 20, "carbs": 94 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.66
+    },
+    {
+      "id": "com-tam-suon-bi-cha",
+      "name_vi": "Cơm tấm sườn bì chả",
+      "name_en": "Broken rice w/ pork chop",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 546, "protein": 22, "fat": 25, "carbs": 60 },
+        "M": { "kcal": 780, "protein": 32, "fat": 36, "carbs": 85 },
+        "L": { "kcal": 1014, "protein": 42, "fat": 47, "carbs": 111 }
+      },
+      "serving": "1 plate",
+      "confidence": 0.70
+    },
+    {
+      "id": "com-tam-suon-trung",
+      "name_vi": "Cơm tấm sườn trứng",
+      "name_en": "Broken rice w/ pork chop + egg",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 574, "protein": 25, "fat": 27, "carbs": 63 },
+        "M": { "kcal": 820, "protein": 36, "fat": 38, "carbs": 90 },
+        "L": { "kcal": 1066, "protein": 47, "fat": 49, "carbs": 117 }
+      },
+      "serving": "1 plate",
+      "confidence": 0.62
+    },
+    {
+      "id": "com-ga-hai-nam",
+      "name_vi": "Cơm gà Hải Nam",
+      "name_en": "Hainanese chicken rice",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 455, "protein": 20, "fat": 13, "carbs": 57 },
+        "M": { "kcal": 650, "protein": 28, "fat": 18, "carbs": 82 },
+        "L": { "kcal": 845, "protein": 36, "fat": 23, "carbs": 107 }
+      },
+      "serving": "1 plate",
+      "confidence": 0.63
+    },
+    {
+      "id": "com-chien-trung",
+      "name_vi": "Cơm chiên trứng",
+      "name_en": "Egg fried rice",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 364, "protein": 8, "fat": 13, "carbs": 53 },
+        "M": { "kcal": 520, "protein": 12, "fat": 18, "carbs": 76 },
+        "L": { "kcal": 676, "protein": 16, "fat": 23, "carbs": 99 }
+      },
+      "serving": "1 plate",
+      "confidence": 0.55
+    },
+    {
+      "id": "com-bo-luc-lac",
+      "name_vi": "Cơm bò lúc lắc",
+      "name_en": "Shaking beef rice",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 532, "protein": 28, "fat": 18, "carbs": 60 },
+        "M": { "kcal": 760, "protein": 40, "fat": 26, "carbs": 85 },
+        "L": { "kcal": 988, "protein": 52, "fat": 34, "carbs": 111 }
+      },
+      "serving": "1 plate",
+      "confidence": 0.68
+    },
+    {
+      "id": "xoi-man",
+      "name_vi": "Xôi mặn",
+      "name_en": "Savoury sticky rice",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 476, "protein": 14, "fat": 18, "carbs": 67 },
+        "M": { "kcal": 680, "protein": 20, "fat": 25, "carbs": 95 },
+        "L": { "kcal": 884, "protein": 26, "fat": 33, "carbs": 124 }
+      },
+      "serving": "1 portion",
+      "confidence": 0.57
+    },
+    {
+      "id": "xoi-ga",
+      "name_vi": "Xôi gà",
+      "name_en": "Chicken sticky rice",
+      "category": "rice",
+      "portions": {
+        "S": { "kcal": 378, "protein": 18, "fat": 11, "carbs": 53 },
+        "M": { "kcal": 540, "protein": 25, "fat": 16, "carbs": 75 },
+        "L": { "kcal": 702, "protein": 33, "fat": 21, "carbs": 98 }
+      },
+      "serving": "1 portion",
+      "confidence": 0.60
+    },
+    {
+      "id": "banh-mi-thit-nguoi",
+      "name_vi": "Bánh mì thịt nguội",
+      "name_en": "Cold-cut bánh mì",
+      "category": "banh_mi",
+      "portions": {
+        "S": { "kcal": 364, "protein": 13, "fat": 15, "carbs": 42 },
+        "M": { "kcal": 520, "protein": 18, "fat": 22, "carbs": 60 },
+        "L": { "kcal": 676, "protein": 23, "fat": 29, "carbs": 78 }
+      },
+      "serving": "1 sandwich",
+      "confidence": 0.65
+    },
+    {
+      "id": "banh-mi-op-la",
+      "name_vi": "Bánh mì ốp la",
+      "name_en": "Fried egg bánh mì",
+      "category": "banh_mi",
+      "portions": {
+        "S": { "kcal": 336, "protein": 14, "fat": 11, "carbs": 43 },
+        "M": { "kcal": 480, "protein": 20, "fat": 16, "carbs": 62 },
+        "L": { "kcal": 624, "protein": 26, "fat": 21, "carbs": 81 }
+      },
+      "serving": "1 sandwich",
+      "confidence": 0.58
+    },
+    {
+      "id": "banh-mi-ga-xe",
+      "name_vi": "Bánh mì gà xé",
+      "name_en": "Shredded chicken bánh mì",
+      "category": "banh_mi",
+      "portions": {
+        "S": { "kcal": 322, "protein": 15, "fat": 10, "carbs": 41 },
+        "M": { "kcal": 460, "protein": 22, "fat": 14, "carbs": 58 },
+        "L": { "kcal": 598, "protein": 29, "fat": 18, "carbs": 75 }
+      },
+      "serving": "1 sandwich",
+      "confidence": 0.60
+    },
+    {
+      "id": "banh-mi-cha-ca",
+      "name_vi": "Bánh mì chả cá",
+      "name_en": "Fish cake bánh mì",
+      "category": "banh_mi",
+      "portions": {
+        "S": { "kcal": 294, "protein": 14, "fat": 8, "carbs": 39 },
+        "M": { "kcal": 420, "protein": 20, "fat": 12, "carbs": 55 },
+        "L": { "kcal": 546, "protein": 26, "fat": 16, "carbs": 72 }
+      },
+      "serving": "1 sandwich",
+      "confidence": 0.63
+    },
+    {
+      "id": "banh-mi-bi",
+      "name_vi": "Bánh mì bì",
+      "name_en": "Pork skin bánh mì",
+      "category": "banh_mi",
+      "portions": {
+        "S": { "kcal": 385, "protein": 13, "fat": 17, "carbs": 45 },
+        "M": { "kcal": 550, "protein": 18, "fat": 24, "carbs": 64 },
+        "L": { "kcal": 715, "protein": 23, "fat": 31, "carbs": 83 }
+      },
+      "serving": "1 sandwich",
+      "confidence": 0.55
+    },
+    {
+      "id": "bap-xao",
+      "name_vi": "Bắp xào",
+      "name_en": "Stir-fried corn butter",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 266, "protein": 4, "fat": 10, "carbs": 39 },
+        "M": { "kcal": 380, "protein": 6, "fat": 14, "carbs": 55 },
+        "L": { "kcal": 494, "protein": 8, "fat": 18, "carbs": 72 }
+      },
+      "serving": "1 cup",
+      "confidence": 0.62
+    },
+    {
+      "id": "banh-trang-tron",
+      "name_vi": "Bánh tráng trộn",
+      "name_en": "Rice paper salad",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 336, "protein": 8, "fat": 13, "carbs": 43 },
+        "M": { "kcal": 480, "protein": 12, "fat": 18, "carbs": 62 },
+        "L": { "kcal": 624, "protein": 16, "fat": 23, "carbs": 81 }
+      },
+      "serving": "1 box",
+      "confidence": 0.59
+    },
+    {
+      "id": "ha-cao-chien",
+      "name_vi": "Há cảo chiên",
+      "name_en": "Fried dumplings",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 301, "protein": 10, "fat": 13, "carbs": 34 },
+        "M": { "kcal": 430, "protein": 14, "fat": 19, "carbs": 48 },
+        "L": { "kcal": 559, "protein": 18, "fat": 25, "carbs": 62 }
+      },
+      "serving": "6 pcs",
+      "confidence": 0.58
+    },
+    {
+      "id": "goi-cuon",
+      "name_vi": "Gỏi cuốn",
+      "name_en": "Fresh spring rolls",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 67, "protein": 6, "fat": 2, "carbs": 8 },
+        "M": { "kcal": 95, "protein": 8, "fat": 3, "carbs": 12 },
+        "L": { "kcal": 124, "protein": 10, "fat": 4, "carbs": 16 }
+      },
+      "serving": "1 roll",
+      "confidence": 0.75
+    },
+    {
+      "id": "nem-chua-ran",
+      "name_vi": "Nem chua rán",
+      "name_en": "Fried sour pork roll",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 224, "protein": 6, "fat": 15, "carbs": 14 },
+        "M": { "kcal": 320, "protein": 8, "fat": 22, "carbs": 20 },
+        "L": { "kcal": 416, "protein": 10, "fat": 29, "carbs": 26 }
+      },
+      "serving": "4 pcs",
+      "confidence": 0.64
+    },
+    {
+      "id": "banh-bao",
+      "name_vi": "Bánh bao",
+      "name_en": "Steamed pork bun",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 210, "protein": 8, "fat": 7, "carbs": 28 },
+        "M": { "kcal": 300, "protein": 12, "fat": 10, "carbs": 40 },
+        "L": { "kcal": 390, "protein": 16, "fat": 13, "carbs": 52 }
+      },
+      "serving": "1 bun",
+      "confidence": 0.56
+    },
+    {
+      "id": "banh-xeo",
+      "name_vi": "Bánh xèo",
+      "name_en": "Crispy pancake",
+      "category": "snacks",
+      "portions": {
+        "S": { "kcal": 245, "protein": 8, "fat": 11, "carbs": 28 },
+        "M": { "kcal": 350, "protein": 12, "fat": 16, "carbs": 40 },
+        "L": { "kcal": 455, "protein": 16, "fat": 21, "carbs": 52 }
+      },
+      "serving": "1 piece",
+      "confidence": 0.52
+    },
+    {
+      "id": "tra-sua-tran-chau",
+      "name_vi": "Trà sữa trân châu",
+      "name_en": "Milk tea with pearls",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 294, "protein": 4, "fat": 7, "carbs": 55 },
+        "M": { "kcal": 420, "protein": 6, "fat": 10, "carbs": 78 },
+        "L": { "kcal": 546, "protein": 8, "fat": 13, "carbs": 101 }
+      },
+      "serving": "500ml",
+      "confidence": 0.78
+    },
+    {
+      "id": "hong-tra-sua",
+      "name_vi": "Hồng trà sữa",
+      "name_en": "Milk black tea",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 224, "protein": 4, "fat": 6, "carbs": 42 },
+        "M": { "kcal": 320, "protein": 5, "fat": 8, "carbs": 60 },
+        "L": { "kcal": 416, "protein": 7, "fat": 10, "carbs": 78 }
+      },
+      "serving": "500ml",
+      "confidence": 0.78
+    },
+    {
+      "id": "tra-dao-cam-sa",
+      "name_vi": "Trà đào cam sả",
+      "name_en": "Peach orange lemongrass tea",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 126, "protein": 1, "fat": 0, "carbs": 32 },
+        "M": { "kcal": 180, "protein": 1, "fat": 0, "carbs": 45 },
+        "L": { "kcal": 234, "protein": 1, "fat": 0, "carbs": 59 }
+      },
+      "serving": "500ml",
+      "confidence": 0.70
+    },
+    {
+      "id": "tra-tac",
+      "name_vi": "Trà tắc",
+      "name_en": "Kumquat tea",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 63, "protein": 0, "fat": 0, "carbs": 15 },
+        "M": { "kcal": 90, "protein": 0, "fat": 0, "carbs": 22 },
+        "L": { "kcal": 117, "protein": 0, "fat": 0, "carbs": 29 }
+      },
+      "serving": "500ml",
+      "confidence": 0.72
+    },
+    {
+      "id": "ca-phe-sua-da",
+      "name_vi": "Cà phê sữa đá",
+      "name_en": "Iced milk coffee",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 112, "protein": 2, "fat": 3, "carbs": 20 },
+        "M": { "kcal": 160, "protein": 3, "fat": 4, "carbs": 28 },
+        "L": { "kcal": 208, "protein": 4, "fat": 5, "carbs": 36 }
+      },
+      "serving": "200ml",
+      "confidence": 0.70
+    },
+    {
+      "id": "bac-xiu",
+      "name_vi": "Bạc xỉu",
+      "name_en": "Traditional VN milk-coffee",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 154, "protein": 3, "fat": 6, "carbs": 22 },
+        "M": { "kcal": 220, "protein": 4, "fat": 8, "carbs": 32 },
+        "L": { "kcal": 286, "protein": 5, "fat": 10, "carbs": 42 }
+      },
+      "serving": "200ml",
+      "confidence": 0.68
+    },
+    {
+      "id": "nuoc-mia",
+      "name_vi": "Nước mía",
+      "name_en": "Sugarcane juice",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 133, "protein": 0, "fat": 0, "carbs": 34 },
+        "M": { "kcal": 190, "protein": 0, "fat": 0, "carbs": 48 },
+        "L": { "kcal": 247, "protein": 0, "fat": 0, "carbs": 62 }
+      },
+      "serving": "500ml",
+      "confidence": 0.74
+    },
+    {
+      "id": "sua-chua-danh-da",
+      "name_vi": "Sữa chua đánh đá",
+      "name_en": "Frozen yogurt drink",
+      "category": "drinks",
+      "portions": {
+        "S": { "kcal": 147, "protein": 4, "fat": 3, "carbs": 25 },
+        "M": { "kcal": 210, "protein": 6, "fat": 4, "carbs": 35 },
+        "L": { "kcal": 273, "protein": 8, "fat": 5, "carbs": 46 }
+      },
+      "serving": "300ml",
+      "confidence": 0.60
+    },
+    {
+      "id": "che-thai",
+      "name_vi": "Chè thái",
+      "name_en": "Thai sweet soup",
+      "category": "desserts",
+      "portions": {
+        "S": { "kcal": 294, "protein": 4, "fat": 8, "carbs": 49 },
+        "M": { "kcal": 420, "protein": 5, "fat": 12, "carbs": 70 },
+        "L": { "kcal": 546, "protein": 7, "fat": 16, "carbs": 91 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.55
+    },
+    {
+      "id": "che-dau-xanh",
+      "name_vi": "Chè đậu xanh",
+      "name_en": "Mung bean sweet soup",
+      "category": "desserts",
+      "portions": {
+        "S": { "kcal": 182, "protein": 5, "fat": 3, "carbs": 34 },
+        "M": { "kcal": 260, "protein": 7, "fat": 4, "carbs": 48 },
+        "L": { "kcal": 338, "protein": 9, "fat": 5, "carbs": 62 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.70
+    },
+    {
+      "id": "banh-flan",
+      "name_vi": "Bánh flan",
+      "name_en": "Caramel flan",
+      "category": "desserts",
+      "portions": {
+        "S": { "kcal": 98, "protein": 3, "fat": 4, "carbs": 13 },
+        "M": { "kcal": 140, "protein": 4, "fat": 5, "carbs": 18 },
+        "L": { "kcal": 182, "protein": 5, "fat": 7, "carbs": 23 }
+      },
+      "serving": "1 cup",
+      "confidence": 0.72
+    },
+    {
+      "id": "kem-dua",
+      "name_vi": "Kem dừa",
+      "name_en": "Coconut ice cream",
+      "category": "desserts",
+      "portions": {
+        "S": { "kcal": 217, "protein": 3, "fat": 11, "carbs": 27 },
+        "M": { "kcal": 310, "protein": 4, "fat": 16, "carbs": 38 },
+        "L": { "kcal": 403, "protein": 5, "fat": 21, "carbs": 49 }
+      },
+      "serving": "1 coconut",
+      "confidence": 0.55
+    },
+    {
+      "id": "banh-chuoi-nuong",
+      "name_vi": "Bánh chuối nướng",
+      "name_en": "Baked banana cake",
+      "category": "desserts",
+      "portions": {
+        "S": { "kcal": 196, "protein": 2, "fat": 6, "carbs": 34 },
+        "M": { "kcal": 280, "protein": 3, "fat": 8, "carbs": 48 },
+        "L": { "kcal": 364, "protein": 4, "fat": 10, "carbs": 62 }
+      },
+      "serving": "1 slice",
+      "confidence": 0.50
+    },
+    {
+      "id": "che-khuc-bach",
+      "name_vi": "Chè khúc bạch",
+      "name_en": "Almond pudding dessert",
+      "category": "desserts",
+      "portions": {
+        "S": { "kcal": 245, "protein": 6, "fat": 13, "carbs": 25 },
+        "M": { "kcal": 350, "protein": 8, "fat": 18, "carbs": 36 },
+        "L": { "kcal": 455, "protein": 10, "fat": 23, "carbs": 47 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.58
+    },
+    {
+      "id": "uc-ga-luoc",
+      "name_vi": "Ức gà luộc",
+      "name_en": "Boiled chicken breast",
+      "category": "clean_eating",
+      "portions": {
+        "S": { "kcal": 116, "protein": 22, "fat": 2, "carbs": 0 },
+        "M": { "kcal": 165, "protein": 31, "fat": 3, "carbs": 0 },
+        "L": { "kcal": 215, "protein": 40, "fat": 4, "carbs": 0 }
+      },
+      "serving": "100g",
+      "confidence": 0.95
+    },
+    {
+      "id": "yen-mach-sua-chuoi",
+      "name_vi": "Yến mạch + sữa + chuối",
+      "name_en": "Oatmeal with milk & banana",
+      "category": "clean_eating",
+      "portions": {
+        "S": { "kcal": 224, "protein": 7, "fat": 4, "carbs": 39 },
+        "M": { "kcal": 320, "protein": 10, "fat": 6, "carbs": 55 },
+        "L": { "kcal": 416, "protein": 13, "fat": 8, "carbs": 72 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.85
+    },
+    {
+      "id": "ca-hoi-ap-chao",
+      "name_vi": "Cá hồi áp chảo",
+      "name_en": "Pan-seared salmon",
+      "category": "clean_eating",
+      "portions": {
+        "S": { "kcal": 193, "protein": 16, "fat": 13, "carbs": 0 },
+        "M": { "kcal": 275, "protein": 23, "fat": 18, "carbs": 0 },
+        "L": { "kcal": 358, "protein": 30, "fat": 23, "carbs": 0 }
+      },
+      "serving": "120g",
+      "confidence": 0.80
+    },
+    {
+      "id": "khoai-lang-hap",
+      "name_vi": "Khoai lang hấp",
+      "name_en": "Steamed sweet potato",
+      "category": "clean_eating",
+      "portions": {
+        "S": { "kcal": 105, "protein": 1, "fat": 0, "carbs": 25 },
+        "M": { "kcal": 150, "protein": 2, "fat": 0, "carbs": 36 },
+        "L": { "kcal": 195, "protein": 3, "fat": 0, "carbs": 47 }
+      },
+      "serving": "150g",
+      "confidence": 0.90
+    },
+    {
+      "id": "sua-chua-hy-lap",
+      "name_vi": "Sữa chua Hy Lạp không đường",
+      "name_en": "Greek yogurt",
+      "category": "clean_eating",
+      "portions": {
+        "S": { "kcal": 70, "protein": 13, "fat": 0, "carbs": 4 },
+        "M": { "kcal": 100, "protein": 18, "fat": 0, "carbs": 5 },
+        "L": { "kcal": 130, "protein": 23, "fat": 0, "carbs": 7 }
+      },
+      "serving": "170g",
+      "confidence": 1.0
+    },
+    {
+      "id": "salad-uc-ga",
+      "name_vi": "Salad ức gà",
+      "name_en": "Chicken breast salad",
+      "category": "clean_eating",
+      "portions": {
+        "S": { "kcal": 245, "protein": 22, "fat": 8, "carbs": 14 },
+        "M": { "kcal": 350, "protein": 32, "fat": 12, "carbs": 20 },
+        "L": { "kcal": 455, "protein": 42, "fat": 16, "carbs": 26 }
+      },
+      "serving": "1 bowl",
+      "confidence": 0.75
+    }
+  ],
+  "categories": [
+    { "id": "noodles", "name_vi": "Mì & Bún", "name_en": "Noodles" },
+    { "id": "rice", "name_vi": "Cơm", "name_en": "Rice" },
+    { "id": "banh_mi", "name_vi": "Bánh mì", "name_en": "Sandwiches" },
+    { "id": "snacks", "name_vi": "Ăn vặt", "name_en": "Snacks" },
+    { "id": "drinks", "name_vi": "Thức uống", "name_en": "Drinks" },
+    { "id": "desserts", "name_vi": "Tráng miệng", "name_en": "Desserts" },
+    { "id": "clean_eating", "name_vi": "Eat clean", "name_en": "Clean Eating" }
+  ]
+}
