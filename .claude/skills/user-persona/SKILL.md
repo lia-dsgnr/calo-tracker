@@ -18,12 +18,12 @@ Requires research input. Run `research-synthesis` skill first if raw research ha
 ## Process
 
 1. **Require research input** - Do not invent personas. Must have:
-   - Synthesized interviews (preferred) → `docs/`
+   - Synthesized interviews (preferred) → `artifacts/`
    - User surveys or feedback
    - Behavioral/analytics data
    - Customer segments data
 
-2. **If research files not found** (check `docs/` first):
+2. **If research files not found** (check `artifacts/` first):
    - Ask user: "Where are your research files located?"
    - Accept file uploads directly in chat
    - Accept pasted research content inline
@@ -58,16 +58,20 @@ Requires research input. Run `research-synthesis` skill first if raw research ha
 
 7. **Format output** - Use template: `.claude/templates/user-persona.md`
 
-8. **Save** - Follow `docs/guides/naming-conventions.md`:
-   - Pattern: `PERS[YYMMDD]-[slug].md`
-   - **Single persona:** One file with descriptive slug
-     - Example: `PERS251209-smb-owner.md`
-   - **Multiple personas:** Each persona in a separate file
-     - Example: `PERS251209-tech-savvy-early-adopter.md`
-     - Example: `PERS251209-budget-conscious-smb.md`
-     - Example: `PERS251209-enterprise-it-admin.md`
-   - Same-day collisions: Append increment (`-2`, `-3`) if slug conflicts
-   - Save all files to `docs/`
+8. **Save** - Create separate file for each persona:
+   - Follow naming conventions: `docs/guides/naming-conventions.md`
+   - Pattern: `PERS[YYMMDD]-[priority]-[persona-slug].md`
+   - Priority prefix:
+     - `a` = Primary persona
+     - `b` = Secondary persona
+     - `c` = Tertiary persona
+     - `n` = Negative persona (who we're NOT designing for)
+   - Examples:
+     - `PERS251209-a-smb-owner.md` (primary)
+     - `PERS251209-b-freelance-designer.md` (secondary)
+     - `PERS251209-c-enterprise-admin.md` (tertiary)
+     - `PERS251209-n-power-user.md` (negative)
+   - Save to `artifacts/`
 
 ## Validation Checklist
 

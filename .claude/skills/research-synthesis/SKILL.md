@@ -19,7 +19,7 @@ description: Synthesize research inputs into actionable insights. Handles user i
    - Metrics/analytics/data
    - Articles/reports/docs
 
-2. **Locate input files** - Check `docs/` first. If not found:
+2. **Locate input files** - Check `artifacts/` first. If not found:
    - Ask user: "Where are your [input type] files located?"
    - Accept file uploads directly in chat
    - Accept pasted content inline
@@ -37,13 +37,21 @@ description: Synthesize research inputs into actionable insights. Handles user i
    - Gaps (what's missing?)
    - Surprises (what's unexpected?)
 
-5. **Format output** - Use template: `.claude/templates/research-synthesis.md`
+5. **Determine topic** - Ask user if not clear from context:
+   - "What topic/focus area is this research about?" (e.g., onboarding, pricing, mobile-usage)
+   - If covering entire product or unclear, omit topic
+   - Sanitize to kebab-case (lowercase, hyphens only)
 
-6. **Save** - Store in `docs/[product]-[topic]-YYYY-MM-DD.md`
-   - Topic: Optional, defaults to "research-synthesis" if not specified
-   - Use specific topic if research is scoped (e.g., "onboarding", "pricing")
-   - If file exists, auto-increment: `-2`, `-3`, etc.
-   - Example: `accountee-onboarding-2025-12-04.md` or `accountee-onboarding-2025-12-04-2.md`
+6. **Format output** - Use template: `.claude/templates/research-synthesis.md`
+
+7. **Save** - Follow naming conventions: `docs/guides/naming-conventions.md`
+   - Pattern: `RSYN[YYMMDD]-[topic-slug].md`
+   - Examples:
+     - `RSYN251209-user-interviews.md`
+     - `RSYN251209-onboarding-feedback.md`
+     - `RSYN251209-pricing-research.md`
+   - Save to `artifacts/`
+   - If file exists same day, auto-increment: `-2`, `-3`
 
 ## Validation Checklist
 

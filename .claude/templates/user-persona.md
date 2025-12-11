@@ -85,3 +85,25 @@ research_sources:
   - [Scenario grounded in research]
   - [Scenario grounded in research]
 
+## 10. Confidence & Gaps
+*Include this section only if gaps or assumptions exist.*
+
+**Confidence:** [Strong | Moderate | Weak] (Based on [X] sources, [consistent/some/limited] patterns)
+
+**Research Sources:**
+- [Source type] ([count]) - [Date/Period]
+- [Source type] ([count]) - [Date/Period]
+
+**Assumptions (require validation):**
+- [ ] [Persona assumption statement]
+- [ ] [Persona assumption statement]
+
+**Known Gaps:**
+- [Gap in persona understanding]
+- [Gap in persona understanding]
+
+**Recommended Validation:**
+| Assumption | Method | Phase |
+|------------|--------|-------|
+| [Persona assumption] | [Validation method] | [Phase name] |
+

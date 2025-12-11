@@ -3,7 +3,7 @@
 ## Prerequisites
 
 User personas require research input. You must have one of:
-- Synthesized user interviews → `docs/01-discover/`
+- Synthesized user interviews → `artifacts/`
 - User surveys or feedback data
 - Behavioral/analytics data
 - Customer segment data
@@ -13,11 +13,11 @@ User personas require research input. You must have one of:
 ## Running with Claude Code
 
 1. Open Claude Code in the project
-2. Provide research files or reference existing ones in `docs/01-discover/`
+2. Provide research files or reference existing ones in `artifacts/`
 3. Enter prompt:
 
 ```
-Create user personas from the research in docs/01-discover/[filename].md
+Create user personas from the research in artifacts/[filename].md
 ```
 
 Or with uploaded files:
@@ -26,7 +26,7 @@ Create user personas from this research [attach files]
 ```
 
 4. Review generated personas for research grounding
-5. Output saves to `docs/01-discover/[product]-personas.md`
+5. Output saves to `artifacts/`
 
 ## Quick Validation
 
@@ -65,4 +65,4 @@ Before finalizing, verify:
 |------|-------|
 | Persona template | `.claude/templates/user-persona.md` |
 | Skill instructions | `.claude/skills/user-persona/SKILL.md` |
-| Save personas to | `docs/01-discover/[product]-personas.md` |
+| Save personas to | `artifacts/` |

@@ -17,11 +17,11 @@ Requires research input. Run `research-synthesis` skill first if raw research ha
 ## Process
 
 1. **Require research input** - Do not invent jobs. Must have:
-   - Synthesized interviews (preferred) → `docs/`
+   - Synthesized interviews (preferred) → `artifacts/`
    - User feedback
    - Behavioral data
 
-2. **If research files not found** (check `docs/` first):
+2. **If research files not found** (check `artifacts/` first):
    - Ask user: "Where are your research files located?"
    - Accept file uploads directly in chat
    - Accept pasted research content inline
@@ -45,10 +45,21 @@ Requires research input. Run `research-synthesis` skill first if raw research ha
    - **Emotional** - How they want to feel
    - **Social** - How they want to be perceived
 
-6. **Format output** - Use template: `.claude/templates/jtbd.md`
+6. **Determine scope** - Ask user if not clear from context:
+   - "What scope/feature is this JTBD for?" (e.g., expense-tracking, onboarding, budget-management)
+   - If entire product or unclear, use `jtbd` without scope
+   - Sanitize to kebab-case (lowercase, hyphens only)
 
-7. **Save** - `docs/[product]-jtbd-YYYY-MM-DD.md`
-   - See `docs/guides/conventions.md` for naming rules and path updates
+7. **Format output** - Use template: `.claude/templates/jtbd.md`
+
+8. **Save** - Follow naming conventions: `docs/guides/naming-conventions.md`
+   - Pattern: `JTBD[YYMMDD]-[scope-slug].md`
+   - Examples:
+     - `JTBD251209-expense-tracking.md`
+     - `JTBD251209-onboarding-flow.md`
+     - `JTBD251209-budget-management.md`
+   - Save to `artifacts/`
+   - If file exists same day, auto-increment: `-2`, `-3`
 
 ## Validation Checklist
 

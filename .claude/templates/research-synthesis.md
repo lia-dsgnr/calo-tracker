@@ -31,3 +31,25 @@ Sources: [count] documents analyzed
 | Source | Type | Key Contribution |
 |--------|------|------------------|
 | [name] | [type] | [what it added] |
+
+## Confidence & Gaps
+*Include this section only if gaps or assumptions exist.*
+
+**Confidence:** [Strong | Moderate | Weak] ([X] sources, [consistent/some/limited] patterns)
+
+**Input Sources:**
+- [Source type] ([count]) - [Date/Period]
+- [Source type] ([count]) - [Date/Period]
+
+**Assumptions (require validation):**
+- [ ] [Assumption statement]
+- [ ] [Assumption statement]
+
+**Known Gaps:**
+- [Gap description]
+- [Gap description]
+
+**Recommended Validation:**
+| Assumption | Method | Phase |
+|------------|--------|-------|
+| [Assumption] | [Validation method] | [Phase name] |
