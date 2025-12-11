@@ -1,0 +1,199 @@
+direction: down
+
+classes: {
+  action-button: {
+    style: {
+      fill: "#0000FF"
+      font-color: "#FFFFFF"
+    }
+  }
+  display-element: {
+    style: {
+      fill: transparent
+      stroke-dash: 3
+      font-color: "#000000"
+    }
+  }
+  invisible-container: {
+    style: {
+      border-radius: 0
+      stroke-width: 0
+    }
+  }
+  invisible-connection: {
+    style: {
+      stroke-width: 0
+      opacity: 0
+    }
+  }
+  navigate-arrow: {
+    style: {
+      stroke: "#666666"
+    }
+  }
+  data-arrow: {
+    style: {
+      stroke: "#009900"
+      stroke-dash: 3
+    }
+  }
+}
+
+user-journey-map: User Journey Map {
+  grid-columns: 1
+
+  Stages: {
+    grid-columns: 5
+    class: invisible-container
+
+    stage1: 1. DAILY OPERATIONS\n& DATA ENTRY { width: 400 }
+    stage2: 2. MID-MONTH PROCESSING\n& RECONCILIATION { width: 400 }
+    stage3: 3. MONTH-END CLOSE\nPREPARATION { width: 400 }
+    stage4: 4. FINANCIAL CLOSE\n& REPORTING { width: 400 }
+    stage5: 5. POST-CLOSE ANALYSIS\n& AUDIT { width: 400 }
+  }
+
+  Goals: {
+    grid-columns: 5
+    class: invisible-container
+
+    goal1: GOAL: Categorize transactions,\nmatch receipts, code to GL accounts { width: 400 }
+    goal2: GOAL: Reconcile statements,\nmatch expenses to POs, monitor spend { width: 400 }
+    goal3: GOAL: Prepare accruals,\nfinalize payments, validate GL, trial balance { width: 400 }
+    goal4: GOAL: Generate financial statements,\nvariance analysis, audit prep { width: 400 }
+    goal5: GOAL: Review trends,\ninvestigate anomalies, handle auditor inquiries { width: 400 }
+  }
+
+  Activities: {
+    grid-columns: 5
+    class: invisible-container
+
+    Activities-01: {
+      grid-rows: 5
+      width: 400
+
+      A1-01: Receive/categorize transactions { width: 300 }
+      A1-02: Import bank transactions { width: 300 }
+      A1-03: Match receipts to expenses { width: 300 }
+      A1-04: Code to GL accounts { width: 300 }
+      A1-05: Resolve data entry errors { width: 300 }
+    }
+
+    Activities-02: {
+      grid-rows: 5
+      width: 400
+
+      A2-01: Reconcile bank to GL { width: 300 }
+      A2-02: Three-way match (PO, invoice, receipt) { width: 300 }
+      A2-03: Monitor departmental spend { width: 300 }
+      A2-04: Chase missing approvals { width: 300 }
+      A2-05: Resolve discrepancies { width: 300 }
+    }
+
+    Activities-03: {
+      grid-rows: 6
+      width: 400
+
+      A3-01: Prepare accruals { width: 300 }
+      A3-02: Finalize vendor payments { width: 300 }
+      A3-03: Validate GL balances { width: 300 }
+      A3-04: Prepare trial balance { width: 300 }
+      A3-05: Review compliance { width: 300 }
+      A3-06: Coordinate approvals { width: 300 }
+    }
+
+    Activities-04: {
+      grid-rows: 6
+      width: 400
+
+      A4-01: Consolidate entries { width: 300 }
+      A4-02: Generate BS, P&L, CF { width: 300 }
+      A4-03: Variance analysis { width: 300 }
+      A4-04: Prepare audit schedules { width: 300 }
+      A4-05: Validate reconciliations { width: 300 }
+      A4-06: Coordinate with auditors { width: 300 }
+    }
+
+    Activities-05: {
+      grid-rows: 5
+      width: 400
+
+      A5-01: Review spend patterns { width: 300 }
+      A5-02: Investigate anomalies { width: 300 }
+      A5-03: Prepare audit documentation { width: 300 }
+      A5-04: Handle auditor inquiries { width: 300 }
+      A5-05: Plan corrective actions { width: 300 }
+    }
+  }
+
+  Stages.stage1 -> Goals.goal1
+  Stages.stage2 -> Goals.goal2
+  Stages.stage3 -> Goals.goal3
+  Stages.stage4 -> Goals.goal4
+  Stages.stage5 -> Goals.goal5
+
+  Goals.goal1 -> Activities.Activities-01
+  Goals.goal2 -> Activities.Activities-02
+  Goals.goal3 -> Activities.Activities-03
+  Goals.goal4 -> Activities.Activities-04
+  Goals.goal5 -> Activities.Activities-05
+}
+
+frontstage: FRONTSTAGE (User Interface) {
+  grid-columns: 6
+
+  expenses: Expenses Page {
+    width: 400
+    grid-rows: 3
+
+    add: "+ Add expense" { class: action-button }
+    edit: Edit { class: action-button }
+    delete: Delete { class: action-button }
+  }
+  income: Income Page {
+    width: 400
+    grid-rows: 3
+
+    add: "+ Add income" { class: action-button }
+    edit: Edit { class: action-button }
+    delete: Delete { class: action-button }
+  }
+  dashboard: Dashboard {
+    width: 400
+    grid-rows: 3
+
+    add-expense: Add Expense { class: action-button }
+    add-income: Add Income { class: action-button }
+    view-reports: View Reports { class: action-button }
+  }
+  budget: Budget Page {
+    width: 400
+    grid-rows: 2
+
+    fill-form: Fill in form { class: display-element }
+    display-budgets: Display expense & budget { class: display-element }
+  }
+  reports-pl-trend: Reports Page {
+    width: 400
+    grid-rows: 1
+
+    display-report: Display report overview { class: display-element }
+  }
+
+  dashboard.add-expense -> expenses: navigate { class: navigate-arrow }
+  dashboard.add-income -> income: navigate { class: navigate-arrow }
+  dashboard.view-reports -> reports-pl-trend: navigate { class: navigate-arrow }
+
+  budget.display-budgets -> expenses: get data from { class: data-arrow }
+  reports-pl-trend.display-report -> expenses: get data from { class: data-arrow }
+  reports-pl-trend.display-report -> income: get data from { class: data-arrow }
+}
+
+user-journey-map -> frontstage: { class: invisible-connection }
+
+user-journey-map.Activities.Activities-01 -> frontstage.expenses
+user-journey-map.Activities.Activities-01 -> frontstage.income
+user-journey-map.Activities.Activities-02 -> frontstage.dashboard
+user-journey-map.Activities.Activities-03 -> frontstage.budget
+user-journey-map.Activities.Activities-04 -> frontstage.reports-pl-trend
+user-journey-map.Activities.Activities-05 -> frontstage.reports-pl-trend

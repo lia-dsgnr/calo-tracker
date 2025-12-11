@@ -78,13 +78,6 @@ research_sources:
 | **Frequency of Use** | [Pattern + frequency] | [source] |
 | **Cognitive Load Preference** | [Minimal UI / Full detail / etc.] | [source] |
 
-## 9. User Story Mapping
-
-* **Related Epics:** `EPIC-XXX`
-* **Common User Scenarios:**
-  - [Scenario grounded in research]
-  - [Scenario grounded in research]
-
 ## 10. Confidence & Gaps
 *Include this section only if gaps or assumptions exist.*
 

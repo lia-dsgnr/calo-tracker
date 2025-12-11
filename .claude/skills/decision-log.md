@@ -78,7 +78,7 @@ Triggers from docs/guides/README.md Common Feedback Triggers (lines 173-178):
    - If todo found: Extract context from todo description for step 4
 
 2. **Check if log exists** - Follow naming conventions: `docs/guides/naming-conventions.md`
-   - Location: `artifacts/[product]-decision-log.md`
+   - Location: `artifacts/decision-log.md`
    - If not found: Ask user for product name, create from template
    - If exists: Read to understand context and get next decision ID
 
@@ -125,7 +125,7 @@ Triggers from docs/guides/README.md Common Feedback Triggers (lines 173-178):
    - Add entry to appropriate section (newest first)
    - Update index if Standard/Major
    - Update last_updated date in frontmatter
-   - Save to `artifacts/[product]-decision-log.md`
+   - Save to `artifacts/decision-log.md`
 
 8. **Complete workflow**:
    - If invoked from todo: Mark todo as completed
@@ -192,13 +192,13 @@ Only documenting benefits, not costs.
 Not linking decision to files it impacts.
 
 ✅ **Clear artifact links**
-"Affected Artifacts: `accountee-user-flow-2025-12.md`, `accountee-personas-2025-12.md`"
+"Affected Artifacts: `user-flow-2025-12.md`, `personas-2025-12.md`"
 
 ## Error Handling
 
 **No decision log exists:**
 - Ask: "What's the product name for this log?"
-- Create from template: `artifacts/[product]-decision-log.md`
+- Create from template: `artifacts/decision-log.md`
 - Set created date to today
 - Initialize with frontmatter only
 
