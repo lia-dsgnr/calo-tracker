@@ -16,7 +16,7 @@ One repo = one product. No product prefix needed.
 
 | Component | Required | Format | Example |
 |-----------|----------|--------|---------|
-| Artifact code | Yes | 4 uppercase letters | `COMP` |
+| Artifact code | Yes | 2-4 uppercase letters | `COMP` |
 | Date | Yes | YYMMDD | `250609` |
 | Slug | Yes | 2-4 words, kebab-case, max 30 chars | `freshbooks-pricing` |
 | Increment | No | `-2`, `-3`, etc. (only if collision) | `-2` |
@@ -36,10 +36,17 @@ COMP250609-freshbooks-pricing-2.md   # second competitive analysis same day
 | Artifact | Code | Description |
 |----------|------|-------------|
 | Competitive Analysis | `COMP` | Market and competitor research |
+| Decision Log | `DLOG` | Design decisions and rationale |
+| Information Architecture | `IA` | Site maps and content structure |
 | JTBD | `JTBD` | Jobs to be done statements |
-| User Persona | `PERS` | User persona definitions |
+| Product Requirement Document | `PRD` | Product requirements and specifications |
 | Research Synthesis | `RSYN` | Synthesized research findings |
-| User Interview | `INTR` | Interview notes and transcripts |
+| Sample Data | `DATA` | Mock or test data sets |
+| Testing Plan | `TEST` | Test strategies and coverage plans |
+| User Flow | `FLOW` | Task flows and interaction sequences |
+| User Interview | `INTV` | Interview notes and transcripts |
+| User Journey Map | `JMAP` | End-to-end user experience maps |
+| User Persona | `PERS` | User persona definitions |
 
 ## Slug Rules
 
@@ -73,7 +80,7 @@ Increment appends at the end, before the extension.
 
 ## File Paths
 
-All artifacts save to `artifacts/`.
+All artifacts save to `artifacts/`
 
 ## Templates
 
@@ -91,7 +98,7 @@ version: 1
 ```
 Pattern:  [CODE][YYMMDD]-[slug](-[increment]).md
 
-Codes:    COMP  JTBD  PERS  RSYN  INTR
+Codes:    COMP  DATA  DLOG  FLOW  IA  INTV  JMAP  JTBD  PERS  PRD  RSYN  TEST
 
 Example:  JTBD250609-checkout-friction.md
 ```
