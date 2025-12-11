@@ -1,0 +1,195 @@
+---
+name: user-persona
+description: Generate user personas from research. Use when asked to create personas, define target users, or understand who the users are.
+---
+
+# User Persona
+
+## Dependencies
+
+Requires research input. Run `research-synthesis` skill first if raw research hasn't been synthesized.
+
+## When to Use
+- "Create user personas from this research"
+- "Who are our target users?"
+- "Define the personas for this product"
+- "What user types should we design for?"
+
+## Process
+
+1. **Require research input** - Do not invent personas. Must have:
+   - Synthesized interviews (preferred) → `docs/`
+   - User surveys or feedback
+   - Behavioral/analytics data
+   - Customer segments data
+
+2. **If research files not found** (check `docs/` first):
+   - Ask user: "Where are your research files located?"
+   - Accept file uploads directly in chat
+   - Accept pasted research content inline
+   - Supported formats: `.md`, `.txt`, `.pdf`, `.docx`
+
+3. **Identify user segments** - Look for:
+   - Distinct behavior patterns
+   - Different goals and motivations
+   - Varying skill levels or contexts
+   - Demographic or role differences that affect product use
+
+4. **Extract persona attributes** for each segment:
+   - **Demographics:** Role, experience level, context
+   - **Goals:** What they're trying to achieve
+   - **Pain points:** Frustrations and obstacles
+   - **Behaviors:** How they currently work/act
+   - **Motivations:** Why they do what they do
+   - **Accessibility needs:** Any impairments or assistive technology use
+   - **Quote:** Representative verbatim from research
+
+5. **Write persona narrative** - Create a realistic character:
+   - Give a name and photo description (not real person)
+   - Write a brief bio in third person
+   - Include day-in-the-life context
+   - Keep grounded in research data
+
+6. **Prioritize personas:**
+   - **Primary:** Main target user, design for first
+   - **Secondary:** Important but not primary focus
+   - **Accessibility:** Users with impairments (visual, motor, cognitive, auditory)
+   - **Negative:** Who we are NOT designing for
+
+7. **Format output** - Use template: `.claude/templates/user-persona.md`
+
+8. **Save** - Follow `docs/guides/naming-conventions.md`:
+   - Pattern: `PERS[YYMMDD]-[slug].md`
+   - **Single persona:** One file with descriptive slug
+     - Example: `PERS251209-smb-owner.md`
+   - **Multiple personas:** Each persona in a separate file
+     - Example: `PERS251209-tech-savvy-early-adopter.md`
+     - Example: `PERS251209-budget-conscious-smb.md`
+     - Example: `PERS251209-enterprise-it-admin.md`
+   - Same-day collisions: Append increment (`-2`, `-3`) if slug conflicts
+   - Save all files to `docs/`
+
+## Validation Checklist
+
+Before finalizing personas:
+- [ ] Every attribute has research evidence cited
+- [ ] Goals and pain points are specific, not generic
+- [ ] Behaviors based on observation, not assumption
+- [ ] Quote is verbatim from research (not invented)
+- [ ] Personas are distinct (no overlap in core needs)
+- [ ] 2-4 personas maximum (avoid persona bloat)
+- [ ] Primary persona clearly identified
+- [ ] Accessibility persona included if research shows users with impairments
+- [ ] Negative persona defined if relevant
+
+## Anti-Patterns
+
+❌ **Generic demographics**
+```markdown
+**Name:** Marketing Mary
+**Age:** 35
+**Role:** Marketing Manager
+**Goals:** Wants to do her job better
+```
+Why this fails: Could describe anyone. No research-backed specificity.
+
+✅ **Research-backed specificity**
+```markdown
+**Name:** Maria Chen
+**Role:** Marketing Manager at B2B SaaS (50-200 employees)
+**Context:** Manages 3-person team, reports to CMO, measured on MQLs
+**Goals:** "I need to prove ROI to justify my budget" - 7 of 10 interviews
+```
+
+❌ **Invented behaviors**
+```markdown
+**Behaviors:** Probably checks email first thing in the morning
+```
+
+✅ **Observed behaviors**
+```markdown
+**Behaviors:** Starts day in Slack, checks dashboards before standup (observed in 5 of 8 contextual inquiries)
+```
+
+❌ **Made-up quotes**
+```markdown
+**Quote:** "I just want things to work!"
+```
+
+✅ **Verbatim research quote**
+```markdown
+**Quote:** "I spend 2 hours every Monday just copying data between systems" - P4, interview-03.md
+```
+
+❌ **Too many personas**
+Creating 8+ personas that dilute focus and create confusion about who to design for.
+
+✅ **Focused persona set**
+2-3 distinct personas with clear primary/secondary designation.
+
+❌ **Aspirational persona**
+Describing the ideal user you wish you had instead of actual users from research.
+
+✅ **Evidence-based persona**
+Reflecting real user patterns, even if uncomfortable or unexpected.
+
+❌ **Overlapping personas**
+Two personas with essentially the same goals and pain points but different names.
+
+✅ **Distinct personas**
+Each persona has meaningfully different goals, contexts, or behaviors that affect product decisions.
+
+❌ **Ignoring accessibility**
+```markdown
+**Accessibility:** N/A - our users don't have disabilities
+```
+Why this fails: ~15-20% of population has some form of impairment. Excludes real users.
+
+✅ **Inclusive accessibility consideration**
+```markdown
+**Accessibility:** Uses screen reader (JAWS) due to low vision. Relies on keyboard navigation. Needs high contrast mode. - P8, interview-05.md
+```
+Or if no specific research: "No accessibility-specific research conducted yet - recommend inclusive testing."
+
+## Error Handling
+
+**No research input available:**
+- Stop: "Personas require research foundation. Cannot proceed."
+- Guide user: "Run research-synthesis skill first, or provide research files"
+- Do not invent personas from assumptions
+
+**Empty or corrupted file:**
+- Notify user: "File X appears empty or unreadable"
+- Request alternative format or re-upload
+- Do not proceed without valid research
+
+**Research lacks user detail:**
+- If research only contains feature requests: "This data lacks user context. Need behavioral data."
+- Ask: "Can you provide user interviews or contextual inquiry data?"
+- Recommend deeper discovery research
+
+**Cannot distinguish user segments:**
+- Flag to user: "Research shows homogeneous user base - may only need 1-2 personas"
+- Don't force-create distinct personas where none exist
+- Consider: Is one persona with variants sufficient?
+
+**Too many potential personas (5+):**
+- Prioritize by frequency and business impact
+- Ask user: "Focus on top 2-3, or document all with priority ranking?"
+- Recommend consolidating similar segments
+
+**Cannot create output directory:**
+- Ask user: "Where should I save this persona document?"
+- Offer to output inline in chat
+- Provide copy-paste ready markdown
+
+**Unsupported file format:**
+- List supported: `.md`, `.txt`, `.pdf`, `.docx`
+- Ask user to convert or paste content directly
+
+## Constraints
+- Every persona attribute must cite research evidence
+- Limit to 2-4 personas (1 primary, 1-2 secondary, optional negative)
+- Do not invent user characteristics without evidence
+- Do not create "ideal user" personas - reflect actual research
+- Quotes must be verbatim from research sources
