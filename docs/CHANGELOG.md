@@ -46,6 +46,11 @@ Migrated from localStorage to SQLite (sql.js WASM) for improved data management 
 - ~500 KB per user, ~3.75 MB total for 10 users
 - 30-day log retention, 90-day summary retention
 
+### Bug Fixes
+- Fixed database initialization hanging in React StrictMode
+  - Root cause: `hasStartedRef` guard prevented re-initialization on second mount
+  - Solution: Removed ref guard; `isMounted` pattern handles cleanup correctly
+
 ### Product Scope
 - Added `artifacts/SCOP251211-food-search-favorites.md` — Scope document for Food Search, Manual Entry & Favorites feature
 
