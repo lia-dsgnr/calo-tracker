@@ -5,4 +5,5 @@
 
 export { useLocalStorage } from './useLocalStorage'
 export { useCaloStorage } from './useCaloStorage'
+export { useDatabaseStorage } from './useDatabaseStorage'
 export { useDatabase } from './useDatabase'

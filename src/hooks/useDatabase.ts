@@ -3,7 +3,7 @@
  * Handles initialisation and provides access to repositories.
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   setupDatabase,
   type MigrationResult,
@@ -56,14 +56,7 @@ export function useDatabase(): UseDatabaseReturn {
     currentUser: null,
   })
 
-  // Track if initialisation has started to prevent duplicates
-  const hasStartedRef = useRef(false)
-
   useEffect(() => {
-    // Prevent double initialisation in StrictMode
-    if (hasStartedRef.current) return
-    hasStartedRef.current = true
-
     let isMounted = true
 
     initialiseDatabaseAsync()
@@ -91,7 +84,6 @@ export function useDatabase(): UseDatabaseReturn {
             migrationResult: null,
             currentUser: null,
           })
-          hasStartedRef.current = false
         }
       })
 
@@ -101,7 +93,6 @@ export function useDatabase(): UseDatabaseReturn {
   }, [])
 
   const reinitialise = useCallback(async () => {
-    hasStartedRef.current = false
     setState({
       isInitialised: false,
       isLoading: true,

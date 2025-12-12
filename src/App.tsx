@@ -7,14 +7,14 @@ import { useState, useCallback, useRef } from 'react'
 import { Dashboard } from '@/components/Dashboard'
 import { FoodTileGrid, PortionPicker } from '@/components/QuickAdd'
 import { Toast } from '@/components/common'
-import { useCaloStorage } from '@/hooks'
+import { useDatabaseStorage } from '@/hooks'
 import type { FoodItem, PortionSize, ToastState, LogEntry } from '@/types'
 
 // Debounce delay for tile taps to prevent accidental double-taps
 const TAP_DEBOUNCE_MS = 200
 
 function App() {
-  const { dailySummary, goals, recentItems, addFood, removeLog } = useCaloStorage()
+  const { dailySummary, goals, recentItems, allFoods, addFood, removeLog } = useDatabaseStorage()
 
   // Portion picker state
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
@@ -41,10 +41,10 @@ function App() {
   }, [])
 
   const handleSelectPortion = useCallback(
-    (portion: PortionSize) => {
+    async (portion: PortionSize) => {
       if (!selectedFood) return
 
-      const entry = addFood(selectedFood, portion)
+      const entry = await addFood(selectedFood, portion)
       lastEntryRef.current = entry
 
       setToast({
@@ -89,6 +89,7 @@ function App() {
         <section>
           <h2 className="text-title text-foreground mb-4">Quick Add</h2>
           <FoodTileGrid
+            allFoods={allFoods}
             recentItems={recentItems}
             onSelectFood={handleSelectFood}
             disabledFoodId={processingFoodId}

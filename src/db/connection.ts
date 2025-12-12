@@ -14,13 +14,12 @@ let db: Database | null = null
 
 /**
  * Initialises sql.js WASM module (singleton).
- * Loads from CDN to avoid bundling large WASM file.
+ * Loads WASM from public folder for reliable loading.
  */
 async function getSql(): Promise<SqlJsStatic> {
   if (!sqlPromise) {
     sqlPromise = initSqlJs({
-      // Load WASM from CDN for smaller bundle size
-      locateFile: (file) => `https://sql.js.org/dist/${file}`,
+      locateFile: () => '/sql-wasm.wasm',
     })
   }
   return sqlPromise

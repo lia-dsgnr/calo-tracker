@@ -7,9 +7,9 @@
 import { useMemo } from 'react'
 import { FoodTile } from './FoodTile'
 import type { FoodItem, RecentItem } from '@/types'
-import foodsData from '@/data/foods.json'
 
 interface FoodTileGridProps {
+  allFoods: FoodItem[]
   recentItems: RecentItem[]
   onSelectFood: (food: FoodItem) => void
   disabledFoodId?: string | null
@@ -26,10 +26,7 @@ const CATEGORY_ORDER = [
   { id: 'clean_eating', label: 'Eat clean' },
 ] as const
 
-export function FoodTileGrid({ recentItems, onSelectFood, disabledFoodId }: FoodTileGridProps) {
-  // Type-cast the imported JSON data
-  const allFoods = foodsData.foods as FoodItem[]
-
+export function FoodTileGrid({ allFoods, recentItems, onSelectFood, disabledFoodId }: FoodTileGridProps) {
   // Map food IDs to food objects for quick lookup
   const foodMap = useMemo(() => {
     return new Map(allFoods.map((food) => [food.id, food]))
