@@ -2,6 +2,51 @@
 
 ## 2025-12-12
 
+### Food Search Feature
+Implemented Vietnamese-optimized food search with accent-insensitive matching, fuzzy search, and recent searches.
+
+#### New Components (`src/components/QuickAdd/`)
+- `SearchInput.tsx` — Debounced search input with clear button, loading spinner, and Vietnamese character support
+- `SearchResults.tsx` — Results list with match highlighting, recent searches panel, and empty states
+
+#### Search Utilities (`src/lib/search.ts`)
+- Vietnamese accent normalization (`normalizeVietnamese`) — Maps 60+ Vietnamese characters to ASCII (e.g., "Phở bò" → "pho bo")
+- Fuzzy matching with Levenshtein distance — Handles typos (max distance: 1) for queries ≥5 characters
+- Relevance scoring — Prefix matches (100 VI / 90 EN) > Contains (50) > Fuzzy (20)
+- Query sanitization — Strips special characters, limits to 50 characters
+
+#### Search Features
+- **Bilingual search** — Matches Vietnamese (`name_vi`) and English (`name_en`) food names
+- **Match highlighting** — Highlighted text segments in orange (`orange-40`) for matched portions
+- **Recent searches** — Last 5 search terms saved per user (FIFO), with delete/clear all actions
+- **Loading states** — Skeleton UI during search, loading spinner in input
+
+#### QuickAdd Integration
+- Updated `QuickAddPage.tsx` with search state management
+- Search results overlay replaces food grid when focused or query entered
+- Auto-saves search term on food selection or Enter key
+- Seamless transition between search results and tile grid
+
+---
+
+### Documentation Reorganization
+Restructured documentation for better organization.
+
+#### File Moves
+- `docs/` → `artifacts/` for product docs:
+  - `DATA251210-sample-data-sets.md`
+  - `FEAT251210-dashboard-quick-add.md`
+  - `PRD251210-product-spec-summary.md`
+  - `RMAP251211-calorie-tracking-web-app.md`
+- `artifacts/*.PERS*.md` → `artifacts/personas/` (4 persona files + SVGs)
+
+#### New Files
+- `artifacts/PLAN251212-food-search.md` — Food search implementation plan
+- `docs/food_search_userflow.d2` — User flow diagram for search feature
+- `docs/data-dependencies.md` — Data flow documentation
+
+---
+
 ### Design System Integration
 Integrated a new wellness-inspired design system with comprehensive color tokens, typography, and visual guidelines.
 
