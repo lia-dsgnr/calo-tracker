@@ -4,7 +4,7 @@
  */
 
 import type { DailyGoals, LogEntry, RecentItem, PortionSize, FoodItem } from '../types'
-import { generateId, isToday, getTodayStart } from './utils'
+import { generateId, isToday } from './utils'
 
 // localStorage keys - prefixed to avoid collisions with other apps
 export const STORAGE_KEYS = {

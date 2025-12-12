@@ -1,1 +1,0 @@
-Summarize this chat and update the docs/CHANGELOG.md with major changes made today

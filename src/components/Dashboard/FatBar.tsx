@@ -1,6 +1,6 @@
 /**
  * FatBar - Horizontal progress bar for daily fat intake.
- * Shows consumed vs goal with rounded ends and rose gradient fill.
+ * Shows consumed vs goal with rounded ends and purple gradient fill.
  */
 
 import { useEffect, useState } from 'react'
@@ -43,11 +43,11 @@ export function FatBar({ consumed, goal, className }: FatBarProps) {
 
       {/* Progress bar container */}
       <div className="h-3 bg-border rounded-pill overflow-hidden">
-        {/* Filled portion with rose gradient */}
+        {/* Filled portion with purple gradient (Kind Purple) */}
         <div
           className={cn(
             'h-full rounded-pill transition-[width] duration-700 ease-out',
-            'bg-gradient-to-r from-rose-500 to-rose-400'
+            'bg-gradient-to-r from-purple-60 to-purple-50'
           )}
           style={{ width: `${animatedWidth}%` }}
         />

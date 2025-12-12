@@ -139,6 +139,7 @@ export function QuickAddPage() {
       {/* Main content - scrollable food grid */}
       <main className="px-5 py-6">
         <FoodTileGrid
+          allFoods={[]}
           recentItems={recentItems}
           onSelectFood={handleSelectFood}
           disabledFoodId={processingFoodId}

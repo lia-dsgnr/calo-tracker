@@ -1,6 +1,6 @@
 /**
  * CarbsBar - Horizontal progress bar for daily carbohydrate intake.
- * Shows consumed vs goal with rounded ends and amber gradient fill.
+ * Shows consumed vs goal with rounded ends and yellow gradient fill.
  */
 
 import { useEffect, useState } from 'react'
@@ -43,11 +43,11 @@ export function CarbsBar({ consumed, goal, className }: CarbsBarProps) {
 
       {/* Progress bar container */}
       <div className="h-3 bg-border rounded-pill overflow-hidden">
-        {/* Filled portion with amber gradient */}
+        {/* Filled portion with yellow gradient (Zen Yellow) */}
         <div
           className={cn(
             'h-full rounded-pill transition-[width] duration-700 ease-out',
-            'bg-gradient-to-r from-amber-500 to-amber-400'
+            'bg-gradient-to-r from-yellow-60 to-yellow-50'
           )}
           style={{ width: `${animatedWidth}%` }}
         />

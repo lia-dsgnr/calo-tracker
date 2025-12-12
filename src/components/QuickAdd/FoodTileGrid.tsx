@@ -7,29 +7,26 @@
 import { useMemo } from 'react'
 import { FoodTile } from './FoodTile'
 import type { FoodItem, RecentItem } from '@/types'
-import foodsData from '@/data/foods.json'
 
 interface FoodTileGridProps {
+  allFoods: FoodItem[]
   recentItems: RecentItem[]
   onSelectFood: (food: FoodItem) => void
   disabledFoodId?: string | null
 }
 
-// Category display order and Vietnamese labels
+// Category display order with English labels and emojis
 const CATEGORY_ORDER = [
-  { id: 'noodles', label: 'Mì & Bún' },
-  { id: 'rice', label: 'Cơm' },
-  { id: 'banh_mi', label: 'Bánh mì' },
-  { id: 'snacks', label: 'Ăn vặt' },
-  { id: 'drinks', label: 'Thức uống' },
-  { id: 'desserts', label: 'Tráng miệng' },
-  { id: 'clean_eating', label: 'Eat clean' },
+  { id: 'noodles', label: 'Noodles', emoji: '🍜' },
+  { id: 'rice', label: 'Rice', emoji: '🍚' },
+  { id: 'banh_mi', label: 'Banh Mi', emoji: '🥖' },
+  { id: 'snacks', label: 'Snacks', emoji: '🍿' },
+  { id: 'drinks', label: 'Drinks', emoji: '🧃' },
+  { id: 'desserts', label: 'Desserts', emoji: '🍰' },
+  { id: 'clean_eating', label: 'Clean Eating', emoji: '🥗' },
 ] as const
 
-export function FoodTileGrid({ recentItems, onSelectFood, disabledFoodId }: FoodTileGridProps) {
-  // Type-cast the imported JSON data
-  const allFoods = foodsData.foods as FoodItem[]
-
+export function FoodTileGrid({ allFoods, recentItems, onSelectFood, disabledFoodId }: FoodTileGridProps) {
   // Map food IDs to food objects for quick lookup
   const foodMap = useMemo(() => {
     return new Map(allFoods.map((food) => [food.id, food]))
@@ -82,14 +79,14 @@ export function FoodTileGrid({ recentItems, onSelectFood, disabledFoodId }: Food
       )}
 
       {/* Category-grouped Food Grid */}
-      {CATEGORY_ORDER.map(({ id, label }) => {
+      {CATEGORY_ORDER.map(({ id, label, emoji }) => {
         const foods = foodsByCategory.get(id) || []
         if (foods.length === 0) return null
 
         return (
           <section key={id}>
             <h2 className="text-title text-foreground mb-3 px-1">
-              {label}
+              {emoji} {label}
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {foods.map((food) => (
