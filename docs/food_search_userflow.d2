@@ -1,0 +1,59 @@
+```d2
+// Flow 1: Search Entry & Empty State
+Search: {
+  Start: "User taps Search"
+  Focus: "Search box focused"
+  Empty: "Show Recent + Favourites + Popular"
+
+  Start -> Focus -> Empty
+}
+
+// Flow 2: Typing & Search Matching
+Typing: {
+  UserTypes: "User types keyword"
+  Debounce: "150ms debounce"
+  QueryDB: "Search DB (system + custom)"
+  Results: "Show matching results"
+  NoResults: "Show 'No results' state + CTA Add Custom"
+
+  UserTypes -> Debounce -> QueryDB
+  QueryDB -> Results: "Matches found"
+  QueryDB -> NoResults: "No match"
+}
+
+// Flow 3: Selecting a Result & Logging
+SelectResult: {
+  HasPortions: "Food has portion sizes?"
+  PortionPicker: "Show portion picker"
+  InstantAdd: "Instant add"
+  LogEntry: "Create log entry"
+  UndoToast: "Show Undo"
+  UndoAction: "Undo removes entry"
+
+  HasPortions -> PortionPicker: Yes
+  HasPortions -> InstantAdd: No
+  PortionPicker -> LogEntry
+  InstantAdd -> LogEntry
+  LogEntry -> UndoToast
+  UndoToast -> UndoAction: Undo
+}
+
+// Flow 4: Custom Food Creation
+CustomFood: {
+  CTA: "Add Custom Food"
+  Form: "Custom Food Form"
+  Validate: "Validate inputs"
+  Save: "Save to My Foods"
+  Errors: "Show validation errors"
+  AddLog: "Add to log"
+
+  CTA -> Form
+  Form -> Validate
+  Validate -> Save: Valid
+  Validate -> Errors: Invalid
+  Save -> AddLog
+  AddLog -> SelectResult.UndoToast
+}
+```
+
+
