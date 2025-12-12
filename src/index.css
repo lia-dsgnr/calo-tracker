@@ -1,5 +1,5 @@
-/* Import Inter font for friendly, modern typography */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Import Nunito Sans font for warm, wellness-inspired typography */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap');
 
 /* Tailwind CSS directives */
 @tailwind base;
@@ -9,19 +9,19 @@
 /* Base layer: global reset and defaults for wellness-inspired design */
 @layer base {
   :root {
-    /* CSS variables for easy theming and component access */
-    --background: 40 33% 97%;
-    --foreground: 20 12% 22%;
+    /* CSS variables matching new design system */
+    --background: 0 0% 96%;           /* gray-10 */
+    --foreground: 24 42% 15%;         /* brown-90 */
     --card: 0 0% 100%;
-    --card-foreground: 20 12% 22%;
-    --primary: 100 18% 52%;
+    --card-foreground: 24 42% 15%;    /* brown-90 */
+    --primary: 75 32% 44%;            /* green-60 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 14 72% 67%;
+    --secondary: 30 100% 33%;         /* orange-60 */
     --secondary-foreground: 0 0% 100%;
-    --muted: 30 10% 51%;
-    --muted-foreground: 30 10% 51%;
-    --border: 30 18% 90%;
-    --ring: 100 18% 52%;
+    --muted: 20 5% 43%;               /* gray-60 */
+    --muted-foreground: 20 5% 43%;
+    --border: 0 1% 88%;               /* gray-20 */
+    --ring: 75 32% 44%;               /* green-60 */
     --radius: 20px;
   }
 

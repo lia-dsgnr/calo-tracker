@@ -2,6 +2,41 @@
 
 ## 2025-12-12
 
+### Design System Integration
+Integrated a new wellness-inspired design system with comprehensive color tokens, typography, and visual guidelines.
+
+#### Color System (`tailwind.config.js`)
+- Added 6 color families with 10-100 shade scales:
+  - **Mindful Brown** (`brown-10` to `brown-100`) — primary neutrals, titles, icons
+  - **Optimistic Gray** (`gray-10` to `gray-100`) — backgrounds, dividers, disabled states
+  - **Serenity Green** (`green-10` to `green-100`) — success, healthy range, CTAs
+  - **Empathy Orange** (`orange-10` to `orange-100`) — warnings, calorie highs, charts
+  - **Zen Yellow** (`yellow-10` to `yellow-100`) — highlights, badges, attention cues
+  - **Kind Purple** (`purple-10` to `purple-100`) — accents, achievements
+- Added semantic token aliases mapping to pure colors:
+  - `primary` → green-60, `secondary` → orange-60, `tertiary` → purple-60
+  - `background` → gray-10, `foreground` → brown-90, `border` → gray-20
+
+#### Typography
+- Changed font family from Inter to **Nunito Sans**
+- Increased font sizes for mobile readability:
+  - `h1`: 32px, `h2`: 24px, `h3`: 20px
+  - `body-lg`: 18px, `body`: 16px, `caption`: 14px
+  - `numeric-lg`: 28px, `numeric`: 20px
+- Added legacy aliases (`headline`, `title`) for backward compatibility
+
+#### Component Updates
+- `CarbsBar.tsx` — Changed gradient from `amber-*` to `yellow-60`/`yellow-50` (Zen Yellow)
+- `FatBar.tsx` — Changed gradient from `rose-*` to `purple-60`/`purple-50` (Kind Purple)
+
+#### Shadows
+- Softened all shadows (0-4px blur, lower opacity) using brown-90 as base color
+
+#### Documentation
+- Added `docs/design-system-integration-plan.md` — Implementation plan with impact assessment, risk analysis, and testing checklist
+
+---
+
 ### SQLite Database Implementation
 Migrated from localStorage to SQLite (sql.js WASM) for improved data management and future scalability.
 
