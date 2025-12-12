@@ -86,12 +86,13 @@ export function Toast({ toast, onClose, onUndo }: ToastProps) {
           aria-label="Dismiss notification"
           className={cn(
             'p-1 -m-1 rounded-full',
+            'flex items-center justify-center',
             'hover:bg-white/10 transition-colors',
             'focus:outline-none focus:ring-2 focus:ring-secondary',
             'tap-highlight-none'
           )}
         >
-          <X className="w-5 h-5 opacity-70" />
+          <X className="w-5 h-5 opacity-70 shrink-0" />
         </button>
       </div>
     </div>
