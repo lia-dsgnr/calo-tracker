@@ -37,11 +37,14 @@ COMP250609-freshbooks-pricing-2.md   # second competitive analysis same day
 |----------|------|-------------|
 | Competitive Analysis | `COMP` | Market and competitor research |
 | Decision Log | `DLOG` | Design decisions and rationale |
+| Feature List | `FEAT` | Feature specifications from scope |
 | Information Architecture | `IA` | Site maps and content structure |
 | JTBD | `JTBD` | Jobs to be done statements |
 | Product Requirement Document | `PRD` | Product requirements and specifications |
 | Research Synthesis | `RSYN` | Synthesized research findings |
 | Sample Data | `DATA` | Mock or test data sets |
+| Scope Definition | `SCOP` | Feature scope and requirements |
+| Task List | `TASK` | Feature task breakdowns and acceptance criteria |
 | Testing Plan | `TEST` | Test strategies and coverage plans |
 | User Flow | `FLOW` | Task flows and interaction sequences |
 | User Interview | `INTV` | Interview notes and transcripts |
@@ -98,7 +101,7 @@ version: 1
 ```
 Pattern:  [CODE][YYMMDD]-[slug](-[increment]).md
 
-Codes:    COMP  DATA  DLOG  FLOW  IA  INTV  JMAP  JTBD  PERS  PRD  RSYN  TEST
+Codes:    COMP  DATA  DLOG  FEAT  FLOW  IA  INTV  JMAP  JTBD  PERS  PRD  RSYN  SCOP  TASK  TEST
 
 Example:  JTBD250609-checkout-friction.md
 ```

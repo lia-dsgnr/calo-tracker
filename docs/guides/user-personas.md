@@ -42,13 +42,13 @@ Before finalizing, verify:
 
 ## Common Mistakes
 
-| Don't | Do |
-|-------|-----|
-| Generic goals: "Wants to do job better" | Specific: "Needs to prove ROI to justify budget" — 7/10 interviews |
-| Assumed behaviour: "Probably checks email first" | Observed: "Starts day in Slack, checks dashboards before standup" — 5/8 observations |
-| Made-up quote: "I just want things to work!" | Verbatim: "I spend 2 hours every Monday copying data between systems" — P4, interview-03.md |
-| 8+ personas | 2-3 focused personas with clear priority |
-| Ideal user you wish you had | Actual users from research |
+| Don't                                            | Do                                                                                          |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Generic goals: "Wants to do job better"          | Specific: "Needs to prove ROI to justify budget" — 7/10 interviews                          |
+| Assumed behaviour: "Probably checks email first" | Observed: "Starts day in Slack, checks dashboards before standup" — 5/8 observations        |
+| Made-up quote: "I just want things to work!"     | Verbatim: "I spend 2 hours every Monday copying data between systems" — P4, interview-03.md |
+| 8+ personas                                      | 2-3 focused personas with clear priority                                                    |
+| Ideal user you wish you had                      | Actual users from research                                                                  |
 
 ## Persona Types
 

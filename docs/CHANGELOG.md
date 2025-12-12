@@ -1,5 +1,56 @@
 # Change Log
 
+## 2025-12-12
+
+### SQLite Database Implementation
+Migrated from localStorage to SQLite (sql.js WASM) for improved data management and future scalability.
+
+#### New Database Module (`src/db/`)
+- `connection.ts` — sql.js connection manager with IndexedDB persistence
+- `init.ts` — Schema creation and migration management
+- `seed.ts` — Seeds system foods from `foods.json` into SQLite
+- `migrate-localStorage.ts` — One-time migration utility from localStorage to SQLite
+- `types.ts` — TypeScript types for all database entities
+- `schema.sql` / `indexes.sql` — SQL schema reference files
+
+#### Database Schema (7 tables)
+- `user_profile` — User accounts and daily goals (max 10 users for testing)
+- `system_food` — Curated Vietnamese food database with S/M/L portions + extended nutrients
+- `custom_food` — User-created foods (max 30 per user, single portion)
+- `food_log` — Meal entries with 30-day retention, 30 items/day limit
+- `favorite` — User favorites (max 20 per user)
+- `recent_search` — Last 5 search terms per user (FIFO)
+- `daily_summary` — Pre-computed daily aggregates for statistics
+
+#### Repository Layer (`src/db/repositories/`)
+- `user-repository.ts` — CRUD for user profiles
+- `food-repository.ts` — System foods + custom foods queries
+- `log-repository.ts` — Food logging with daily summaries
+- `favorite-repository.ts` — Favorites management with toggle support
+- `search-repository.ts` — Recent search terms
+- `stats-repository.ts` — Weekly/monthly summaries, trends, streaks
+
+#### React Integration (`src/contexts/`, `src/hooks/`)
+- `useDatabase.ts` — Hook for database lifecycle management
+- `DatabaseProvider` — Context provider with loading/error states
+- `useDatabaseContext` / `useCurrentUser` — Hooks to access database context
+
+#### Dependencies Added
+- `sql.js` — SQLite compiled to WASM for browser
+- `uuid` — UUID generation for primary keys
+- `date-fns` — Date manipulation for queries
+- `@types/sql.js` — TypeScript definitions
+
+#### Capacity Limits
+- 10 local user accounts
+- ~500 KB per user, ~3.75 MB total for 10 users
+- 30-day log retention, 90-day summary retention
+
+### Product Scope
+- Added `artifacts/SCOP251211-food-search-favorites.md` — Scope document for Food Search, Manual Entry & Favorites feature
+
+---
+
 ## 2025-12-11
 
 ### Design Process Framework (DPA)
