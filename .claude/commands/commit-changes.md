@@ -1,4 +1,4 @@
-1. Summarize and update the docs/CHANGELOG.md with major changes made to the code repo today. Skip any git-related activities.
+1. Summarize and update the docs/CHANGELOG.md with major changes made to the code repo today. Skip any git-related or duplicated activities.
 2. Commit code to the current branch. Make sure to follow our rules
     We follow Conventional Commits to keep our history clean and readable.
     Format: type(scope): description

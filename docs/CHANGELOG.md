@@ -2,33 +2,6 @@
 
 ## 2025-12-15
 
-### Bug Fixes
-
-#### Real-time MealList Updates
-Fixed issue where MealList did not update immediately when food was added from QuickAddPage.
-
-- **Root Cause**: `App.tsx` and `QuickAddPage.tsx` each called `useDatabaseStorage()` independently, creating separate state instances
-- **Solution**: Centralized storage in `App.tsx` and passed `recentItems`, `addFood`, and `removeLog` as props to `QuickAddPage`
-- **Impact**: MealList now updates in real-time when food is logged, providing immediate visual feedback
-
-#### Toast Undo Action Flag
-Fixed missing `undoAction` flag in toast states, preventing undo button from appearing.
-
-- Updated `ToastState` type: changed `undoAction` from `() => void` to `boolean` to match actual usage
-- Added `undoAction: true` to all success toasts for food logging operations
-- Ensures undo functionality is available for all logged meals
-
-#### Nested Button Fix
-Fixed React hydration error caused by nested `<button>` elements in `FoodTile`.
-
-- Changed favorite heart icon from `<button>` to `<div role="button">` with keyboard support
-- Prevents invalid HTML nesting while maintaining accessibility and functionality
-- Added `handleHeartKeyDown` for Enter/Space key support
-
----
-
-## 2025-12-15
-
 ### Manual Entry Feature Integration
 Integrated manual food entry functionality into the QuickAdd UI, allowing users to log foods not found in the database.
 
