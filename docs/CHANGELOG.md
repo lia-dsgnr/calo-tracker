@@ -1,5 +1,65 @@
 # Change Log
 
+## 2025-12-15
+
+### Manual Entry Feature Integration
+Integrated manual food entry functionality into the QuickAdd UI, allowing users to log foods not found in the database.
+
+#### Manual Entry Modal (`src/components/QuickAdd/ManualEntryModal.tsx`)
+- Bottom sheet form for manual food entry with name, calories, and optional macros (protein, carbs, fat)
+- Validation for required fields and numeric inputs
+- High-calorie warning (>5000 kcal) with confirmation prompt
+- "Save as custom food" checkbox (checked by default) with limit checking (30 max)
+- Pre-fills food name from search query when available
+- Success toast with undo option and custom food save confirmation
+
+#### QuickAddPage Integration
+- Added manual entry modal state management
+- Integrated with search results ("Can't find your food?" link)
+- Handles custom food creation, logging, and conditional soft-deletion
+- Shows success messages with custom food save status
+- Pre-fills name from search query (even when results exist)
+
+#### Database Integration
+- Creates custom food entries for manual logs (required for foodId in log table)
+- Soft-deletes custom food if "Save as custom" is unchecked (preserves foodId in log)
+- Handles edge case E7: logs meal even when at 30 custom food limit
+
+### Custom Foods in Food Grid
+Added custom foods display to the main food grid as a new "My Dishes" category.
+
+#### FoodTileGrid Updates
+- Added `customFoods` prop to accept custom food items
+- New "My Dishes" section displayed before category sections
+- Custom foods show with "Custom" badge and `foodType="custom"` for proper favorite handling
+- Recent section now includes both system and custom foods
+- Hidden Recent section for "All" tab (only shows in "Recent" tab)
+
+#### QuickAddPage Updates
+- Converts custom foods to FoodItem format (single portion, same values for S/M/L)
+- Passes custom foods to FoodTileGrid
+- Updated `handleSelectFood` to open portion picker for custom foods (single "1 serving" button)
+- Custom foods in Recent section display with proper foodType and badges
+
+### Portion Picker Enhancements
+Enhanced portion picker to show complete nutrition information and support custom foods.
+
+#### PortionPicker Updates
+- Added `isCustomFood` prop to identify custom foods
+- Auto-detects custom foods by checking if all portions (S/M/L) are identical
+- Custom foods show single "1 serving" button instead of S/M/L options
+- Displays protein, carbs, and fat information for all foods
+- Format: "P: Xg • C: Yg • F: Zg" below calories
+- Updated `handleSelectPortion` to handle custom foods via `logCustomFood`
+
+### UX Improvements
+- Manual entry checkbox checked by default to encourage saving for reuse
+- Recent section shows custom foods with "Custom" badge
+- Consistent interaction pattern: custom foods open portion picker (single button) like system foods
+- Complete nutrition info visible in portion picker for better decision-making
+
+---
+
 ## 2025-12-12
 
 ### Design System Integration

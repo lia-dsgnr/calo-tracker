@@ -4,7 +4,7 @@
  * Closes on backdrop tap or portion selection.
  */
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import type { FoodItem, PortionSize } from '@/types'
 
@@ -13,6 +13,8 @@ interface PortionPickerProps {
   isOpen: boolean
   onSelect: (portion: PortionSize) => void
   onClose: () => void
+  /** Whether this is a custom food (single portion only) */
+  isCustomFood?: boolean
 }
 
 // Portion size labels and multiplier descriptions
@@ -22,7 +24,32 @@ const PORTION_OPTIONS: { size: PortionSize; label: string; description: string }
   { size: 'L', label: 'L', description: 'Large' },
 ]
 
-export function PortionPicker({ food, isOpen, onSelect, onClose }: PortionPickerProps) {
+export function PortionPicker({
+  food,
+  isOpen,
+  onSelect,
+  onClose,
+  isCustomFood = false,
+}: PortionPickerProps) {
+  // Detect if this is a custom food by checking if all portions are identical
+  const isCustom = useMemo(() => {
+    if (!food) return false
+    const s = food.portions.S
+    const m = food.portions.M
+    const l = food.portions.L
+    return (
+      s.kcal === m.kcal &&
+      s.kcal === l.kcal &&
+      s.protein === m.protein &&
+      s.protein === l.protein &&
+      s.carbs === m.carbs &&
+      s.carbs === l.carbs &&
+      s.fat === m.fat &&
+      s.fat === l.fat
+    )
+  }, [food])
+
+  const isSinglePortion = isCustomFood || isCustom
   // Prevent body scroll when sheet is open
   useEffect(() => {
     if (isOpen) {
@@ -94,39 +121,78 @@ export function PortionPicker({ food, isOpen, onSelect, onClose }: PortionPicker
           {food.name_vi}
         </h2>
 
-        {/* Portion size pills */}
+        {/* Portion size pills - single button for custom foods, S/M/L for system foods */}
         <div className="flex gap-3 justify-center">
-          {PORTION_OPTIONS.map(({ size, label }) => {
-            const nutrition = food.portions[size]
-            
-            return (
-              <button
-                key={size}
-                type="button"
-                onClick={() => handlePortionSelect(size)}
-                className={cn(
-                  // Pill base: rounded, generous padding for touch
-                  'flex-1 max-w-[140px] py-4 px-4',
-                  'rounded-pill bg-primary text-primary-foreground',
-                  'transition-all duration-150',
-                  'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-                  // Hover/active states
-                  'hover:bg-primary-dark active:scale-95',
-                  // Touch target compliance
-                  'min-h-[72px] tap-highlight-none'
-                )}
-              >
-                {/* Size label - large and prominent */}
-                <span className="block text-xl font-bold mb-1">
-                  {label}
-                </span>
-                {/* Calorie info - smaller caption */}
+          {isSinglePortion ? (
+            // Single button for custom foods - use 'M' as portion (all portions are identical)
+            <button
+              type="button"
+              onClick={() => handlePortionSelect('M')}
+              className={cn(
+                // Full width button for single portion
+                'w-full max-w-[300px] py-4 px-4',
+                'rounded-pill bg-primary text-primary-foreground',
+                'transition-all duration-150',
+                'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                // Hover/active states
+                'hover:bg-primary-dark active:scale-95',
+                // Touch target compliance
+                'min-h-[72px] tap-highlight-none'
+              )}
+            >
+              {/* Portion label for custom foods */}
+              <span className="block text-xl font-bold mb-1">
+                1 serving
+              </span>
+              {/* Nutrition info */}
+              <div className="space-y-0.5">
                 <span className="block text-caption opacity-90">
-                  {nutrition.kcal} kcal
+                  {food.portions.M.kcal} kcal
                 </span>
-              </button>
-            )
-          })}
+                <span className="block text-xs opacity-75">
+                  P: {food.portions.M.protein}g • C: {food.portions.M.carbs}g • F: {food.portions.M.fat}g
+                </span>
+              </div>
+            </button>
+          ) : (
+            // S/M/L buttons for system foods
+            PORTION_OPTIONS.map(({ size, label }) => {
+              const nutrition = food.portions[size]
+
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => handlePortionSelect(size)}
+                  className={cn(
+                    // Pill base: rounded, generous padding for touch
+                    'flex-1 max-w-[140px] py-4 px-4',
+                    'rounded-pill bg-primary text-primary-foreground',
+                    'transition-all duration-150',
+                    'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                    // Hover/active states
+                    'hover:bg-primary-dark active:scale-95',
+                    // Touch target compliance
+                    'min-h-[72px] tap-highlight-none'
+                  )}
+                >
+                  {/* Size label - large and prominent */}
+                  <span className="block text-xl font-bold mb-1">
+                    {label}
+                  </span>
+                  {/* Nutrition info */}
+                  <div className="space-y-0.5">
+                    <span className="block text-caption opacity-90">
+                      {nutrition.kcal} kcal
+                    </span>
+                    <span className="block text-xs opacity-75">
+                      P: {nutrition.protein}g • C: {nutrition.carbs}g • F: {nutrition.fat}g
+                    </span>
+                  </div>
+                </button>
+              )
+            })
+          )}
         </div>
 
         {/* Serving size hint */}

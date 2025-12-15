@@ -4,3 +4,4 @@
  */
 
 export { Toast } from './Toast'
+export { LimitPrompt } from './LimitPrompt'

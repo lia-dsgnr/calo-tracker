@@ -88,8 +88,8 @@ export function useCaloStorage(): UseCaloStorageReturn {
   )
 
   // Track last added entry for undo functionality (in-memory only)
-  // Using ref would persist across renders but not component unmounts - acceptable for MVP
-  let lastAddedEntry: LogEntry | null = null
+  // Using ref to persist across renders; value is cleared on component unmount
+  const lastAddedEntryRef = useRef<LogEntry | null>(null)
 
   /**
    * Adds a food item to today's log and updates recent items.
@@ -107,7 +107,8 @@ export function useCaloStorage(): UseCaloStorageReturn {
       
       setLogs(updatedLogs)
       setRecentItems(updatedRecent)
-      lastAddedEntry = newEntry
+      // Store entry in ref to persist across renders
+      lastAddedEntryRef.current = newEntry
       
       return newEntry
     },
@@ -130,11 +131,12 @@ export function useCaloStorage(): UseCaloStorageReturn {
    * Returns the removed entry for toast display, or null if nothing to undo.
    */
   const undoLastLog = useCallback((): LogEntry | null => {
-    if (!lastAddedEntry) return null
+    if (!lastAddedEntryRef.current) return null
     
-    const entryToRemove = lastAddedEntry
+    const entryToRemove = lastAddedEntryRef.current
     setLogs((prev) => removeLogEntry(prev, entryToRemove.id))
-    lastAddedEntry = null
+    // Clear ref after undo
+    lastAddedEntryRef.current = null
     
     return entryToRemove
   }, [setLogs])
