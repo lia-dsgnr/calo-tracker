@@ -134,6 +134,7 @@ export function FoodTile({
               onClick={handleHeartClick}
               className={cn(
                 'p-1.5 rounded-full',
+                'flex items-center justify-center',
                 'hover:bg-gray-20',
                 'transition-colors duration-150',
                 'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1'

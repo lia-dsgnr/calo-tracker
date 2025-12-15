@@ -229,7 +229,7 @@ export function ManualEntryModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 -mr-2 rounded-full hover:bg-gray-20 transition-colors"
+              className="p-2 -mr-2 rounded-full flex items-center justify-center hover:bg-gray-20 transition-colors"
               aria-label="Close"
             >
               <X size={20} className="text-foreground-muted" />

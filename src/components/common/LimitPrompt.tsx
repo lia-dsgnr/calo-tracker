@@ -128,7 +128,7 @@ export function LimitPrompt({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 -mt-1 -mr-1 rounded-full hover:bg-gray-20 transition-colors"
+            className="p-1 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-gray-20 transition-colors"
             aria-label="Close"
           >
             <X size={20} className="text-foreground-muted" />

@@ -112,6 +112,7 @@ export function SearchBar({
             className={cn(
               'absolute right-3 top-1/2 -translate-y-1/2',
               'p-1 rounded-full',
+              'flex items-center justify-center',
               'text-foreground-muted hover:text-foreground',
               'hover:bg-gray-20',
               'transition-colors duration-150'
@@ -165,7 +166,7 @@ export function SearchBar({
                   <button
                     type="button"
                     onClick={() => onClearRecent(search.id)}
-                    className="p-0.5 rounded-full hover:bg-gray-30 transition-colors"
+                    className="p-0.5 rounded-full flex items-center justify-center hover:bg-gray-30 transition-colors"
                     aria-label={`Remove ${search.searchTerm} from recent searches`}
                   >
                     <X size={14} />

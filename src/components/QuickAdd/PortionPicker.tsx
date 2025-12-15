@@ -122,15 +122,15 @@ export function PortionPicker({
         </h2>
 
         {/* Portion size pills - single button for custom foods, S/M/L for system foods */}
-        <div className="flex gap-3 justify-center">
+        <div className="flex flex-col gap-3 items-center">
           {isSinglePortion ? (
             // Single button for custom foods - use 'M' as portion (all portions are identical)
             <button
               type="button"
               onClick={() => handlePortionSelect('M')}
               className={cn(
-                // Full width button for single portion
-                'w-full max-w-[300px] py-4 px-4',
+                // Full width on mobile, max 480px on desktop
+                'w-full max-w-[480px] py-4 px-6',
                 'rounded-pill bg-primary text-primary-foreground',
                 'transition-all duration-150',
                 'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
@@ -140,22 +140,24 @@ export function PortionPicker({
                 'min-h-[72px] tap-highlight-none'
               )}
             >
-              {/* Portion label for custom foods */}
-              <span className="block text-xl font-bold mb-1">
-                1 serving
-              </span>
-              {/* Nutrition info */}
-              <div className="space-y-0.5">
-                <span className="block text-caption opacity-90">
-                  {food.portions.M.kcal} kcal
+              <div className="flex items-center justify-between w-full">
+                {/* Portion label for custom foods */}
+                <span className="text-xl font-bold">
+                  1 serving
                 </span>
-                <span className="block text-xs opacity-75">
-                  P: {food.portions.M.protein}g • C: {food.portions.M.carbs}g • F: {food.portions.M.fat}g
-                </span>
+                {/* Nutrition info - separated to the right */}
+                <div className="text-right">
+                  <span className="block text-caption opacity-90">
+                    {food.portions.M.kcal} kcal
+                  </span>
+                  <span className="block text-xs opacity-75">
+                    P: {food.portions.M.protein}g • C: {food.portions.M.carbs}g • F: {food.portions.M.fat}g
+                  </span>
+                </div>
               </div>
             </button>
           ) : (
-            // S/M/L buttons for system foods
+            // S/M/L buttons for system foods - stacked vertically
             PORTION_OPTIONS.map(({ size, label }) => {
               const nutrition = food.portions[size]
 
@@ -165,8 +167,8 @@ export function PortionPicker({
                   type="button"
                   onClick={() => handlePortionSelect(size)}
                   className={cn(
-                    // Pill base: rounded, generous padding for touch
-                    'flex-1 max-w-[140px] py-4 px-4',
+                    // Full width on mobile, max 480px on desktop
+                    'w-full max-w-[480px] py-4 px-6',
                     'rounded-pill bg-primary text-primary-foreground',
                     'transition-all duration-150',
                     'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
@@ -176,18 +178,20 @@ export function PortionPicker({
                     'min-h-[72px] tap-highlight-none'
                   )}
                 >
-                  {/* Size label - large and prominent */}
-                  <span className="block text-xl font-bold mb-1">
-                    {label}
-                  </span>
-                  {/* Nutrition info */}
-                  <div className="space-y-0.5">
-                    <span className="block text-caption opacity-90">
-                      {nutrition.kcal} kcal
+                  <div className="flex items-center justify-between w-full">
+                    {/* Size label - large and prominent */}
+                    <span className="text-xl font-bold">
+                      {label}
                     </span>
-                    <span className="block text-xs opacity-75">
-                      P: {nutrition.protein}g • C: {nutrition.carbs}g • F: {nutrition.fat}g
-                    </span>
+                    {/* Nutrition info - separated to the right */}
+                    <div className="text-right">
+                      <span className="block text-caption opacity-90">
+                        {nutrition.kcal} kcal
+                      </span>
+                      <span className="block text-xs opacity-75">
+                        P: {nutrition.protein}g • C: {nutrition.carbs}g • F: {nutrition.fat}g
+                      </span>
+                    </div>
                   </div>
                 </button>
               )
