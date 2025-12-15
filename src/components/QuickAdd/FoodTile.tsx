@@ -60,7 +60,7 @@ export function FoodTile({
    * Handle heart icon click with debouncing to prevent flicker.
    */
   const handleHeartClick = useCallback(
-    (event: React.MouseEvent) => {
+    (event: React.MouseEvent | React.KeyboardEvent) => {
       // Stop propagation to prevent triggering tile selection
       event.stopPropagation()
 
@@ -76,6 +76,15 @@ export function FoodTile({
       onFavoriteToggle(food, foodType)
     },
     [disabled, food, foodType, onFavoriteToggle]
+  )
+
+  const handleHeartKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        handleHeartClick(event)
+      }
+    },
+    [handleHeartClick]
   )
 
   // M portion is the default display value per spec
@@ -129,9 +138,11 @@ export function FoodTile({
         <div className="flex items-center gap-1 shrink-0">
           {/* Favorite heart icon */}
           {onFavoriteToggle && (
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={disabled ? -1 : 0}
               onClick={handleHeartClick}
+              onKeyDown={handleHeartKeyDown}
               className={cn(
                 'p-1.5 rounded-full',
                 'flex items-center justify-center',
@@ -144,7 +155,6 @@ export function FoodTile({
                   ? `Remove ${food.name_vi} from favorites`
                   : `Add ${food.name_vi} to favorites`
               }
-              disabled={disabled}
             >
               <Heart
                 size={18}
@@ -155,7 +165,7 @@ export function FoodTile({
                     : 'text-foreground-muted'
                 )}
               />
-            </button>
+            </div>
           )}
 
           {/* Add icon for clarity */}

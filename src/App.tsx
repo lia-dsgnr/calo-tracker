@@ -8,8 +8,9 @@ import { QuickAddPage } from '@/components/QuickAdd'
 import { useDatabaseStorage } from '@/hooks'
 
 function App() {
-  // Database storage provides data for Dashboard
-  const { dailySummary, goals, removeLog } = useDatabaseStorage()
+  // Single source of truth for storage - shared between Dashboard and QuickAddPage
+  // This ensures MealList updates in real-time when food is added
+  const { dailySummary, goals, removeLog, recentItems, addFood } = useDatabaseStorage()
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,7 +23,11 @@ function App() {
         />
 
         {/* Quick Add with integrated search feature */}
-        <QuickAddPage />
+        <QuickAddPage
+          recentItems={recentItems}
+          addFood={addFood}
+          removeLog={removeLog}
+        />
       </main>
     </div>
   )

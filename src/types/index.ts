@@ -85,7 +85,8 @@ export interface ToastState {
   visible: boolean
   message: string
   variant: ToastVariant
-  undoAction?: () => void
+  /** Flag indicating if undo action is available (actual undo function passed via onUndo prop) */
+  undoAction?: boolean
 }
 
 // App state for context/store

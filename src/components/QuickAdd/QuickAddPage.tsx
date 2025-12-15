@@ -13,7 +13,7 @@ import { TabBar, type TabId } from './TabBar'
 import { FavoritesTab, type FavoriteDisplayItem } from './FavoritesTab'
 import { Toast } from '@/components/common/Toast'
 import { ManualEntryModal, type ManualEntryFormData } from './ManualEntryModal'
-import { useDatabaseStorage, useSearch, useFavorites } from '@/hooks'
+import { useSearch, useFavorites } from '@/hooks'
 import { useCurrentUser } from '@/contexts/useDatabaseContext'
 import { toggleFavorite, getFavoriteCount } from '@/db/repositories/favorite-repository'
 import { createLog } from '@/db/repositories/log-repository'
@@ -24,7 +24,7 @@ import {
   deleteCustomFood,
   getCustomFoodCount,
 } from '@/db/repositories/food-repository'
-import type { FoodItem, PortionSize, ToastState, LogEntry } from '@/types'
+import type { FoodItem, PortionSize, ToastState, LogEntry, RecentItem } from '@/types'
 import type { CustomFood } from '@/db/types'
 
 // Debounce delay for tile taps to prevent accidental double-taps
@@ -33,12 +33,14 @@ const TAP_DEBOUNCE_MS = 200
 // Warning threshold for favorites limit
 const FAVORITES_WARNING_THRESHOLD = 18
 
-export function QuickAddPage() {
-  const currentUser = useCurrentUser()
+interface QuickAddPageProps {
+  recentItems: RecentItem[]
+  addFood: (food: FoodItem, portion: PortionSize) => Promise<LogEntry | null>
+  removeLog: (entryId: string) => Promise<void>
+}
 
-  // Storage hook provides logs, recent items, and mutation functions
-  // Using database storage to standardize on one storage approach
-  const { recentItems, addFood, removeLog } = useDatabaseStorage()
+export function QuickAddPage({ recentItems, addFood, removeLog }: QuickAddPageProps) {
+  const currentUser = useCurrentUser()
 
   // Search hook provides search state and recent searches
   const {
@@ -177,10 +179,25 @@ export function QuickAddPage() {
         })
 
         if (log) {
+          // Store entry for undo
+          const entry: LogEntry = {
+            id: log.id,
+            foodId: log.foodId,
+            name_vi: log.nameSnapshot,
+            portion: 'single' as PortionSize,
+            kcal: log.kcal,
+            protein: log.protein,
+            carbs: log.carbs,
+            fat: log.fat,
+            timestamp: log.loggedAt,
+          }
+          lastEntryRef.current = entry
+
           setToast({
             visible: true,
             message: `Added ${customFood.name}`,
             variant: 'success',
+            undoAction: true,
           })
         }
 
@@ -315,6 +332,7 @@ export function QuickAddPage() {
             visible: true,
             message: `Added ${selectedFood.name_vi} (${portion})`,
             variant: 'success',
+            undoAction: true,
           })
 
           // Close picker and clear processing state
@@ -520,6 +538,7 @@ export function QuickAddPage() {
           visible: true,
           message,
           variant: 'success',
+          undoAction: true,
         })
 
         // Refresh foods to update custom foods list if actually saved (not soft-deleted)
