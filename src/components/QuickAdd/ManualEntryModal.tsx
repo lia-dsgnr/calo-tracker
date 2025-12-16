@@ -425,10 +425,15 @@ export function ManualEntryModal({
                 Save as custom food for reuse
               </label>
               {isAtCustomFoodLimit ? (
+                // When the user is at the hard limit, we explicitly explain why they cannot
+                // enable the "Save as custom" option and how to resolve it.
                 <p className="text-caption text-secondary">
                   You've reached 30 custom foods. Manage your list to add more.
                 </p>
-              ) : customFoodSlotsRemaining <= 5 && customFoodSlotsRemaining > 0 ? (
+              ) : customFoodSlotsRemaining > 0 ? (
+                // Always show how many slots remain so users understand their available
+                // capacity, not only when close to the limit. This addresses the confusion
+                // where the custom food count felt invisible in the UI.
                 <p className="text-caption text-foreground-muted">
                   {customFoodSlotsRemaining} custom food slot
                   {customFoodSlotsRemaining === 1 ? '' : 's'} remaining

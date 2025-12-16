@@ -361,7 +361,7 @@ export function QuickAddPage({ recentItems, addFood, removeLog }: QuickAddPagePr
   const handleClosePicker = useCallback(() => {
     setSelectedFood(null)
     setIsSelectedFoodCustom(false)
-    setProcessingFoodId(null)
+      setProcessingFoodId(null)
   }, [])
 
   /**
@@ -439,7 +439,7 @@ export function QuickAddPage({ recentItems, addFood, removeLog }: QuickAddPagePr
   // Load custom food count when modal opens
   useEffect(() => {
     if (isManualEntryOpen) {
-      loadCustomFoodCount()
+      void loadCustomFoodCount()
     }
   }, [isManualEntryOpen, loadCustomFoodCount])
 
@@ -561,7 +561,7 @@ export function QuickAddPage({ recentItems, addFood, removeLog }: QuickAddPagePr
         })
       }
     },
-    [currentUser, refreshFoods, loadCustomFoodCount, setQuery]
+    [currentUser, refreshFoods, loadCustomFoodCount, setQuery, customFoodCount]
   )
 
   /**

@@ -2,7 +2,28 @@
 
 ## 2025-12-15
 
-### Manual Entry Feature Integration
+### UX Improvements
+
+#### Custom Food Slots Visibility
+Improved visibility of custom food capacity in manual entry modal.
+
+- **ManualEntryModal**: Always displays remaining custom food slots (previously only showed when ≤5 remaining)
+- Added explanatory comments clarifying business logic for limit messaging
+- Addresses user confusion about available custom food capacity
+
+- Manual entry checkbox checked by default to encourage saving for reuse
+- Recent section shows custom foods with "Custom" badge
+- Consistent interaction pattern: custom foods open portion picker (single button) like system foods
+- Complete nutrition info visible in portion picker for better decision-making
+
+### Bug Fixes
+
+#### Code Quality
+- Fixed indentation inconsistency in `handleClosePicker` callback
+- Added `void` operator to async function call in `useEffect` for proper promise handling
+- Added missing `customFoodCount` dependency to `handleManualEntrySave` callback dependency array
+
+#### Real-time MealList Updates
 Integrated manual food entry functionality into the QuickAdd UI, allowing users to log foods not found in the database.
 
 #### Manual Entry Modal (`src/components/QuickAdd/ManualEntryModal.tsx`)
@@ -51,12 +72,6 @@ Enhanced portion picker to show complete nutrition information and support custo
 - Displays protein, carbs, and fat information for all foods
 - Format: "P: Xg • C: Yg • F: Zg" below calories
 - Updated `handleSelectPortion` to handle custom foods via `logCustomFood`
-
-### UX Improvements
-- Manual entry checkbox checked by default to encourage saving for reuse
-- Recent section shows custom foods with "Custom" badge
-- Consistent interaction pattern: custom foods open portion picker (single button) like system foods
-- Complete nutrition info visible in portion picker for better decision-making
 
 ### Bug Fixes
 
