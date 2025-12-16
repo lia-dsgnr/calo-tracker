@@ -1,5 +1,14 @@
 # Change Log
 
+## 2025-12-16
+
+### Documentation Organization
+- Reorganized `artifacts/` folder structure for Food Search & Favorites feature
+- Moved scope document into dedicated `artifacts/food-search-favorites/` subdirectory
+- Groups related SCOP, FEAT, and TASK documents together for better discoverability
+
+---
+
 ## 2025-12-15
 
 ### UX Improvements
