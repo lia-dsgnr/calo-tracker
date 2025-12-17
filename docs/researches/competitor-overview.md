@@ -68,19 +68,5 @@ Caloer (VN)  : ░░                             (≈100K+ claim
       
     
 
----
-
-If you want, I can:
-
-- convert this table into a downloadable CSV or Google Sheet;  
-      
-    
-- run a quick feature-gap matrix between your product and these five (web-focused columns); or  
-      
-    
-- prioritize which competitor capabilities you should copy, beat, or ignore in a RICE-scored roadmap. Which one first?  
-      
-    
-
   
 **

@@ -1,5 +1,16 @@
 # Change Log
 
+## 2025-12-17
+
+### Research & Problem Framing
+- Added `docs/CHAT251216-food-search-problem-framing.md` to reframe food search drop-offs (recognition vs recall) with risk-assessed assumptions and six solution approaches.
+- Highlights high-risk hypotheses (meal repetition, consistent naming, near-mealtime logging) to validate before committing to build.
+
+### Competitive Landscape
+- Simplified `docs/researches/competitor-overview.md` by removing CTA footer to keep the competitive scan focused on facts and sources.
+
+---
+
 ## 2025-12-12
 
 ### Design System Integration
