@@ -151,7 +151,10 @@ export function FavoritesGrid({
         </Card>
       )}
 
-      {/* Suggestions section - show unless user hid it or no items left */}
+      {/* Suggestions section - show unless user hid it or no items left.
+          We intentionally do not render a "Show suggestions" button here,
+          because favorites should stay focused on saved items once the user
+          dismisses suggestions via the close icon. */}
       {shouldShowSuggestions && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -172,19 +175,6 @@ export function FavoritesGrid({
             onVisibleChange={setHasVisibleSuggestions}
           />
         </div>
-      )}
-
-      {/* Show suggestions button if hidden */}
-      {!shouldShowSuggestions && (
-        <button
-          onClick={() => {
-            localStorage.removeItem(SUGGESTIONS_HIDDEN_KEY)
-            setSuggestionsHidden(false)
-          }}
-          className="text-primary hover:underline text-caption"
-        >
-          Show suggestions
-        </button>
       )}
     </section>
   )

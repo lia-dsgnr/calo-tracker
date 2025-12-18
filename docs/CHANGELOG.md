@@ -29,6 +29,18 @@
 - Removed the TemplatesSection and TemplateEditorSheet from the Quick Add page UI to avoid exposing a half-implemented templates flow during this iteration.
 - Kept the underlying template repository, hooks, and types intact so templates can be re-enabled later without data migration or schema changes.
 
+### Quick Add Food Search
+- **Inline Search Bar**: Added a reusable `SearchInput` component and `FoodSearchBar` wrapper, placing search inline with the `Quick Add` heading and auto-focusing on page load so users can start typing immediately.
+- **Grouped Results**: Implemented `useFoodSearch` hook and `FoodSearchResults` UI to surface results in three groups that respect \"my food first\" ordering: Favourite Foods, Recently Logged, and All Foods, each collapsible after five items.
+- **Result Rows**: Introduced `ListItem`, `SectionHeader`, `Badge`, and `FoodSearchResultItem` so every row shows emoji, name with subtle match highlighting, source label (\"Your food\" / \"Global database\"), and a heart icon to add or remove favourites directly from search.
+- **Empty / First-Time States**: Added first-time helper text plus an informative \"No results yet\" state with a mocked \"Add custom food\" call-to-action so users are never met with a blank screen.
+- **Interaction & Analytics**: Tapping a result still routes through the Portion Picker, and a new `search_food_selected` analytics event tracks which foods are chosen from search and with what query.
+
+### Timeline Tabs & Visual Refresh
+- **Tabbed Timeline**: Reworked `useTimeline` to power a tabbed timeline (Today, Yesterday, weekday tabs, Older) and added `TimelineTabs` so users can jump between recent days instead of scrolling a long list.
+- **Timeline Layout**: Updated `TimelineSection` to render logs along a vertical timeline with dots and cards offset from the line, matching the new design and making the logging history easier to scan.
+- **Timeline Card Simplification**: Simplified `TimelineCard` into a compact, non-expandable card focused on emoji, meal name, time, calories, and a single \"Log again\" action to keep the flow fast.
+
 ---
 
 ## 2025-12-17

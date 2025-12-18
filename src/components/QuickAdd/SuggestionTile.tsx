@@ -44,7 +44,6 @@ interface SuggestionTileProps {
 export function SuggestionTile({
   food,
   onSelect,
-  onQuickLog,
   onAddFavorite,
   onRemove,
   isFavorited = false,

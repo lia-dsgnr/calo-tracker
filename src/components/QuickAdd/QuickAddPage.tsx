@@ -1,6 +1,6 @@
 /**
  * QuickAddPage - Main container for food logging flow.
- * Orchestrates: favorites grid, timeline, tile selection -> portion picker -> toast notification.
+ * Orchestrates: food search, favorites grid, timeline, tile selection -> portion picker -> toast.
  * Manages debouncing, undo state, and database integration.
  */
 
@@ -8,10 +8,12 @@ import { useState, useCallback, useRef } from 'react'
 import { FoodTileGrid } from './FoodTileGrid'
 import { FavoritesGrid } from './FavoritesGrid'
 import { TimelineSection } from './TimelineSection'
+import { FoodSearchBar } from './FoodSearchBar'
+import { FoodSearchResults } from './FoodSearchResults'
 import { PortionPicker } from './PortionPicker'
 import { Toast } from '@/components/common/Toast'
 import { Dashboard } from '@/components/Dashboard'
-import { useDatabaseStorage } from '@/hooks'
+import { useDatabaseStorage, useFoodSearch } from '@/hooks'
 import { useDatabaseContext } from '@/contexts/useDatabaseContext'
 import { recordFavoriteUse, getSystemFoodById } from '@/db'
 import { trackEvent, calculateDaysAgo } from '@/lib/analytics'
@@ -24,6 +26,17 @@ export function QuickAddPage() {
   // Database storage hook provides logs, recent items, and mutation functions
   const { recentItems, addFood, removeLog, dailySummary, goals } = useDatabaseStorage()
   const { currentUser } = useDatabaseContext()
+
+  // Food search state (query, grouped results, and favourite toggling)
+  const {
+    query,
+    setQuery,
+    results,
+    isSearching,
+    clearQuery,
+    toggleFavoriteForFood,
+  } = useFoodSearch()
+  const [isSearchActive, setIsSearchActive] = useState(false)
 
   // Selected food for portion picker (null when picker is closed)
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
@@ -58,7 +71,24 @@ export function QuickAddPage() {
 
     setSelectedFood(food)
     setProcessingFoodId(food.id)
-  }, [])
+
+    // Track analytics for search selection if search is active
+    if (isSearchActive && query) {
+      trackEvent('search_food_selected', {
+        food_id: food.id,
+        query,
+      })
+    }
+  }, [isSearchActive, query])
+
+  /**
+   * Handle search query change - activates/deactivates search mode based on query.
+   */
+  const handleSearchChange = useCallback((value: string) => {
+    setQuery(value)
+    // Activate search mode when typing, deactivate when cleared
+    setIsSearchActive(value.length > 0)
+  }, [setQuery])
 
   /**
    * Handle portion selection - logs the food and shows toast.
@@ -161,26 +191,6 @@ export function QuickAddPage() {
   )
 
   /**
-   * Handle delete action from timeline - removes log entry.
-   */
-  const handleDeleteLog = useCallback(
-    async (logId: string) => {
-      await removeLog(logId)
-      
-      // Show toast with undo option
-      setToast({
-        visible: true,
-        message: 'Removed from log',
-        variant: 'undo',
-        undoAction: () => {
-          // Undo would restore the log (not implemented yet)
-        },
-      })
-    },
-    [removeLog]
-  )
-
-  /**
    * Handle portion picker close without selection.
    */
   const handleClosePicker = useCallback(() => {
@@ -215,28 +225,49 @@ export function QuickAddPage() {
           goals={goals}
           onDeleteLog={removeLog}
         />
-        {/* Quick Add section header */}
-        <h2 className="text-title text-foreground">Quick Add</h2>
 
-        {/* Favorites grid - top section.
-            Quick-log for favorites is currently handled elsewhere, so we only pass tile tap handling here. */}
-        <FavoritesGrid
-          onSelectFood={handleSelectFood}
-        />
+        {/* Quick Add section: header + search bar on same row, search aligned right */}
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-title text-foreground shrink-0">Quick Add</h2>
+          <FoodSearchBar
+            value={query}
+            onChange={handleSearchChange}
+            autoFocus={true}
+            className="max-w-[50%]"
+          />
+        </div>
 
-        {/* Timeline section - recent meals */}
-        <TimelineSection
-          onLogAgain={handleLogAgain}
-          onDelete={handleDeleteLog}
-        />
+        {/* Conditional content: search results OR normal browse mode */}
+        {isSearchActive || query ? (
+          // Search mode: show search results
+          <FoodSearchResults
+            results={results}
+            query={query}
+            onSelectFood={handleSelectFood}
+            isSearching={isSearching}
+            onToggleFavorite={toggleFavoriteForFood}
+          />
+        ) : (
+          // Browse mode: show favorites, timeline, and recent items
+          <>
+            {/* Favorites grid - top section.
+                Quick-log for favorites is currently handled elsewhere, so we only pass tile tap handling here. */}
+            <FavoritesGrid
+              onSelectFood={handleSelectFood}
+            />
 
-        {/* Recent items grid - fallback for browsing */}
-        <FoodTileGrid
-          allFoods={[]}
-          recentItems={recentItems}
-          onSelectFood={handleSelectFood}
-          disabledFoodId={processingFoodId}
-        />
+            {/* Timeline section - recent meals with tab navigation */}
+            <TimelineSection onLogAgain={handleLogAgain} />
+
+            {/* Recent items grid - fallback for browsing */}
+            <FoodTileGrid
+              allFoods={[]}
+              recentItems={recentItems}
+              onSelectFood={handleSelectFood}
+              disabledFoodId={processingFoodId}
+            />
+          </>
+        )}
       </main>
 
       {/* Portion picker bottom sheet */}

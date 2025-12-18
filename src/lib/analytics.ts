@@ -26,6 +26,7 @@ export type AnalyticsEvent =
   | 'quickadd_favorites_removed_all'
   | 'quickadd_suggestions_hidden'
   | 'quickadd_suggestion_hidden'
+  | 'search_food_selected'
 
 /**
  * Event parameters for each event type.
@@ -88,6 +89,10 @@ export interface AnalyticsParams {
   quickadd_suggestions_hidden: Record<string, never>
   quickadd_suggestion_hidden: {
     food_id: string
+  }
+  search_food_selected: {
+    food_id: string
+    query: string
   }
 }
 

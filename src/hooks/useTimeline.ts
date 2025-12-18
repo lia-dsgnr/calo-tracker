@@ -1,24 +1,35 @@
 /**
- * Hook for managing meal timeline (recent logs).
- * Fetches logs from database, groups by date, and provides actions.
+ * Hook for managing meal timeline with tab-based navigation.
+ * Fetches logs from database, groups into tabs (Today, Yesterday, weekdays, Older).
+ * Provides tab selection state and filtered logs for the active tab.
  */
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useDatabaseContext } from '../contexts/useDatabaseContext'
 import { getRecentLogs } from '../db/repositories/log-repository'
 import type { FoodLog } from '../db/types'
 import type { LogEntry, PortionSize } from '../types'
-import { format, isToday, isYesterday, parseISO } from 'date-fns'
-import { vi } from 'date-fns/locale/vi'
+import {
+  format,
+  isToday,
+  isYesterday,
+  isBefore,
+  startOfDay,
+  subDays,
+} from 'date-fns'
 
-interface TimelineGroup {
-  date: string
-  dateLabel: string
-  logs: LogEntry[]
+// Tab structure for timeline navigation
+export interface TimelineTab {
+  key: string // Unique identifier: 'today' | 'yesterday' | 'tue' | 'older' etc.
+  label: string // Display label for the tab button
+  date?: string // YYYY-MM-DD for specific days (undefined for 'older')
 }
 
 interface UseTimelineReturn {
-  groups: TimelineGroup[]
+  tabs: TimelineTab[]
+  selectedTab: string
+  setSelectedTab: (key: string) => void
+  logs: LogEntry[] // Filtered logs for selected tab
   isLoading: boolean
   error: string | null
   refresh: () => Promise<void>
@@ -39,28 +50,34 @@ function toLogEntry(log: FoodLog): LogEntry {
   }
 }
 
-// Format date label for timeline groups
-function formatDateLabel(dateString: string): string {
-  const date = parseISO(dateString)
-
-  if (isToday(date)) {
-    return 'Today'
-  }
-  if (isYesterday(date)) {
-    return 'Yesterday'
-  }
-
-  // Format as "Mon 16 Dec" in Vietnamese locale
-  return format(date, 'EEE d MMM', { locale: vi })
+/**
+ * Generate tab label based on date.
+ * Today/Yesterday get semantic labels; other days show abbreviated weekday.
+ */
+function getTabLabel(date: Date): string {
+  if (isToday(date)) return 'Today'
+  if (isYesterday(date)) return 'Yesterday'
+  return format(date, 'EEE') // e.g., "Tue", "Mon"
 }
 
 /**
- * Hook for fetching and managing meal timeline.
- * Groups logs by date and provides refresh capability.
+ * Generate tab key based on date.
+ * Uses semantic keys for Today/Yesterday, lowercase weekday for others.
+ */
+function getTabKey(date: Date): string {
+  if (isToday(date)) return 'today'
+  if (isYesterday(date)) return 'yesterday'
+  return format(date, 'EEE').toLowerCase() // e.g., "tue", "mon"
+}
+
+/**
+ * Hook for fetching and managing meal timeline with tab navigation.
+ * Generates tabs for the last 7 days plus an "Older" tab.
  */
 export function useTimeline(days: number = 7): UseTimelineReturn {
   const { isInitialised, currentUser } = useDatabaseContext()
-  const [groups, setGroups] = useState<TimelineGroup[]>([])
+  const [allLogs, setAllLogs] = useState<LogEntry[]>([])
+  const [selectedTab, setSelectedTab] = useState<string>('today')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -74,34 +91,10 @@ export function useTimeline(days: number = 7): UseTimelineReturn {
     setError(null)
 
     try {
-      // Fetch recent logs
-      const dbLogs = await getRecentLogs(currentUser.id, days)
+      // Fetch logs for extended period (include older logs)
+      const dbLogs = await getRecentLogs(currentUser.id, days + 7)
       const logs = dbLogs.map(toLogEntry)
-
-      // Group logs by date
-      const grouped = new Map<string, LogEntry[]>()
-
-      for (const log of logs) {
-        // Extract date from timestamp (YYYY-MM-DD format)
-        const logDate = new Date(log.timestamp)
-        const dateKey = format(logDate, 'yyyy-MM-dd')
-
-        if (!grouped.has(dateKey)) {
-          grouped.set(dateKey, [])
-        }
-        grouped.get(dateKey)!.push(log)
-      }
-
-      // Convert to timeline groups with labels
-      const timelineGroups: TimelineGroup[] = Array.from(grouped.entries())
-        .map(([date, dateLogs]) => ({
-          date,
-          dateLabel: formatDateLabel(date),
-          logs: dateLogs.sort((a, b) => b.timestamp - a.timestamp), // Most recent first
-        }))
-        .sort((a, b) => b.date.localeCompare(a.date)) // Most recent date first
-
-      setGroups(timelineGroups)
+      setAllLogs(logs)
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to load timeline'
@@ -116,8 +109,68 @@ export function useTimeline(days: number = 7): UseTimelineReturn {
     loadTimeline()
   }, [loadTimeline])
 
+  // Generate tabs based on last 7 days + Older
+  const tabs = useMemo<TimelineTab[]>(() => {
+    const result: TimelineTab[] = []
+    const today = startOfDay(new Date())
+
+    // Generate tabs for each day in the range (Today through 6 days ago)
+    for (let i = 0; i < days; i++) {
+      const date = subDays(today, i)
+      const dateString = format(date, 'yyyy-MM-dd')
+
+      result.push({
+        key: getTabKey(date),
+        label: getTabLabel(date),
+        date: dateString,
+      })
+    }
+
+    // Add "Older" tab for logs before the 7-day window
+    result.push({
+      key: 'older',
+      label: 'Older',
+      date: undefined,
+    })
+
+    return result
+  }, [days])
+
+  // Filter logs based on selected tab
+  const logs = useMemo<LogEntry[]>(() => {
+    const selectedTabData = tabs.find((tab) => tab.key === selectedTab)
+    if (!selectedTabData) return []
+
+    // For "Older" tab, show logs before the 7-day window
+    if (selectedTab === 'older') {
+      const cutoffDate = subDays(startOfDay(new Date()), days)
+
+      return allLogs
+        .filter((log) => {
+          const logDate = new Date(log.timestamp)
+          return isBefore(logDate, cutoffDate)
+        })
+        .sort((a, b) => b.timestamp - a.timestamp)
+    }
+
+    // For specific date tabs, filter by date string
+    if (selectedTabData.date) {
+      return allLogs
+        .filter((log) => {
+          const logDateString = format(new Date(log.timestamp), 'yyyy-MM-dd')
+          return logDateString === selectedTabData.date
+        })
+        .sort((a, b) => b.timestamp - a.timestamp)
+    }
+
+    return []
+  }, [allLogs, selectedTab, tabs, days])
+
   return {
-    groups,
+    tabs,
+    selectedTab,
+    setSelectedTab,
+    logs,
     isLoading,
     error,
     refresh: loadTimeline,
