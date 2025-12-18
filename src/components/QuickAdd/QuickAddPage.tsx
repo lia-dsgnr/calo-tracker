@@ -8,17 +8,14 @@ import { useState, useCallback, useRef } from 'react'
 import { FoodTileGrid } from './FoodTileGrid'
 import { FavoritesGrid } from './FavoritesGrid'
 import { TimelineSection } from './TimelineSection'
-import { TemplatesSection } from './TemplatesSection'
-import { TemplateEditorSheet } from './TemplateEditorSheet'
 import { PortionPicker } from './PortionPicker'
 import { Toast } from '@/components/common/Toast'
 import { Dashboard } from '@/components/Dashboard'
 import { useDatabaseStorage } from '@/hooks'
 import { useDatabaseContext } from '@/contexts/useDatabaseContext'
-import { recordFavoriteUse, getSystemFoodById, createLog } from '@/db'
+import { recordFavoriteUse, getSystemFoodById } from '@/db'
 import { trackEvent, calculateDaysAgo } from '@/lib/analytics'
 import type { FoodItem, PortionSize, ToastState, LogEntry, FoodCategory } from '@/types'
-import type { LogPortionType } from '@/db/types'
 
 // Debounce delay for tile taps to prevent accidental double-taps
 const TAP_DEBOUNCE_MS = 200
@@ -46,9 +43,6 @@ export function QuickAddPage() {
 
   // Track which food is currently being processed (for disabled state)
   const [processingFoodId, setProcessingFoodId] = useState<string | null>(null)
-
-  // Template editor sheet state
-  const [isTemplateEditorOpen, setIsTemplateEditorOpen] = useState(false)
 
   /**
    * Handle food tile selection - opens portion picker with debouncing.
@@ -110,46 +104,6 @@ export function QuickAddPage() {
     },
     [selectedFood, addFood, currentUser]
   )
-
-  /**
-   * Handle quick-log action - logs immediately with default portion.
-   * Used by FavoriteTile quick-log icon.
-   */
-  const handleQuickLog = useCallback(
-    async (food: FoodItem, portion: PortionSize) => {
-      // Add food to log via storage hook
-      const entry = await addFood(food, portion)
-      if (!entry) return
-
-      lastEntryRef.current = entry
-
-      // Record favorite use (non-blocking)
-      if (currentUser) {
-        recordFavoriteUse(currentUser.id, 'system', food.id, portion).catch(
-          (err) => console.error('Failed to record favorite use:', err)
-        )
-      }
-
-      // Track analytics: favorite logged via quick-log icon
-      trackEvent('favorite_logged', {
-        food_id: food.id,
-        portion,
-        method: 'quick_log',
-      })
-
-      // Show success toast with undo option
-      setToast({
-        visible: true,
-        message: `Added ${food.name_vi} (${portion})`,
-        variant: 'success',
-        undoAction: () => {
-          // Undo action will be called via handleUndo
-        },
-      })
-    },
-    [addFood, currentUser]
-  )
-
   /**
    * Handle "Log Again" action from timeline - opens portion picker with same portion.
    * Fetches full food details from database to ensure accurate portion data.
@@ -227,82 +181,6 @@ export function QuickAddPage() {
   )
 
   /**
-   * Handle template logging - logs multiple items from a template.
-   * Creates multiple log entries in a transaction-like manner.
-   */
-  const handleLogTemplate = useCallback(
-    async (items: Array<{ foodId: string; foodType: 'system' | 'custom'; portion: LogPortionType }>) => {
-      if (!currentUser) return
-
-      // Log all items sequentially (transaction-like)
-      const loggedEntries: LogEntry[] = []
-
-      for (const item of items) {
-        // For system foods, fetch nutrition data
-        if (item.foodType === 'system') {
-          const systemFood = await getSystemFoodById(item.foodId)
-          if (!systemFood) continue
-
-          // Get nutrition for the selected portion
-          const nutrition = 
-            item.portion === 'S' ? { kcal: systemFood.kcalS, protein: systemFood.proteinS, fat: systemFood.fatS, carbs: systemFood.carbsS } :
-            item.portion === 'M' ? { kcal: systemFood.kcalM, protein: systemFood.proteinM, fat: systemFood.fatM, carbs: systemFood.carbsM } :
-            item.portion === 'L' ? { kcal: systemFood.kcalL, protein: systemFood.proteinL, fat: systemFood.fatL, carbs: systemFood.carbsL } :
-            null
-
-          if (!nutrition) continue
-
-          const log = await createLog({
-            userId: currentUser.id,
-            foodType: 'system',
-            foodId: item.foodId,
-            portion: item.portion,
-            nameSnapshot: systemFood.nameVi,
-            kcal: nutrition.kcal,
-            protein: nutrition.protein,
-            fat: nutrition.fat,
-            carbs: nutrition.carbs,
-          })
-
-          if (log) {
-            loggedEntries.push({
-              id: log.id,
-              foodId: log.foodId,
-              name_vi: log.nameSnapshot,
-              portion: log.portion as PortionSize,
-              kcal: log.kcal,
-              protein: log.protein,
-              carbs: log.carbs,
-              fat: log.fat,
-              timestamp: log.loggedAt,
-            })
-          }
-        }
-        // Custom foods would be handled here (future enhancement)
-      }
-
-      if (loggedEntries.length === 0) return
-
-      // Note: Template logging analytics is tracked in TemplatesSection component
-      // where we have access to template_id
-
-      // Store last entry for undo (use first entry as representative)
-      lastEntryRef.current = loggedEntries[0]
-
-      // Show success toast
-      setToast({
-        visible: true,
-        message: `Added ${loggedEntries.length} ${loggedEntries.length === 1 ? 'item' : 'items'}`,
-        variant: 'success',
-        undoAction: () => {
-          // Undo action will be called via handleUndo
-        },
-      })
-    },
-    [currentUser]
-  )
-
-  /**
    * Handle portion picker close without selection.
    */
   const handleClosePicker = useCallback(() => {
@@ -327,29 +205,6 @@ export function QuickAddPage() {
     }
   }, [removeLog])
 
-  /**
-   * Handle add template - opens the template editor sheet.
-   */
-  const handleAddTemplate = useCallback(() => {
-    setIsTemplateEditorOpen(true)
-  }, [])
-
-  /**
-   * Handle template editor close.
-   */
-  const handleCloseTemplateEditor = useCallback(() => {
-    setIsTemplateEditorOpen(false)
-  }, [])
-
-  /**
-   * Handle template save - placeholder for MVP (requires items to save).
-   */
-  const handleSaveTemplate = useCallback(async (data: { name: string; description?: string }) => {
-    // MVP: Template creation requires items, which will be added in future enhancement
-    console.log('Template save requested:', data)
-    setIsTemplateEditorOpen(false)
-  }, [])
-
   return (
     <div className="min-h-screen bg-background">
       {/* Main content - scrollable sections */}
@@ -363,15 +218,10 @@ export function QuickAddPage() {
         {/* Quick Add section header */}
         <h2 className="text-title text-foreground">Quick Add</h2>
 
-        {/* Favorites grid - top section */}
+        {/* Favorites grid - top section.
+            Quick-log for favorites is currently handled elsewhere, so we only pass tile tap handling here. */}
         <FavoritesGrid
           onSelectFood={handleSelectFood}
-          onQuickLog={handleQuickLog}
-        />
-
-        {/* Templates section - meal templates */}
-        <TemplatesSection
-          onLogTemplate={handleLogTemplate}
         />
 
         {/* Timeline section - recent meals */}

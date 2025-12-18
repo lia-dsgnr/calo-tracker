@@ -14,11 +14,10 @@ import { SuggestionsGrid } from './SuggestionsGrid'
 import { Card, IconButton } from '@/components/common'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
-import type { FoodItem, PortionSize } from '@/types'
+import type { FoodItem } from '@/types'
 
 interface FavoritesGridProps {
   onSelectFood: (food: FoodItem) => void
-  onQuickLog: (food: FoodItem, portion: PortionSize) => void
 }
 
 const SUGGESTIONS_HIDDEN_KEY = 'calo_suggestions_hidden'
@@ -29,13 +28,14 @@ const SUGGESTIONS_HIDDEN_KEY = 'calo_suggestions_hidden'
  */
 export function FavoritesGrid({
   onSelectFood,
-  onQuickLog,
 }: FavoritesGridProps) {
   const { favorites, isLoading, error, refresh } = useFavorites(8)
   const { currentUser } = useDatabaseContext()
   const [suggestionsHidden, setSuggestionsHidden] = useState(() => {
     return localStorage.getItem(SUGGESTIONS_HIDDEN_KEY) === 'true'
   })
+  // Track whether SuggestionsGrid currently has any visible items
+  const [hasVisibleSuggestions, setHasVisibleSuggestions] = useState(true)
 
   // Callback to refresh favorites when a suggestion is added
   const handleFavoriteAdded = useCallback(() => {
@@ -74,61 +74,9 @@ export function FavoritesGrid({
     }
   }, [isLoading])
 
-  // Empty state: show suggestions or hidden message
-  if (!isLoading && !error && validFavorites.length === 0) {
-    // User chose to hide suggestions
-    if (suggestionsHidden) {
-      return (
-        <section className="mb-8">
-          <h2 className="text-title text-foreground mb-4 flex items-center gap-2">
-            <span>❤️</span> Favorites
-          </h2>
-          <Card variant="default" className="text-center py-6">
-            <p className="text-body text-foreground-muted mb-2">
-              No favorites yet
-            </p>
-            <button
-              onClick={() => {
-                localStorage.removeItem(SUGGESTIONS_HIDDEN_KEY)
-                setSuggestionsHidden(false)
-              }}
-              className="text-primary hover:underline text-caption"
-            >
-              Show suggestions
-            </button>
-          </Card>
-        </section>
-      )
-    }
-
-    // Show suggestions with hide option
-    return (
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-title text-foreground flex items-center gap-2">
-            <span>❤️</span> Favorites
-          </h2>
-          <IconButton
-            icon={<X size={16} />}
-            onClick={handleHideSuggestions}
-            aria-label="Hide suggestions"
-            variant="ghost"
-            size="sm"
-          />
-        </div>
-        <div className="space-y-3">
-          <p className="text-caption text-foreground-muted">
-            Try these popular foods, or tap ❤️ on any food to add it here
-          </p>
-          <SuggestionsGrid
-            onSelectFood={onSelectFood}
-            onQuickLog={onQuickLog}
-            onFavoriteAdded={handleFavoriteAdded}
-          />
-        </div>
-      </section>
-    )
-  }
+  // Check if suggestions should be shown
+  // Show suggestions only if user has not hidden the section AND there are items left
+  const shouldShowSuggestions = !suggestionsHidden && hasVisibleSuggestions
 
   // Error state
   if (error) {
@@ -170,33 +118,74 @@ export function FavoritesGrid({
     )
   }
 
-  // Normal state: display favorites as grid
+  // Normal state: display favorites as grid, with suggestions below if enabled
   return (
     <section className="mb-8">
+      {/* Favorites section */}
       <h2 className="text-title text-foreground mb-4 flex items-center gap-2">
         <span>❤️</span> Favorites
       </h2>
-      {/* Responsive grid: 2 columns on mobile, 3 columns on larger screens */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {validFavorites.map(({ favorite, food }) => {
-          if (!food) return null
+      {validFavorites.length > 0 ? (
+        /* Responsive grid: 2 columns on mobile, 3 columns on larger screens */
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+          {validFavorites.map(({ favorite, food }) => {
+            if (!food) return null
 
-          const portionSize =
-            favorite.defaultPortion === 'single' ? 'M' : favorite.defaultPortion
+            return (
+              <FavoriteCard
+                key={favorite.id}
+                food={food}
+                useCount={favorite.useCount}
+                onSelect={onSelectFood}
+                onRemove={handleRemoveFavorite}
+              />
+            )
+          })}
+        </div>
+      ) : (
+        /* Empty favorites state */
+        <Card variant="default" className="text-center py-6 mb-6">
+          <p className="text-body text-foreground-muted mb-2">
+            No favorites yet
+          </p>
+        </Card>
+      )}
 
-          return (
-            <FavoriteCard
-              key={favorite.id}
-              food={food}
-              useCount={favorite.useCount}
-              defaultPortion={portionSize}
-              onSelect={onSelectFood}
-              onQuickLog={onQuickLog}
-              onRemove={handleRemoveFavorite}
+      {/* Suggestions section - show unless user hid it or no items left */}
+      {shouldShowSuggestions && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-caption text-foreground-muted">
+              Try these popular foods, or tap ❤️ on any food to add it here
+            </p>
+            <IconButton
+              icon={<X size={16} />}
+              onClick={handleHideSuggestions}
+              aria-label="Hide suggestions"
+              variant="ghost"
+              size="sm"
             />
-          )
-        })}
-      </div>
+          </div>
+          <SuggestionsGrid
+            onSelectFood={onSelectFood}
+            onFavoriteAdded={handleFavoriteAdded}
+            onVisibleChange={setHasVisibleSuggestions}
+          />
+        </div>
+      )}
+
+      {/* Show suggestions button if hidden */}
+      {!shouldShowSuggestions && (
+        <button
+          onClick={() => {
+            localStorage.removeItem(SUGGESTIONS_HIDDEN_KEY)
+            setSuggestionsHidden(false)
+          }}
+          className="text-primary hover:underline text-caption"
+        >
+          Show suggestions
+        </button>
+      )}
     </section>
   )
 }

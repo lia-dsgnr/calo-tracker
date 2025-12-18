@@ -8,7 +8,7 @@ import { useCallback } from 'react'
 import { Heart } from 'lucide-react'
 import { Card, IconButton } from '@/components/common'
 import { cn } from '@/lib/utils'
-import type { FoodItem, PortionSize, FoodCategory } from '@/types'
+import type { FoodItem, FoodCategory } from '@/types'
 
 // Category emoji mapping for display
 const CATEGORY_EMOJI: Record<FoodCategory, string> = {
@@ -31,9 +31,7 @@ function getCategoryEmoji(category: FoodCategory): string {
 interface FavoriteCardProps {
   food: FoodItem
   useCount: number
-  defaultPortion: PortionSize
   onSelect: (food: FoodItem) => void
-  onQuickLog: (food: FoodItem, portion: PortionSize) => void
   onRemove?: (food: FoodItem) => void
   disabled?: boolean
 }
@@ -45,9 +43,7 @@ interface FavoriteCardProps {
 export function FavoriteCard({
   food,
   useCount,
-  defaultPortion,
   onSelect,
-  onQuickLog,
   onRemove,
   disabled = false,
 }: FavoriteCardProps) {

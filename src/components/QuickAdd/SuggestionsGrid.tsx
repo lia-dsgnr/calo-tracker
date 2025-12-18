@@ -13,14 +13,19 @@ import { SuggestionTile } from './SuggestionTile'
 import { Card } from '@/components/common'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
-import type { FoodItem, PortionSize } from '@/types'
+import type { FoodItem } from '@/types'
 
 const HIDDEN_SUGGESTIONS_KEY = 'calo_hidden_suggestions'
 
 interface SuggestionsGridProps {
   onSelectFood: (food: FoodItem) => void
-  onQuickLog: (food: FoodItem, portion: PortionSize) => void
   onFavoriteAdded?: () => void
+  /**
+   * Optional callback to let parent know if there are any visible suggestions.
+   * Used so FavoritesGrid can hide the entire suggestions section (title + close icon)
+   * when no items remain.
+   */
+  onVisibleChange?: (hasVisible: boolean) => void
 }
 
 /**
@@ -29,8 +34,8 @@ interface SuggestionsGridProps {
  */
 export function SuggestionsGrid({
   onSelectFood,
-  onQuickLog,
   onFavoriteAdded,
+  onVisibleChange,
 }: SuggestionsGridProps) {
   const { suggestions, isLoading, error } = useSuggestions()
   const { currentUser, isInitialised } = useDatabaseContext()
@@ -73,19 +78,28 @@ export function SuggestionsGrid({
     return new Set<string>()
   })
 
-  // Filter out hidden suggestions
+  // Filter out hidden suggestions AND favorited items
+  // Items are removed when: user clicks X icon OR item is favorited
   const visibleSuggestions = useMemo(() => {
-    return suggestions.filter((food) => !hiddenIds.has(food.id))
-  }, [suggestions, hiddenIds])
+    return suggestions.filter(
+      (food) => !hiddenIds.has(food.id) && !favoritedIds.has(food.id)
+    )
+  }, [suggestions, hiddenIds, favoritedIds])
+
+  // Notify parent whenever visible suggestions count changes so it can show/hide the entire suggestions section.
+  useEffect(() => {
+    onVisibleChange?.(visibleSuggestions.length > 0)
+  }, [visibleSuggestions.length, onVisibleChange])
 
   // Handle adding food to favorites
+  // This removes the item from suggestions (filtered out by favoritedIds)
   const handleAddFavorite = useCallback(
     async (food: FoodItem) => {
       if (!currentUser) return
 
       await addFavorite(currentUser.id, 'system', food.id)
 
-      // Update local favorited state
+      // Update local favorited state - this will filter out the item from visibleSuggestions
       setFavoritedIds((prev) => new Set(prev).add(food.id))
 
       trackEvent('suggestion_favorited', {
@@ -93,7 +107,7 @@ export function SuggestionsGrid({
         category: food.category,
       })
 
-      // Notify parent to refresh favorites (but don't remove from suggestions)
+      // Notify parent to refresh favorites list
       onFavoriteAdded?.()
     },
     [currentUser, onFavoriteAdded]
@@ -171,7 +185,6 @@ export function SuggestionsGrid({
           key={food.id}
           food={food}
           onSelect={onSelectFood}
-          onQuickLog={onQuickLog}
           onAddFavorite={handleAddFavorite}
           onRemove={handleRemove}
           isFavorited={favoritedIds.has(food.id)}

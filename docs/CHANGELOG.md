@@ -25,6 +25,10 @@
 - Added `quickadd_favorites_removed_all` event for tracking bulk removal
 - Added `quickadd_suggestion_hidden` event for tracking individual suggestion hiding
 
+### Templates Section (Temporarily Disabled)
+- Removed the TemplatesSection and TemplateEditorSheet from the Quick Add page UI to avoid exposing a half-implemented templates flow during this iteration.
+- Kept the underlying template repository, hooks, and types intact so templates can be re-enabled later without data migration or schema changes.
+
 ---
 
 ## 2025-12-17

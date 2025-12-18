@@ -8,7 +8,7 @@ import { useCallback } from 'react'
 import { X, Heart } from 'lucide-react'
 import { Card, IconButton } from '@/components/common'
 import { cn } from '@/lib/utils'
-import type { FoodItem, PortionSize, FoodCategory } from '@/types'
+import type { FoodItem, FoodCategory } from '@/types'
 
 // Category emoji mapping for display
 const CATEGORY_EMOJI: Record<FoodCategory, string> = {
@@ -31,7 +31,6 @@ function getCategoryEmoji(category: FoodCategory): string {
 interface SuggestionTileProps {
   food: FoodItem
   onSelect: (food: FoodItem) => void
-  onQuickLog: (food: FoodItem, portion: PortionSize) => void
   onAddFavorite: (food: FoodItem) => void
   onRemove?: (food: FoodItem) => void
   isFavorited?: boolean

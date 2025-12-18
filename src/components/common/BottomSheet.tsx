@@ -9,7 +9,6 @@
  */
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { useEffect } from 'react'
 import { cn } from '@/lib/utils'
 
 interface BottomSheetProps {
@@ -43,24 +42,9 @@ export function BottomSheet({
   size = 'auto',
   showDragHandle = true,
 }: BottomSheetProps) {
-  // Prevent body scroll when sheet is open, compensating for scrollbar width to avoid layout shift
-  useEffect(() => {
-    if (isOpen) {
-      // Calculate scrollbar width before hiding it
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-      document.body.style.overflow = 'hidden'
-      // Add padding to compensate for removed scrollbar, preventing layout shift
-      document.body.style.paddingRight = `${scrollbarWidth}px`
-    } else {
-      document.body.style.overflow = ''
-      document.body.style.paddingRight = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-      document.body.style.paddingRight = ''
-    }
-  }, [isOpen])
-
+  // BottomSheet itself no longer mutates global scroll/overflow state.
+  // Radix's dialog overlay handles focus trapping and scroll blocking,
+  // which keeps the main UI stable while the sheet is open.
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
@@ -79,15 +63,16 @@ export function BottomSheet({
           className={cn(
             // Base positioning: fixed, z-index above overlay
             'fixed z-50',
-            // Mobile app-style: near bottom with margin, horizontally centered via margin auto
-            'bottom-4 left-0 right-0 mx-auto w-[calc(100%-2rem)] max-w-lg',
-            // Desktop: same positioning, slightly more margin
-            'md:bottom-6',
+            // Mobile app-style: flush with bottom edge so the main UI behind does not appear lifted.
+            // We still centre horizontally and cap width on larger screens.
+            'bottom-0 left-0 right-0 mx-auto w-full max-w-lg',
+            // Desktop: same bottom alignment to avoid extra gap under full-screen sheets.
+            'md:bottom-0',
             // Background and styling - rounded top corners, square bottom for edge-to-edge feel
             'bg-background-card rounded-t-2xl rounded-b-none',
             'shadow-xl',
-            // Padding and safe area support
-            'px-5 pt-6 pb-6 safe-bottom',
+            // Padding: top and sides only, bottom padding kept minimal to avoid visible extra space
+            'px-5 pt-6 pb-4',
             // Size variants
             size === 'half' && 'h-1/2',
             size === 'full' && 'h-full md:h-auto md:max-h-[90vh]',
@@ -97,8 +82,8 @@ export function BottomSheet({
             // Focus management: Radix handles focus trap automatically
             'outline-none focus:outline-none'
           )}
-          // Radix Dialog automatically handles backdrop click to close
-          // Escape key is handled by Radix via onOpenChange
+          // Radix Dialog automatically handles backdrop click to close,
+          // and the escape key is wired via onOpenChange above.
         >
           {/* Drag handle indicator - optional visual affordance */}
           {showDragHandle && (

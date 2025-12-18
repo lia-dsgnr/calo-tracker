@@ -38,9 +38,10 @@
     @apply bg-background text-foreground font-sans antialiased;
     /* Mobile-first: ensure minimum width support */
     min-width: 320px;
-    /* Desktop: constrain content width for readability */
-    max-width: 1000px;
-    margin: 0 auto;
+    /* App content width is now constrained by an inner shell container
+       instead of the body itself so that global scroll locking (e.g. modals)
+       cannot change the perceived size of the main UI. */
+    margin: 0;
     padding: 0;
   }
 
