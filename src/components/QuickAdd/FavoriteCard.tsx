@@ -1,7 +1,7 @@
 /**
  * FavoriteCard - Grid card component for favorite foods.
- * Displays food with category icon, name, calories, usage count, and heart icon to remove.
- * Optimized for grid layout with responsive design.
+ * Displays food with category icon, name, usage count, and heart icon to remove.
+ * Optimized for grid layout with responsive design and compact height.
  */
 
 import { useCallback } from 'react'
@@ -38,7 +38,7 @@ interface FavoriteCardProps {
 
 /**
  * Favorite card component for grid display.
- * Shows category icon, food name, calories, usage count badge, and heart icon to remove.
+ * Shows category icon, food name, usage count badge, and heart icon to remove.
  */
 export function FavoriteCard({
   food,
@@ -65,9 +65,11 @@ export function FavoriteCard({
     [disabled, food, onRemove]
   )
 
-  // M portion is the default display value
-  const displayKcal = food.portions.M.kcal
   const categoryEmoji = getCategoryEmoji(food.category)
+  const hasUsage = useCount > 0
+  const usageLabel = hasUsage
+    ? `Logged ${useCount} ${useCount === 1 ? 'time' : 'times'}`
+    : null
 
   return (
     <Card
@@ -75,66 +77,55 @@ export function FavoriteCard({
       onPress={handleCardClick}
       disabled={disabled}
       className={cn(
-        // Grid card layout: vertical stack with relative positioning for badge and heart
-        'relative flex flex-col',
-        'p-4',
-        'min-h-[120px]'
+        // Favorites quick-add cards should feel like a single horizontal scan line:
+        // emoji, label, and logged summary form one row with the heart as a trailing affordance.
+        // We keep height comfortable for touch while letting content dictate final size.
+        'flex items-center justify-between',
+        'p-3 min-h-[90px]'
       )}
     >
-      {/* Heart icon - remove from favorites, top right corner */}
-      {onRemove && (
-        <div className="absolute top-2 right-2 z-10">
-          <IconButton
-            icon={<Heart size={16} className="fill-current" />}
-            onClick={handleRemove}
-            aria-label={`Remove ${food.name_vi} from favorites`}
-            variant="ghost"
-            size="sm"
-            disabled={disabled}
-            className="text-orange-60 hover:text-orange-70"
-          />
-        </div>
-      )}
-
-      {/* Usage count badge - top left corner (when heart is on right) */}
-      {useCount > 0 && (
-        <div
-          className={cn(
-            // Positioned absolutely in top-left
-            'absolute top-2 left-2',
-            // Badge styling: small, rounded, green background
-            'bg-primary/20 text-primary',
-            'px-2 py-0.5 rounded-full',
-            'text-caption font-medium',
-            'z-10'
-          )}
-        >
-          {useCount}x
-        </div>
-      )}
-
-      {/* Category emoji - centered at top */}
-      <div className="flex justify-center mb-2">
-        <span className="text-3xl" role="img" aria-label={food.category}>
+      {/* Left side: emoji and a text block (name + logged summary) for quick comprehension. */}
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="text-2xl" role="img" aria-label={food.category}>
           {categoryEmoji}
         </span>
+        <div className="flex flex-col min-w-0">
+          <p
+            className={cn(
+              // Food name stays the primary anchor; truncate to keep layout stable on small screens.
+              'text-title text-foreground font-medium',
+              'truncate'
+            )}
+          >
+            {food.name_vi}
+          </p>
+          {usageLabel && (
+            <p
+              className={cn(
+                // Logged summary explains why this quick-add is useful,
+                // using a softer style so it does not compete with the title.
+                'text-body text-foreground-muted',
+                'truncate'
+              )}
+            >
+              {usageLabel}
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* Food name - Vietnamese name, truncated if too long */}
-      <p
-        className={cn(
-          'text-body text-foreground font-medium',
-          'text-center line-clamp-2',
-          'mb-1'
-        )}
-      >
-        {food.name_vi}
-      </p>
-
-      {/* Calories - smaller text, muted color */}
-      <p className="text-caption text-foreground-muted text-center">
-        {displayKcal} kcal
-      </p>
+      {/* Right side: heart toggle only, acting as a clear favorite affordance. */}
+      {onRemove && (
+        <IconButton
+          icon={<Heart size={16} className="fill-current" />}
+          onClick={handleRemove}
+          aria-label={`Remove ${food.name_vi} from favorites`}
+          variant="ghost"
+          size="sm"
+          disabled={disabled}
+          className="text-orange-60 hover:text-orange-70"
+        />
+      )}
     </Card>
   )
 }

@@ -12,6 +12,11 @@
 - **Removed Edit Mode**: Simplified UI by removing edit mode; heart icon directly removes items
 - **Heart Icon Styling**: Changed heart icon color to empathy orange (`orange-60`) when favorited
 
+### Favorites Grid & Card Refinements
+- **Inline Card Layout**: Updated `FavoriteCard` to a single-row layout with emoji, food name, and a secondary \"Logged N time(s)\" line, keeping the heart icon as the sole trailing affordance.
+- **Expand/Collapse Grid**: Favorites grid now shows the first 9 items by default with a \"Show all / Show less\" control, backed by a new `useFavorites` API that can fetch all favorites and exposes `totalCount` for accurate counts.
+- **Section Counters**: Favorites section heading now displays the total number of valid favorites in loading, error, and normal states for quick at-a-glance feedback.
+
 ### Suggestions Grid Updates
 - **Matching Design**: Updated suggestion tiles to match FavoriteCard grid layout and styling
 - **Icon Changes**: 
@@ -24,6 +29,7 @@
 ### Analytics
 - Added `quickadd_favorites_removed_all` event for tracking bulk removal
 - Added `quickadd_suggestion_hidden` event for tracking individual suggestion hiding
+- Added `quickadd_favorites_toggle_expand` event for tracking expand/collapse behaviour on the favorites grid
 
 ### Templates Section (Temporarily Disabled)
 - Removed the TemplatesSection and TemplateEditorSheet from the Quick Add page UI to avoid exposing a half-implemented templates flow during this iteration.

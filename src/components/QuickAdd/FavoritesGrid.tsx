@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { X } from 'lucide-react'
+import { X, ChevronDown, ChevronUp } from 'lucide-react'
 import { useFavorites } from '@/hooks/useFavorites'
 import { useDatabaseContext } from '@/contexts/useDatabaseContext'
 import { removeFavorite } from '@/db/repositories/favorite-repository'
@@ -21,21 +21,26 @@ interface FavoritesGridProps {
 }
 
 const SUGGESTIONS_HIDDEN_KEY = 'calo_suggestions_hidden'
+const INITIAL_DISPLAY_LIMIT = 9
 
 /**
  * Favorites grid component with compact card layout.
  * Displays favorites with remove/log actions, shows suggestions when empty.
+ * Shows first 9 favorites initially, with "Show all" button to expand.
  */
 export function FavoritesGrid({
   onSelectFood,
 }: FavoritesGridProps) {
-  const { favorites, isLoading, error, refresh } = useFavorites(8)
+  // Fetch all favorites to support expand/collapse functionality
+  const { favorites, isLoading, error, refresh } = useFavorites(null)
   const { currentUser } = useDatabaseContext()
   const [suggestionsHidden, setSuggestionsHidden] = useState(() => {
     return localStorage.getItem(SUGGESTIONS_HIDDEN_KEY) === 'true'
   })
   // Track whether SuggestionsGrid currently has any visible items
   const [hasVisibleSuggestions, setHasVisibleSuggestions] = useState(true)
+  // Track expanded state for showing all favorites
+  const [isExpanded, setIsExpanded] = useState(false)
 
   // Callback to refresh favorites when a suggestion is added
   const handleFavoriteAdded = useCallback(() => {
@@ -44,6 +49,26 @@ export function FavoritesGrid({
 
   // Filter out favorites without food data
   const validFavorites = favorites.filter((item) => item.food !== null)
+
+  // Count of valid favorites that can actually be displayed
+  // This may differ from totalCount if some favorites have missing food data
+  const displayCount = validFavorites.length
+
+  // Determine which favorites to display based on expanded state
+  const displayedFavorites = isExpanded
+    ? validFavorites
+    : validFavorites.slice(0, INITIAL_DISPLAY_LIMIT)
+
+  // Show "Show all" button if there are more favorites than the initial limit
+  const hasMoreFavorites = validFavorites.length > INITIAL_DISPLAY_LIMIT
+
+  // Handle expand/collapse toggle
+  const handleToggleExpand = useCallback(() => {
+    setIsExpanded((prev) => !prev)
+    trackEvent('quickadd_favorites_toggle_expand', {
+      action: isExpanded ? 'collapse' : 'expand',
+    })
+  }, [isExpanded])
 
   // Handle removing a favorite
   const handleRemoveFavorite = useCallback(
@@ -84,6 +109,11 @@ export function FavoritesGrid({
       <section className="mb-8">
         <h2 className="text-title text-foreground mb-4 flex items-center gap-2">
           <span>❤️</span> Favorites
+          {displayCount > 0 && (
+            <span className="text-body text-foreground-muted font-normal">
+              ({displayCount})
+            </span>
+          )}
         </h2>
         <Card variant="default" className="text-center py-8">
           <p className="text-body text-foreground-muted mb-4">
@@ -106,6 +136,11 @@ export function FavoritesGrid({
       <section className="mb-8">
         <h2 className="text-title text-foreground mb-4 flex items-center gap-2">
           <span>❤️</span> Favorites
+          {displayCount > 0 && (
+            <span className="text-body text-foreground-muted font-normal">
+              ({displayCount})
+            </span>
+          )}
         </h2>
         <div className={cn('grid grid-cols-2 md:grid-cols-3 gap-3', 'animate-pulse')}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -124,24 +159,52 @@ export function FavoritesGrid({
       {/* Favorites section */}
       <h2 className="text-title text-foreground mb-4 flex items-center gap-2">
         <span>❤️</span> Favorites
+        {displayCount > 0 && (
+          <span className="text-body text-foreground-muted font-normal">
+            ({displayCount})
+          </span>
+        )}
       </h2>
       {validFavorites.length > 0 ? (
-        /* Responsive grid: 2 columns on mobile, 3 columns on larger screens */
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-          {validFavorites.map(({ favorite, food }) => {
-            if (!food) return null
+        <>
+          {/* Responsive grid: 2 columns on mobile, 3 columns on larger screens */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+            {displayedFavorites.map(({ favorite, food }) => {
+              if (!food) return null
 
-            return (
-              <FavoriteCard
-                key={favorite.id}
-                food={food}
-                useCount={favorite.useCount}
-                onSelect={onSelectFood}
-                onRemove={handleRemoveFavorite}
-              />
-            )
-          })}
-        </div>
+              return (
+                <FavoriteCard
+                  key={favorite.id}
+                  food={food}
+                  useCount={favorite.useCount}
+                  onSelect={onSelectFood}
+                  onRemove={handleRemoveFavorite}
+                />
+              )
+            })}
+          </div>
+          {/* Show all / Show less button */}
+          {hasMoreFavorites && (
+            <div className="flex justify-center mb-6">
+              <button
+                onClick={handleToggleExpand}
+                className="text-primary hover:text-primary/80 text-body flex items-center gap-1 transition-colors"
+              >
+                {isExpanded ? (
+                  <>
+                    <span>Show less</span>
+                    <ChevronUp size={16} />
+                  </>
+                ) : (
+                  <>
+                    <span>Show all</span>
+                    <ChevronDown size={16} />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         /* Empty favorites state */
         <Card variant="default" className="text-center py-6 mb-6">

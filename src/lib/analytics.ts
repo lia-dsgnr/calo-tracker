@@ -24,6 +24,7 @@ export type AnalyticsEvent =
   | 'quickadd_section_visible'
   | 'quickadd_favorite_removed'
   | 'quickadd_favorites_removed_all'
+  | 'quickadd_favorites_toggle_expand'
   | 'quickadd_suggestions_hidden'
   | 'quickadd_suggestion_hidden'
   | 'search_food_selected'
@@ -85,6 +86,9 @@ export interface AnalyticsParams {
   }
   quickadd_favorites_removed_all: {
     count: number
+  }
+  quickadd_favorites_toggle_expand: {
+    action: 'expand' | 'collapse'
   }
   quickadd_suggestions_hidden: Record<string, never>
   quickadd_suggestion_hidden: {

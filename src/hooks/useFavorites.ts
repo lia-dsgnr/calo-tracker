@@ -8,6 +8,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { useDatabaseContext } from '../contexts/useDatabaseContext'
 import {
   getFavoritesByFrequency,
+  getFavoriteCount,
 } from '../db/repositories/favorite-repository'
 import { getSystemFoodById } from '../db/repositories/food-repository'
 import type { Favorite } from '../db/types'
@@ -20,6 +21,7 @@ interface FavoriteWithFood {
 
 interface UseFavoritesReturn {
   favorites: FavoriteWithFood[]
+  totalCount: number
   isLoading: boolean
   error: string | null
   refresh: () => Promise<void>
@@ -64,10 +66,12 @@ function toFoodItem(sf: {
 /**
  * Hook for fetching and managing user favorites.
  * Resolves food details for each favorite and provides refresh capability.
+ * Fetches all favorites (up to 100) to support expand/collapse functionality.
  */
-export function useFavorites(limit: number = 8): UseFavoritesReturn {
+export function useFavorites(limit: number | null = null): UseFavoritesReturn {
   const { isInitialised, currentUser } = useDatabaseContext()
   const [favorites, setFavorites] = useState<FavoriteWithFood[]>([])
+  const [totalCount, setTotalCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -81,8 +85,14 @@ export function useFavorites(limit: number = 8): UseFavoritesReturn {
     setError(null)
 
     try {
-      // Fetch favorites sorted by frequency
-      const dbFavorites = await getFavoritesByFrequency(currentUser.id, limit)
+      // Fetch total count for display in title
+      const count = await getFavoriteCount(currentUser.id)
+      setTotalCount(count)
+
+      // Fetch all favorites (use high limit to get all, since max is 20 per user)
+      // If limit is provided, use it; otherwise fetch all (max 100 is more than enough)
+      const fetchLimit = limit ?? 100
+      const dbFavorites = await getFavoritesByFrequency(currentUser.id, fetchLimit)
 
       // Resolve food details for each favorite
       const favoritesWithFood = await Promise.all(
@@ -118,6 +128,7 @@ export function useFavorites(limit: number = 8): UseFavoritesReturn {
 
   return {
     favorites,
+    totalCount,
     isLoading,
     error,
     refresh: loadFavorites,
