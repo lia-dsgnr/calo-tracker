@@ -53,6 +53,9 @@
 - **Timeline Layout**: Updated `TimelineSection` to render logs along a vertical timeline with dots and cards offset from the line, matching the new design and making the logging history easier to scan.
 - **Timeline Card Simplification**: Simplified `TimelineCard` into a compact, non-expandable card focused on emoji, meal name, time, calories, and a single \"Log again\" action to keep the flow fast.
 
+### Quick Add User Flow Diagram
+- Added `docs/user-flow.md` Mermaid flowchart documenting the end-to-end Quick Add journey from dashboard entry through search/browse branches, Portion Picker, and success toast with undo, so product, design, and engineering share a single source of truth for the logging flow.
+
 ---
 
 ## 2025-12-17
