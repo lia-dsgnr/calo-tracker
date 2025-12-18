@@ -17,6 +17,12 @@
 - **Expand/Collapse Grid**: Favorites grid now shows the first 9 items by default with a \"Show all / Show less\" control, backed by a new `useFavorites` API that can fetch all favorites and exposes `totalCount` for accurate counts.
 - **Section Counters**: Favorites section heading now displays the total number of valid favorites in loading, error, and normal states for quick at-a-glance feedback.
 
+### Unified Food Emoji System
+- **Single Source of Truth**: Centralised all food and drink emojis tied to `FoodItem` / `FoodCategory` into `src/lib/food-emoji.ts`, exposing `getFoodEmoji`, `getCategoryEmoji`, and `getMealEmojiFromName` so components no longer define their own emoji maps.
+- **Shared Emoji Container**: Introduced `EmojiContainer` in `components/common` and updated `FavoriteCard`, `SuggestionTile`, `FoodTile`, and `TimelineCard` to render emojis inside a consistent rounded container that matches the design reference.
+- **Consistent Category Icons**: Wired `FoodTileGrid` category headers and Quick Add search results to use the same category emoji mapping, ensuring noodles/rice/snacks/drinks/desserts/clean eating all share one configuration surface.
+- **Template Previews**: Updated `TemplateCard` to derive its meal preview emoji (breakfast, lunch, dinner, snack) from the central emoji config instead of local string heuristics.
+
 ### Suggestions Grid Updates
 - **Matching Design**: Updated suggestion tiles to match FavoriteCard grid layout and styling
 - **Icon Changes**: 

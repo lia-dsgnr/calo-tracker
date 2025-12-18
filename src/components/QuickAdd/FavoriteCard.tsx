@@ -6,27 +6,10 @@
 
 import { useCallback } from 'react'
 import { Heart } from 'lucide-react'
-import { Card, IconButton } from '@/components/common'
+import { Card, IconButton, EmojiContainer } from '@/components/common'
 import { cn } from '@/lib/utils'
-import type { FoodItem, FoodCategory } from '@/types'
-
-// Category emoji mapping for display
-const CATEGORY_EMOJI: Record<FoodCategory, string> = {
-  noodles: '🍜',
-  rice: '🍚',
-  banh_mi: '🥖',
-  snacks: '🍿',
-  drinks: '🧃',
-  desserts: '🍰',
-  clean_eating: '🥗',
-}
-
-/**
- * Get emoji for a food category.
- */
-function getCategoryEmoji(category: FoodCategory): string {
-  return CATEGORY_EMOJI[category] || '🍽️'
-}
+import { getFoodEmoji } from '@/lib/food-emoji'
+import type { FoodItem } from '@/types'
 
 interface FavoriteCardProps {
   food: FoodItem
@@ -38,7 +21,7 @@ interface FavoriteCardProps {
 
 /**
  * Favorite card component for grid display.
- * Shows category icon, food name, usage count badge, and heart icon to remove.
+ * Shows category icon, food name, logged count summary, and heart icon to remove.
  */
 export function FavoriteCard({
   food,
@@ -47,14 +30,14 @@ export function FavoriteCard({
   onRemove,
   disabled = false,
 }: FavoriteCardProps) {
-  // Handle card click: opens portion picker
+  // Handle card click: opens portion picker for quick logging.
   const handleCardClick = useCallback(() => {
     if (!disabled) {
       onSelect(food)
     }
   }, [disabled, food, onSelect])
 
-  // Handle heart icon click: removes from favorites
+  // Handle heart icon click: removes food from favorites without opening the picker.
   const handleRemove = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation()
@@ -65,7 +48,7 @@ export function FavoriteCard({
     [disabled, food, onRemove]
   )
 
-  const categoryEmoji = getCategoryEmoji(food.category)
+  const categoryEmoji = getFoodEmoji(food)
   const hasUsage = useCount > 0
   const usageLabel = hasUsage
     ? `Logged ${useCount} ${useCount === 1 ? 'time' : 'times'}`
@@ -78,17 +61,14 @@ export function FavoriteCard({
       disabled={disabled}
       className={cn(
         // Favorites quick-add cards should feel like a single horizontal scan line:
-        // emoji, label, and logged summary form one row with the heart as a trailing affordance.
-        // We keep height comfortable for touch while letting content dictate final size.
+        // emoji container, label block, and heart affordance live on one row.
         'flex items-center justify-between',
         'p-3 min-h-[90px]'
       )}
     >
-      {/* Left side: emoji and a text block (name + logged summary) for quick comprehension. */}
+      {/* Left side: emoji container and text block (name + logged summary). */}
       <div className="flex items-center gap-3 min-w-0">
-        <span className="text-2xl" role="img" aria-label={food.category}>
-          {categoryEmoji}
-        </span>
+        <EmojiContainer emoji={categoryEmoji} ariaLabel={food.category} size="md" />
         <div className="flex flex-col min-w-0">
           <p
             className={cn(

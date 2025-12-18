@@ -8,19 +8,9 @@ import { useMemo, useCallback } from 'react'
 import { Heart } from 'lucide-react'
 import { ListItem, Badge, IconButton } from '@/components/common'
 import { cn } from '@/lib/utils'
-import type { FoodItem, FoodCategory } from '@/types'
+import { getFoodEmoji } from '@/lib/food-emoji'
+import type { FoodItem } from '@/types'
 import type { SearchResultItem } from '@/hooks/useFoodSearch'
-
-// Category emoji mapping for thumbnail display
-const CATEGORY_EMOJI: Record<FoodCategory, string> = {
-  noodles: '🍜',
-  rice: '🍚',
-  banh_mi: '🥖',
-  snacks: '🍿',
-  drinks: '🧃',
-  desserts: '🍰',
-  clean_eating: '🥗',
-}
 
 interface FoodSearchResultItemProps {
   /** Search result item with food and metadata */
@@ -93,8 +83,8 @@ export function FoodSearchResultItem({
 }: FoodSearchResultItemProps) {
   const { food, source, logCount, isFavorite } = item
 
-  // Get category emoji for thumbnail
-  const emoji = CATEGORY_EMOJI[food.category] || '🍽️'
+  // Get emoji for thumbnail from the shared food-emoji source of truth.
+  const emoji = getFoodEmoji(food)
 
   // Build highlighted title
   const highlightedTitle = useMemo(

@@ -6,7 +6,8 @@
 
 import { useMemo } from 'react'
 import { FoodTile } from './FoodTile'
-import type { FoodItem, RecentItem } from '@/types'
+import { getCategoryEmoji } from '@/lib/food-emoji'
+import type { FoodItem, RecentItem, FoodCategory } from '@/types'
 
 interface FoodTileGridProps {
   allFoods: FoodItem[]
@@ -15,16 +16,18 @@ interface FoodTileGridProps {
   disabledFoodId?: string | null
 }
 
-// Category display order with English labels and emojis
-const CATEGORY_ORDER = [
-  { id: 'noodles', label: 'Noodles', emoji: '🍜' },
-  { id: 'rice', label: 'Rice', emoji: '🍚' },
-  { id: 'banh_mi', label: 'Banh Mi', emoji: '🥖' },
-  { id: 'snacks', label: 'Snacks', emoji: '🍿' },
-  { id: 'drinks', label: 'Drinks', emoji: '🧃' },
-  { id: 'desserts', label: 'Desserts', emoji: '🍰' },
-  { id: 'clean_eating', label: 'Clean Eating', emoji: '🥗' },
-] as const
+// Category display order with English labels.
+// Emojis are sourced from the shared food-emoji config so filters
+// always mirror the same visuals as cards and tiles.
+const CATEGORY_ORDER: { id: FoodCategory; label: string }[] = [
+  { id: 'noodles', label: 'Noodles' },
+  { id: 'rice', label: 'Rice' },
+  { id: 'banh_mi', label: 'Banh Mi' },
+  { id: 'snacks', label: 'Snacks' },
+  { id: 'drinks', label: 'Drinks' },
+  { id: 'desserts', label: 'Desserts' },
+  { id: 'clean_eating', label: 'Clean Eating' },
+]
 
 export function FoodTileGrid({ allFoods, recentItems, onSelectFood, disabledFoodId }: FoodTileGridProps) {
   // Map food IDs to food objects for quick lookup
@@ -79,9 +82,11 @@ export function FoodTileGrid({ allFoods, recentItems, onSelectFood, disabledFood
       )}
 
       {/* Category-grouped Food Grid */}
-      {CATEGORY_ORDER.map(({ id, label, emoji }) => {
+      {CATEGORY_ORDER.map(({ id, label }) => {
         const foods = foodsByCategory.get(id) || []
         if (foods.length === 0) return null
+
+        const emoji = getCategoryEmoji(id)
 
         return (
           <section key={id}>

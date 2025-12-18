@@ -1,32 +1,15 @@
 /**
  * SuggestionTile - Grid card for suggested food items.
- * Displays food with category icon, name, calories, heart icon to add to favorites, and remove icon to hide.
- * Similar to FavoriteCard but for suggestions.
+ * Displays food with category emoji container, name, calories, heart icon to add to favorites,
+ * and remove icon to hide. Similar visual language to FavoriteCard.
  */
 
 import { useCallback } from 'react'
 import { X, Heart } from 'lucide-react'
-import { Card, IconButton } from '@/components/common'
+import { Card, IconButton, EmojiContainer } from '@/components/common'
 import { cn } from '@/lib/utils'
-import type { FoodItem, FoodCategory } from '@/types'
-
-// Category emoji mapping for display
-const CATEGORY_EMOJI: Record<FoodCategory, string> = {
-  noodles: '🍜',
-  rice: '🍚',
-  banh_mi: '🥖',
-  snacks: '🍿',
-  drinks: '🧃',
-  desserts: '🍰',
-  clean_eating: '🥗',
-}
-
-/**
- * Get emoji for a food category.
- */
-function getCategoryEmoji(category: FoodCategory): string {
-  return CATEGORY_EMOJI[category] || '🍽️'
-}
+import { getFoodEmoji } from '@/lib/food-emoji'
+import type { FoodItem } from '@/types'
 
 interface SuggestionTileProps {
   food: FoodItem
@@ -39,7 +22,7 @@ interface SuggestionTileProps {
 
 /**
  * Suggestion tile component with favorite and remove actions.
- * Shows category icon, food name, calories, heart icon to add to favorites, and remove icon to hide.
+ * Uses the shared emoji container so suggestions visually match favorites.
  */
 export function SuggestionTile({
   food,
@@ -49,14 +32,14 @@ export function SuggestionTile({
   isFavorited = false,
   disabled = false,
 }: SuggestionTileProps) {
-  // Handle tile body click: opens portion picker
+  // Handle tile body click: opens portion picker from a suggestion.
   const handleTileClick = useCallback(() => {
     if (!disabled) {
       onSelect(food)
     }
   }, [disabled, food, onSelect])
 
-  // Handle heart icon click: adds to favorites
+  // Handle heart icon click: adds a suggestion to favorites without logging.
   const handleAddFavorite = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation()
@@ -67,7 +50,7 @@ export function SuggestionTile({
     [disabled, food, onAddFavorite]
   )
 
-  // Handle remove icon click: hides item from suggestion list
+  // Handle remove icon click: hides item from suggestion list while keeping it in the database.
   const handleRemove = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation()
@@ -78,9 +61,9 @@ export function SuggestionTile({
     [disabled, food, onRemove]
   )
 
-  // M portion is the default display value
+  // M portion is the default display value.
   const displayKcal = food.portions.M.kcal
-  const categoryEmoji = getCategoryEmoji(food.category)
+  const categoryEmoji = getFoodEmoji(food)
 
   return (
     <Card
@@ -88,13 +71,13 @@ export function SuggestionTile({
       onPress={handleTileClick}
       disabled={disabled}
       className={cn(
-        // Grid card layout: vertical stack with relative positioning for icons
+        // Grid card layout: vertical stack with floating action icons.
         'relative flex flex-col',
         'p-4',
         'min-h-[120px]'
       )}
     >
-      {/* Remove icon - hide from suggestions, top left corner */}
+      {/* Remove icon - hide from suggestions, top left corner. */}
       {onRemove && (
         <div className="absolute top-2 left-2 z-10">
           <IconButton
@@ -109,7 +92,7 @@ export function SuggestionTile({
         </div>
       )}
 
-      {/* Heart icon - add to favorites, top right corner */}
+      {/* Heart icon - add to favorites, top right corner. */}
       <div className="absolute top-2 right-2 z-10">
         <IconButton
           icon={
@@ -136,14 +119,12 @@ export function SuggestionTile({
         />
       </div>
 
-      {/* Category emoji - centered at top */}
+      {/* Category emoji in shared container at the top of the tile. */}
       <div className="flex justify-center mb-2">
-        <span className="text-3xl" role="img" aria-label={food.category}>
-          {categoryEmoji}
-        </span>
+        <EmojiContainer emoji={categoryEmoji} ariaLabel={food.category} size="md" />
       </div>
 
-      {/* Food name - Vietnamese name, truncated if too long */}
+      {/* Food name - Vietnamese name, truncated if too long. */}
       <p
         className={cn(
           'text-body text-foreground font-medium',
@@ -154,7 +135,7 @@ export function SuggestionTile({
         {food.name_vi}
       </p>
 
-      {/* Calories - smaller text, muted color */}
+      {/* Calories - smaller text, muted color. */}
       <p className="text-caption text-foreground-muted text-center">
         {displayKcal} kcal
       </p>

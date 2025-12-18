@@ -6,11 +6,12 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { RotateCcw } from 'lucide-react'
-import { Card, IconButton } from '@/components/common'
+import { Card, IconButton, EmojiContainer } from '@/components/common'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { getSystemFoodById } from '@/db'
 import {
+  DEFAULT_EMOJI,
   getCategoryEmoji,
   getCachedCategory,
   cacheFoodCategory,
@@ -27,7 +28,9 @@ interface TimelineCardProps {
  * Fetches category from database to display appropriate emoji.
  */
 export function TimelineCard({ log, onLogAgain }: TimelineCardProps) {
-  const [emoji, setEmoji] = useState<string>('🍽️')
+  // Start with the shared default emoji so timeline cards use the same
+  // fallback visual as other food surfaces before category data loads.
+  const [emoji, setEmoji] = useState<string>(DEFAULT_EMOJI)
 
   // Fetch category emoji on mount (with caching)
   useEffect(() => {
@@ -60,18 +63,8 @@ export function TimelineCard({ log, onLogAgain }: TimelineCardProps) {
 
   return (
     <Card variant="default" className={cn('flex items-center gap-3')}>
-      {/* Left: Emoji in subtle container */}
-      <div
-        className={cn(
-          'w-10 h-10 shrink-0',
-          'flex items-center justify-center',
-          'bg-brown-10 rounded-xl',
-          'text-xl'
-        )}
-        aria-hidden="true"
-      >
-        {emoji}
-      </div>
+      {/* Left: Emoji in shared container for consistent food visuals. */}
+      <EmojiContainer emoji={emoji} ariaLabel={log.name_vi} size="sm" />
 
       {/* Centre: Meal name and time/calories */}
       <div className="flex-1 min-w-0">

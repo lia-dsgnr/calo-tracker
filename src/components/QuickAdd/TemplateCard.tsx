@@ -8,6 +8,7 @@
 
 import { Card } from '@/components/common'
 import { cn } from '@/lib/utils'
+import { getMealEmojiFromName } from '@/lib/food-emoji'
 import type { MealTemplate } from '@/db/types'
 
 interface TemplateCardProps {
@@ -17,26 +18,15 @@ interface TemplateCardProps {
   disabled?: boolean
 }
 
-/**
- * Generates emoji preview from template name (simple heuristic).
- * Can be enhanced later with actual food emoji mapping.
- */
-function getTemplateEmoji(name: string): string {
-  const lowerName = name.toLowerCase()
-  if (lowerName.includes('breakfast') || lowerName.includes('sáng')) return '🌅'
-  if (lowerName.includes('lunch') || lowerName.includes('trưa')) return '🍽️'
-  if (lowerName.includes('dinner') || lowerName.includes('tối')) return '🌙'
-  if (lowerName.includes('snack') || lowerName.includes('ăn vặt')) return '🍪'
-  return '🍱' // Default meal emoji
-}
-
 export function TemplateCard({
   template,
   itemCount,
   onPress,
   disabled = false,
 }: TemplateCardProps) {
-  const emoji = getTemplateEmoji(template.name)
+  // Template emojis now share the central food emoji config so meal preview
+  // icons stay consistent with the rest of the quick-add experience.
+  const emoji = getMealEmojiFromName(template.name)
 
   return (
     <Card
