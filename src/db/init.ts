@@ -144,7 +144,7 @@ CREATE INDEX IF NOT EXISTS idx_favorite_user ON favorite(user_id, deleted_at);
 CREATE INDEX IF NOT EXISTS idx_recent_search_user ON recent_search(user_id, searched_at DESC);
 `
 
-const CURRENT_SCHEMA_VERSION = 1
+const CURRENT_SCHEMA_VERSION = 3
 
 /**
  * Checks if database has been initialised with schema.
@@ -207,6 +207,115 @@ export async function initDatabase(): Promise<void> {
 }
 
 /**
+ * Migration 2: Extends favorite table with use tracking fields.
+ * Adds default_portion, use_count, and last_used_at columns.
+ */
+async function migrateToV2(): Promise<void> {
+  const db = await getDatabase()
+
+  // Add new columns to favorite table (SQLite doesn't support IF NOT EXISTS for ALTER TABLE)
+  try {
+    db.run('ALTER TABLE favorite ADD COLUMN default_portion TEXT DEFAULT "M"')
+  } catch (error) {
+    // Column might already exist - ignore error
+    if (!String(error).includes('duplicate column')) {
+      throw error
+    }
+  }
+
+  try {
+    db.run('ALTER TABLE favorite ADD COLUMN use_count INTEGER DEFAULT 0')
+  } catch (error) {
+    if (!String(error).includes('duplicate column')) {
+      throw error
+    }
+  }
+
+  try {
+    db.run('ALTER TABLE favorite ADD COLUMN last_used_at INTEGER')
+  } catch (error) {
+    if (!String(error).includes('duplicate column')) {
+      throw error
+    }
+  }
+
+  // Record migration
+  db.run(
+    'INSERT INTO schema_version (version, applied_at, description) VALUES (?, ?, ?)',
+    [2, Date.now(), 'Extended favorite table with use tracking fields']
+  )
+
+  await persistDatabase()
+}
+
+/**
+ * Migration 3: Creates meal template tables.
+ * Adds meal_template and template_item tables with indexes.
+ */
+async function migrateToV3(): Promise<void> {
+  await execMultipleStatements(`
+    -- Meal template table: reusable multi-item meal definitions
+    CREATE TABLE IF NOT EXISTS meal_template (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      description TEXT,
+      total_kcal INTEGER NOT NULL,
+      total_protein REAL NOT NULL,
+      total_fat REAL NOT NULL,
+      total_carbs REAL NOT NULL,
+      use_count INTEGER DEFAULT 0,
+      last_used_at INTEGER,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      deleted_at INTEGER,
+      FOREIGN KEY (user_id) REFERENCES user_profile(id) ON DELETE CASCADE
+    );
+
+    -- Template items: individual foods within a template
+    CREATE TABLE IF NOT EXISTS template_item (
+      id TEXT PRIMARY KEY,
+      template_id TEXT NOT NULL,
+      food_type TEXT NOT NULL CHECK (food_type IN ('system', 'custom')),
+      food_id TEXT NOT NULL,
+      portion TEXT NOT NULL CHECK (portion IN ('S', 'M', 'L', 'single')),
+      name_snapshot TEXT NOT NULL,
+      kcal INTEGER NOT NULL,
+      protein REAL NOT NULL,
+      fat REAL NOT NULL,
+      carbs REAL NOT NULL,
+      is_required INTEGER DEFAULT 1,
+      sort_order INTEGER DEFAULT 0,
+      FOREIGN KEY (template_id) REFERENCES meal_template(id) ON DELETE CASCADE
+    );
+  `)
+
+  // Create indexes for template tables
+  await execMultipleStatements(`
+    -- Optimise template queries by user
+    CREATE INDEX IF NOT EXISTS idx_meal_template_user 
+    ON meal_template(user_id, deleted_at);
+
+    -- Optimise template item lookups
+    CREATE INDEX IF NOT EXISTS idx_template_item_template 
+    ON template_item(template_id);
+
+    -- Optimise favorites frequency calculation
+    CREATE INDEX IF NOT EXISTS idx_food_log_user_food_date 
+    ON food_log(user_id, food_id, logged_date);
+  `)
+
+  // Record migration
+  const db = await getDatabase()
+  db.run(
+    'INSERT INTO schema_version (version, applied_at, description) VALUES (?, ?, ?)',
+    [3, Date.now(), 'Created meal_template and template_item tables']
+  )
+
+  await persistDatabase()
+}
+
+/**
  * Runs any pending database migrations.
  * Migrations are applied in version order.
  */
@@ -217,11 +326,14 @@ async function runMigrations(): Promise<void> {
 
   if (!currentVersion) return
 
-  // Add future migrations here as version increases
-  // Example:
-  // if (currentVersion.version < 2) {
-  //   await migrateToV2()
-  // }
+  // Apply migrations in order
+  if (currentVersion.version < 2) {
+    await migrateToV2()
+  }
+
+  if (currentVersion.version < 3) {
+    await migrateToV3()
+  }
 }
 
 /**

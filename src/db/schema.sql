@@ -98,6 +98,9 @@ CREATE TABLE IF NOT EXISTS favorite (
   food_type TEXT NOT NULL CHECK (food_type IN ('system', 'custom')),
   food_id TEXT NOT NULL,
   sort_order INTEGER DEFAULT 0,
+  default_portion TEXT DEFAULT 'M',
+  use_count INTEGER DEFAULT 0,
+  last_used_at INTEGER,
   created_at INTEGER NOT NULL,
   deleted_at INTEGER,
   FOREIGN KEY (user_id) REFERENCES user_profile(id) ON DELETE CASCADE
@@ -129,6 +132,41 @@ CREATE TABLE IF NOT EXISTS daily_summary (
   updated_at INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES user_profile(id) ON DELETE CASCADE,
   UNIQUE (user_id, date)
+);
+
+-- Meal template table: reusable multi-item meal definitions
+CREATE TABLE IF NOT EXISTS meal_template (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  total_kcal INTEGER NOT NULL,
+  total_protein REAL NOT NULL,
+  total_fat REAL NOT NULL,
+  total_carbs REAL NOT NULL,
+  use_count INTEGER DEFAULT 0,
+  last_used_at INTEGER,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  deleted_at INTEGER,
+  FOREIGN KEY (user_id) REFERENCES user_profile(id) ON DELETE CASCADE
+);
+
+-- Template items: individual foods within a template
+CREATE TABLE IF NOT EXISTS template_item (
+  id TEXT PRIMARY KEY,
+  template_id TEXT NOT NULL,
+  food_type TEXT NOT NULL CHECK (food_type IN ('system', 'custom')),
+  food_id TEXT NOT NULL,
+  portion TEXT NOT NULL CHECK (portion IN ('S', 'M', 'L', 'single')),
+  name_snapshot TEXT NOT NULL,
+  kcal INTEGER NOT NULL,
+  protein REAL NOT NULL,
+  fat REAL NOT NULL,
+  carbs REAL NOT NULL,
+  is_required INTEGER DEFAULT 1,
+  sort_order INTEGER DEFAULT 0,
+  FOREIGN KEY (template_id) REFERENCES meal_template(id) ON DELETE CASCADE
 );
 
 -- Schema metadata for versioning and migrations

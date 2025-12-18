@@ -1,5 +1,32 @@
 # Change Log
 
+## 2025-12-18
+
+### Favorites Grid UI Redesign
+- **Grid Layout**: Transformed favorites from vertical list to responsive grid (2 columns mobile, 3 columns tablet+)
+- **FavoriteCard Component**: New grid card component displaying:
+  - Category emoji icon (centered at top)
+  - Food name and calories
+  - Usage count badge (top-left, e.g., "3x", "10x")
+  - Heart icon (top-right) in empathy orange to remove from favorites
+- **Removed Edit Mode**: Simplified UI by removing edit mode; heart icon directly removes items
+- **Heart Icon Styling**: Changed heart icon color to empathy orange (`orange-60`) when favorited
+
+### Suggestions Grid Updates
+- **Matching Design**: Updated suggestion tiles to match FavoriteCard grid layout and styling
+- **Icon Changes**: 
+  - Replaced Zap (quick-log) icon with X (remove) icon
+  - Swapped positions: remove icon (X) in top-left, heart icon in top-right
+- **Hide Functionality**: Added ability to hide individual suggestions (persisted in localStorage)
+- **Favorited State**: Heart icon shows filled with empathy orange when item is favorited
+- **Persistent Suggestions**: Items remain in suggestions list after being favorited (not removed)
+
+### Analytics
+- Added `quickadd_favorites_removed_all` event for tracking bulk removal
+- Added `quickadd_suggestion_hidden` event for tracking individual suggestion hiding
+
+---
+
 ## 2025-12-17
 
 ### Research & Problem Framing

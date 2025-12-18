@@ -4,3 +4,6 @@
  */
 
 export { Toast } from './Toast'
+export { BottomSheet } from './BottomSheet'
+export { Card } from './Card'
+export { IconButton } from './IconButton'

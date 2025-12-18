@@ -125,6 +125,9 @@ export interface Favorite {
   foodType: FoodType
   foodId: string
   sortOrder: number
+  defaultPortion: LogPortionType
+  useCount: number
+  lastUsedAt: number | null
   createdAt: number
   deletedAt: number | null
 }
@@ -168,11 +171,52 @@ export interface SchemaVersion {
   description: string | null
 }
 
+/**
+ * Meal template entity
+ * Reusable multi-item meal definitions for quick logging
+ */
+export interface MealTemplate {
+  id: string
+  userId: string
+  name: string
+  description: string | null
+  totalKcal: number
+  totalProtein: number
+  totalFat: number
+  totalCarbs: number
+  useCount: number
+  lastUsedAt: number | null
+  createdAt: number
+  updatedAt: number
+  deletedAt: number | null
+}
+
+/**
+ * Template item entity
+ * Individual food items within a meal template
+ */
+export interface TemplateItem {
+  id: string
+  templateId: string
+  foodType: FoodType
+  foodId: string
+  portion: LogPortionType
+  nameSnapshot: string
+  kcal: number
+  protein: number
+  fat: number
+  carbs: number
+  isRequired: boolean
+  sortOrder: number
+}
+
 // Database capacity limits (per plan spec)
 export const DB_LIMITS = {
   MAX_USERS: 10,
   MAX_CUSTOM_FOODS_PER_USER: 30,
   MAX_FAVORITES_PER_USER: 20,
+  MAX_TEMPLATES_PER_USER: 10,
+  MAX_ITEMS_PER_TEMPLATE: 8,
   MAX_RECENT_SEARCHES: 5,
   MAX_LOGS_PER_DAY: 30,
   LOG_RETENTION_DAYS: 30,
