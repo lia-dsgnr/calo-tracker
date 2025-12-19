@@ -1,5 +1,15 @@
 # Change Log
 
+## 2025-12-19
+
+### Quick Add User Flow Diagram Updates
+- **Separated Browse Sections**: Split the combined "Favourites · Timeline · Recent items" node into two distinct nodes: "Favourites" and "Timeline + Recent" to better represent the UI tabs
+- **Favourites Visibility Logic**: Added "Has favourites?" decision node to control which tab is shown by default when query is empty:
+  - User has ≥1 favourite → show Favourites tab
+  - No favourites → show Timeline + Recent tab
+
+---
+
 ## 2025-12-18
 
 ### Favorites Grid UI Redesign

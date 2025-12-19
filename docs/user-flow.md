@@ -18,17 +18,22 @@ flowchart TD
   A[Dashboard<br/><small>Progress ring · macros vs goals · today’s meals</small>]:::surface
   B[Quick Add header<br/><small>Title + search bar</small>]:::surface
   C{Query non-empty?}:::decision
+  C2{Has favourites?}:::decision
 
-  D[Favourites · Timeline · Recent items<br/><small>Browse mode</small>]:::browse
+  D[Favourites<br/><small>Saved favourite foods</small>]:::browse
+  D2[Timeline + Recent<br/><small>Past meals · recent items</small>]:::browse
   E[Search results<br/><small>Grouped foods · favourites toggle</small>]:::search
 
   F[Portion Picker<br/><small>Choose portion → log entry</small>]:::action
 
   %% === Flow ===
   A --> B --> C
-  C -->|No| D
+  C -->|No| C2
   C -->|Yes| E
+  C2 -->|Yes| D
+  C2 -->|No| D2
   D --> F
+  D2 --> F
   E --> F
   F --> A
 
