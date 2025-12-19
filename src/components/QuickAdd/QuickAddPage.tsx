@@ -1,23 +1,42 @@
 /**
  * QuickAddPage - Main container for food logging flow.
- * Orchestrates: tile selection -> portion picker -> toast notification.
- * Manages debouncing, undo state, and localStorage integration.
+ * Orchestrates: food search, favorites grid, timeline, tile selection -> portion picker -> toast.
+ * Manages debouncing, undo state, and database integration.
  */
 
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { FoodTileGrid } from './FoodTileGrid'
+import { FavoritesGrid } from './FavoritesGrid'
+import { TimelineSection } from './TimelineSection'
+import { FoodSearchBar } from './FoodSearchBar'
+import { FoodSearchResults } from './FoodSearchResults'
 import { PortionPicker } from './PortionPicker'
 import { Toast } from '@/components/common/Toast'
-import { useCaloStorage } from '@/hooks'
-import { formatNumber } from '@/lib/utils'
-import type { FoodItem, PortionSize, ToastState, LogEntry } from '@/types'
+import { Dashboard } from '@/components/Dashboard'
+import { useDatabaseStorage, useFoodSearch } from '@/hooks'
+import { useDatabaseContext } from '@/contexts/useDatabaseContext'
+import { recordFavoriteUse, getSystemFoodById } from '@/db'
+import { trackEvent, calculateDaysAgo } from '@/lib/analytics'
+import type { FoodItem, PortionSize, ToastState, LogEntry, FoodCategory } from '@/types'
 
 // Debounce delay for tile taps to prevent accidental double-taps
 const TAP_DEBOUNCE_MS = 200
 
 export function QuickAddPage() {
-  // Storage hook provides logs, recent items, and mutation functions
-  const { recentItems, addFood, removeLog, dailySummary, goals } = useCaloStorage()
+  // Database storage hook provides logs, recent items, and mutation functions
+  const { recentItems, addFood, removeLog, dailySummary, goals } = useDatabaseStorage()
+  const { currentUser } = useDatabaseContext()
+
+  // Food search state (query, grouped results, and favourite toggling)
+  const {
+    query,
+    setQuery,
+    results,
+    isSearching,
+    clearQuery,
+    toggleFavoriteForFood,
+  } = useFoodSearch()
+  const [isSearchActive, setIsSearchActive] = useState(false)
 
   // Selected food for portion picker (null when picker is closed)
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
@@ -52,18 +71,52 @@ export function QuickAddPage() {
 
     setSelectedFood(food)
     setProcessingFoodId(food.id)
-  }, [])
+
+    // Track analytics for search selection if search is active
+    if (isSearchActive && query) {
+      trackEvent('search_food_selected', {
+        food_id: food.id,
+        query,
+      })
+    }
+  }, [isSearchActive, query])
+
+  /**
+   * Handle search query change - activates/deactivates search mode based on query.
+   */
+  const handleSearchChange = useCallback((value: string) => {
+    setQuery(value)
+    // Activate search mode when typing, deactivate when cleared
+    setIsSearchActive(value.length > 0)
+  }, [setQuery])
 
   /**
    * Handle portion selection - logs the food and shows toast.
+   * Also records favorite use if the food is favorited.
    */
   const handleSelectPortion = useCallback(
-    (portion: PortionSize) => {
+    async (portion: PortionSize) => {
       if (!selectedFood) return
 
       // Add food to log via storage hook
-      const entry = addFood(selectedFood, portion)
+      const entry = await addFood(selectedFood, portion)
+      if (!entry) return
+
       lastEntryRef.current = entry
+
+      // Record favorite use if food is favorited (non-blocking)
+      if (currentUser) {
+        recordFavoriteUse(currentUser.id, 'system', selectedFood.id, portion).catch(
+          (err) => console.error('Failed to record favorite use:', err)
+        )
+      }
+
+      // Track analytics: favorite logged via tile tap
+      trackEvent('favorite_logged', {
+        food_id: selectedFood.id,
+        portion,
+        method: 'tap',
+      })
 
       // Show success toast with undo option
       setToast({
@@ -79,7 +132,62 @@ export function QuickAddPage() {
       setSelectedFood(null)
       setProcessingFoodId(null)
     },
-    [selectedFood, addFood]
+    [selectedFood, addFood, currentUser]
+  )
+  /**
+   * Handle "Log Again" action from timeline - opens portion picker with same portion.
+   * Fetches full food details from database to ensure accurate portion data.
+   */
+  const handleLogAgain = useCallback(
+    async (log: LogEntry) => {
+      // Fetch full food details from database
+      const systemFood = await getSystemFoodById(log.foodId)
+      if (!systemFood) {
+        console.error('Food not found for log:', log.foodId)
+        return
+      }
+
+      // Convert SystemFood to FoodItem format
+      const food: FoodItem = {
+        id: systemFood.id,
+        name_vi: systemFood.nameVi,
+        name_en: systemFood.nameEn,
+        category: systemFood.category as FoodCategory,
+        serving: systemFood.servingDescription ?? '',
+        confidence: systemFood.confidence,
+        portions: {
+          S: {
+            kcal: systemFood.kcalS,
+            protein: systemFood.proteinS,
+            fat: systemFood.fatS,
+            carbs: systemFood.carbsS,
+          },
+          M: {
+            kcal: systemFood.kcalM,
+            protein: systemFood.proteinM,
+            fat: systemFood.fatM,
+            carbs: systemFood.carbsM,
+          },
+          L: {
+            kcal: systemFood.kcalL,
+            protein: systemFood.proteinL,
+            fat: systemFood.fatL,
+            carbs: systemFood.carbsL,
+          },
+        },
+      }
+
+      // Track analytics: timeline log again
+      const daysAgo = calculateDaysAgo(log.timestamp)
+      trackEvent('timeline_log_again', {
+        food_id: log.foodId,
+        days_ago: daysAgo,
+      })
+
+      setSelectedFood(food)
+      setProcessingFoodId(food.id)
+    },
+    []
   )
 
   /**
@@ -107,43 +215,59 @@ export function QuickAddPage() {
     }
   }, [removeLog])
 
-  // Calculate progress display values
-  const progressPercent = useMemo(() => {
-    return Math.min(100, (dailySummary.consumedKcal / goals.dailyKcal) * 100)
-  }, [dailySummary.consumedKcal, goals.dailyKcal])
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with daily progress summary */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="px-5 py-4">
-          <h1 className="text-headline text-foreground mb-2">
-            Quick Add
-          </h1>
-          
-          {/* Daily progress bar - condensed view */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-2 bg-border rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary rounded-full transition-all duration-300"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-            <span className="text-caption text-foreground-muted whitespace-nowrap">
-              {formatNumber(dailySummary.consumedKcal)} / {formatNumber(goals.dailyKcal)} kcal
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content - scrollable food grid */}
-      <main className="px-5 py-6">
-        <FoodTileGrid
-          allFoods={[]}
-          recentItems={recentItems}
-          onSelectFood={handleSelectFood}
-          disabledFoodId={processingFoodId}
+      {/* Main content - scrollable sections */}
+      <main className="px-4 py-6 space-y-8">
+        {/* Dashboard: progress ring + today's meals */}
+        <Dashboard
+          dailySummary={dailySummary}
+          goals={goals}
+          onDeleteLog={removeLog}
         />
+
+        {/* Quick Add section: header + search bar on same row, search aligned right */}
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-title text-foreground shrink-0">Quick Add</h2>
+          <FoodSearchBar
+            value={query}
+            onChange={handleSearchChange}
+            autoFocus={true}
+            className="max-w-[50%]"
+          />
+        </div>
+
+        {/* Conditional content: search results OR normal browse mode */}
+        {isSearchActive || query ? (
+          // Search mode: show search results
+          <FoodSearchResults
+            results={results}
+            query={query}
+            onSelectFood={handleSelectFood}
+            isSearching={isSearching}
+            onToggleFavorite={toggleFavoriteForFood}
+          />
+        ) : (
+          // Browse mode: show favorites, timeline, and recent items
+          <>
+            {/* Favorites grid - top section.
+                Quick-log for favorites is currently handled elsewhere, so we only pass tile tap handling here. */}
+            <FavoritesGrid
+              onSelectFood={handleSelectFood}
+            />
+
+            {/* Timeline section - recent meals with tab navigation */}
+            <TimelineSection onLogAgain={handleLogAgain} />
+
+            {/* Recent items grid - fallback for browsing */}
+            <FoodTileGrid
+              allFoods={[]}
+              recentItems={recentItems}
+              onSelectFood={handleSelectFood}
+              disabledFoodId={processingFoodId}
+            />
+          </>
+        )}
       </main>
 
       {/* Portion picker bottom sheet */}

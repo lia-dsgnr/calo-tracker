@@ -2,10 +2,16 @@
  * PortionPicker - Bottom sheet overlay for selecting portion size.
  * Shows S/M/L pill buttons with calorie info for the selected food.
  * Closes on backdrop tap or portion selection.
+ * Includes heart icon button to toggle favorite status.
+ *
+ * Refactored to use BottomSheet primitive for consistent modal behavior,
+ * accessibility (focus trap, ARIA), and responsive design (mobile drawer vs desktop modal).
  */
 
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
+import { Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { BottomSheet } from '@/components/common'
 import type { FoodItem, PortionSize } from '@/types'
 
 interface PortionPickerProps {
@@ -13,6 +19,10 @@ interface PortionPickerProps {
   isOpen: boolean
   onSelect: (portion: PortionSize) => void
   onClose: () => void
+  /** Whether the current food is in user's favorites */
+  isFavorite?: boolean
+  /** Callback when user taps the heart icon to toggle favorite */
+  onToggleFavorite?: (food: FoodItem) => void
 }
 
 // Portion size labels and multiplier descriptions
@@ -22,118 +32,114 @@ const PORTION_OPTIONS: { size: PortionSize; label: string; description: string }
   { size: 'L', label: 'L', description: 'Large' },
 ]
 
-export function PortionPicker({ food, isOpen, onSelect, onClose }: PortionPickerProps) {
-  // Prevent body scroll when sheet is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
-
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
-
-  const handleBackdropClick = useCallback(() => {
-    onClose()
-  }, [onClose])
-
-  const handleSheetClick = useCallback((e: React.MouseEvent) => {
-    // Prevent backdrop click when clicking inside sheet
-    e.stopPropagation()
-  }, [])
-
+export function PortionPicker({
+  food,
+  isOpen,
+  onSelect,
+  onClose,
+  isFavorite = false,
+  onToggleFavorite,
+}: PortionPickerProps) {
+  // Handle portion selection: close sheet and notify parent
   const handlePortionSelect = useCallback(
     (portion: PortionSize) => {
       onSelect(portion)
+      // Note: BottomSheet handles closing via onClose, but we call it explicitly
+      // to ensure sheet closes immediately after selection
+      onClose()
     },
-    [onSelect]
+    [onSelect, onClose]
   )
 
+  // Handle favorite toggle
+  const handleToggleFavorite = useCallback(() => {
+    if (food && onToggleFavorite) {
+      onToggleFavorite(food)
+    }
+  }, [food, onToggleFavorite])
+
+  // Don't render if closed or no food selected
   if (!isOpen || !food) return null
 
-  return (
-    // Backdrop overlay - closes sheet on tap
-    <div
-      className="fixed inset-0 z-50 bg-black/40 animate-fade-in"
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="portion-picker-title"
-    >
-      {/* Bottom sheet container */}
-      <div
-        className={cn(
-          'absolute bottom-0 left-0 right-0',
-          'bg-background-card rounded-t-sheet shadow-sheet',
-          'px-5 pt-6 pb-14 safe-bottom',
-          'animate-slide-up'
-        )}
-        onClick={handleSheetClick}
-      >
-        {/* Drag handle indicator */}
-        <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5" />
-
-        {/* Food name header */}
-        <h2
-          id="portion-picker-title"
-          className="text-title text-foreground text-center mb-6"
+  // Custom title with heart icon
+  const titleWithHeart = (
+    <span className="inline-flex items-center justify-center gap-2">
+      {food.name_vi}
+      {onToggleFavorite && (
+        <button
+          type="button"
+          onClick={handleToggleFavorite}
+          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          className={cn(
+            'inline-flex items-center justify-center',
+            'w-8 h-8 rounded-full',
+            'transition-all duration-150',
+            'hover:bg-gray-100 active:scale-95',
+            'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
+          )}
         >
-          {food.name_vi}
-        </h2>
+          <Heart
+            size={20}
+            className={cn(
+              'transition-colors duration-150',
+              isFavorite
+                ? 'fill-red-500 text-red-500'
+                : 'fill-none text-foreground-muted'
+            )}
+          />
+        </button>
+      )}
+    </span>
+  )
 
-        {/* Portion size pills */}
-        <div className="flex gap-3 justify-center">
-          {PORTION_OPTIONS.map(({ size, label }) => {
-            const nutrition = food.portions[size]
-            
-            return (
-              <button
-                key={size}
-                type="button"
-                onClick={() => handlePortionSelect(size)}
-                className={cn(
-                  // Pill base: rounded, generous padding for touch
-                  'flex-1 max-w-[140px] py-4 px-4',
-                  'rounded-pill bg-primary text-primary-foreground',
-                  'transition-all duration-150',
-                  'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-                  // Hover/active states
-                  'hover:bg-primary-dark active:scale-95',
-                  // Touch target compliance
-                  'min-h-[72px] tap-highlight-none'
-                )}
-              >
-                {/* Size label - large and prominent */}
-                <span className="block text-xl font-bold mb-1">
-                  {label}
-                </span>
-                {/* Calorie info - smaller caption */}
-                <span className="block text-caption opacity-90">
-                  {nutrition.kcal} kcal
-                </span>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Serving size hint */}
-        <p className="text-caption text-foreground-muted text-center mt-4">
-          {food.serving}
-        </p>
+  return (
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title={titleWithHeart}
+      description={`Select portion size for ${food.name_vi}`}
+      size="auto"
+      showDragHandle={true}
+    >
+      {/* Portion size pills - padding accommodates focus ring */}
+      <div className="flex gap-3 justify-center p-1">
+        {PORTION_OPTIONS.map(({ size, label }) => {
+          const nutrition = food.portions[size]
+          
+          return (
+            <button
+              key={size}
+              type="button"
+              onClick={() => handlePortionSelect(size)}
+              className={cn(
+                // Pill base: rounded, generous padding for touch
+                'flex-1 max-w-[140px] py-4 px-4',
+                'rounded-pill bg-primary text-primary-foreground',
+                'transition-all duration-150',
+                'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                // Hover/active states
+                'hover:bg-primary-dark active:scale-95',
+                // Touch target compliance
+                'min-h-[72px] tap-highlight-none'
+              )}
+            >
+              {/* Size label - large and prominent */}
+              <span className="block text-xl font-bold mb-1">
+                {label}
+              </span>
+              {/* Calorie info - smaller caption */}
+              <span className="block text-caption opacity-90">
+                {nutrition.kcal} kcal
+              </span>
+            </button>
+          )
+        })}
       </div>
-    </div>
+
+      {/* Serving size hint */}
+      <p className="text-caption text-foreground-muted text-center mt-4">
+        {food.serving}
+      </p>
+    </BottomSheet>
   )
 }

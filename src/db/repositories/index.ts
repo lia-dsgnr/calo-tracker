@@ -59,6 +59,8 @@ export {
   updateFavoriteOrder,
   getFavoriteCount,
   toggleFavorite,
+  getFavoritesByFrequency,
+  recordFavoriteUse,
 } from './favorite-repository'
 
 // Search operations
@@ -81,3 +83,18 @@ export {
   pruneOldSummaries,
   getStreak,
 } from './stats-repository'
+
+// Template operations
+export {
+  createTemplate,
+  getTemplateById,
+  getTemplatesByUser,
+  getTemplateItems,
+  getTemplateWithItems,
+  updateTemplate,
+  updateTemplateItems,
+  deleteTemplate,
+  restoreTemplate,
+  getTemplateCount,
+  incrementTemplateUse,
+} from './template-repository'

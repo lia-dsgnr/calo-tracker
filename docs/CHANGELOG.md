@@ -1,5 +1,97 @@
 # Change Log
 
+## 2025-12-19
+
+### Documentation Reorganization
+- **Moved Product Documentation**: Relocated PRD, RMAP, and research synthesis files to `docs/requirements/` folder for better organization
+- **Deleted Redundant Files**: Removed duplicate strategic insights and user flow documentation that was superseded by newer versions
+- **Added Change Request Documentation**: Created `docs/change-request-2/` with food logging analysis, problem framings, and user flow documentation
+- **New Research Artifacts**: Added user journey map v0 and consolidated market research document
+- **Code Formatting**: Added trailing newlines to template-related components and repository files for consistency
+
+### Plan Updates
+- Simplified and cleaned up plan files for food search feature, quick-add enhancement, and favorites grid UI updates
+
+### Design Workflow Commands
+- Added new design workflow command structure in `.claude/commands/design-workflow-#1/` with reframing, assumptions, hypothesis formation, and solution approaches
+
+### Quick Add User Flow Diagram Updates
+- **Separated Browse Sections**: Split the combined "Favourites · Timeline · Recent items" node into two distinct nodes: "Favourites" and "Timeline + Recent" to better represent the UI tabs
+- **Favourites Visibility Logic**: Added "Has favourites?" decision node to control which tab is shown by default when query is empty:
+  - User has ≥1 favourite → show Favourites tab
+  - No favourites → show Timeline + Recent tab
+
+---
+
+## 2025-12-18
+
+### Favorites Grid UI Redesign
+- **Grid Layout**: Transformed favorites from vertical list to responsive grid (2 columns mobile, 3 columns tablet+)
+- **FavoriteCard Component**: New grid card component displaying:
+  - Category emoji icon (centered at top)
+  - Food name and calories
+  - Usage count badge (top-left, e.g., "3x", "10x")
+  - Heart icon (top-right) in empathy orange to remove from favorites
+- **Removed Edit Mode**: Simplified UI by removing edit mode; heart icon directly removes items
+- **Heart Icon Styling**: Changed heart icon color to empathy orange (`orange-60`) when favorited
+
+### Favorites Grid & Card Refinements
+- **Inline Card Layout**: Updated `FavoriteCard` to a single-row layout with emoji, food name, and a secondary \"Logged N time(s)\" line, keeping the heart icon as the sole trailing affordance.
+- **Expand/Collapse Grid**: Favorites grid now shows the first 9 items by default with a \"Show all / Show less\" control, backed by a new `useFavorites` API that can fetch all favorites and exposes `totalCount` for accurate counts.
+- **Section Counters**: Favorites section heading now displays the total number of valid favorites in loading, error, and normal states for quick at-a-glance feedback.
+
+### Unified Food Emoji System
+- **Single Source of Truth**: Centralised all food and drink emojis tied to `FoodItem` / `FoodCategory` into `src/lib/food-emoji.ts`, exposing `getFoodEmoji`, `getCategoryEmoji`, and `getMealEmojiFromName` so components no longer define their own emoji maps.
+- **Shared Emoji Container**: Introduced `EmojiContainer` in `components/common` and updated `FavoriteCard`, `SuggestionTile`, `FoodTile`, and `TimelineCard` to render emojis inside a consistent rounded container that matches the design reference.
+- **Consistent Category Icons**: Wired `FoodTileGrid` category headers and Quick Add search results to use the same category emoji mapping, ensuring noodles/rice/snacks/drinks/desserts/clean eating all share one configuration surface.
+- **Template Previews**: Updated `TemplateCard` to derive its meal preview emoji (breakfast, lunch, dinner, snack) from the central emoji config instead of local string heuristics.
+
+### Suggestions Grid Updates
+- **Matching Design**: Updated suggestion tiles to match FavoriteCard grid layout and styling
+- **Icon Changes**: 
+  - Replaced Zap (quick-log) icon with X (remove) icon
+  - Swapped positions: remove icon (X) in top-left, heart icon in top-right
+- **Hide Functionality**: Added ability to hide individual suggestions (persisted in localStorage)
+- **Favorited State**: Heart icon shows filled with empathy orange when item is favorited
+- **Persistent Suggestions**: Items remain in suggestions list after being favorited (not removed)
+
+### Analytics
+- Added `quickadd_favorites_removed_all` event for tracking bulk removal
+- Added `quickadd_suggestion_hidden` event for tracking individual suggestion hiding
+- Added `quickadd_favorites_toggle_expand` event for tracking expand/collapse behaviour on the favorites grid
+
+### Templates Section (Temporarily Disabled)
+- Removed the TemplatesSection and TemplateEditorSheet from the Quick Add page UI to avoid exposing a half-implemented templates flow during this iteration.
+- Kept the underlying template repository, hooks, and types intact so templates can be re-enabled later without data migration or schema changes.
+
+### Quick Add Food Search
+- **Inline Search Bar**: Added a reusable `SearchInput` component and `FoodSearchBar` wrapper, placing search inline with the `Quick Add` heading and auto-focusing on page load so users can start typing immediately.
+- **Grouped Results**: Implemented `useFoodSearch` hook and `FoodSearchResults` UI to surface results in three groups that respect \"my food first\" ordering: Favourite Foods, Recently Logged, and All Foods, each collapsible after five items.
+- **Result Rows**: Introduced `ListItem`, `SectionHeader`, `Badge`, and `FoodSearchResultItem` so every row shows emoji, name with subtle match highlighting, source label (\"Your food\" / \"Global database\"), and a heart icon to add or remove favourites directly from search.
+- **Empty / First-Time States**: Added first-time helper text plus an informative \"No results yet\" state with a mocked \"Add custom food\" call-to-action so users are never met with a blank screen.
+- **Interaction & Analytics**: Tapping a result still routes through the Portion Picker, and a new `search_food_selected` analytics event tracks which foods are chosen from search and with what query.
+
+### Timeline Tabs & Visual Refresh
+- **Tabbed Timeline**: Reworked `useTimeline` to power a tabbed timeline (Today, Yesterday, weekday tabs, Older) and added `TimelineTabs` so users can jump between recent days instead of scrolling a long list.
+- **Timeline Layout**: Updated `TimelineSection` to render logs along a vertical timeline with dots and cards offset from the line, matching the new design and making the logging history easier to scan.
+- **Timeline Card Simplification**: Simplified `TimelineCard` into a compact, non-expandable card focused on emoji, meal name, time, calories, and a single \"Log again\" action to keep the flow fast.
+
+### Quick Add User Flow Diagram
+- Added `docs/user-flow.md` Mermaid flowchart documenting the end-to-end Quick Add journey from dashboard entry through search/browse branches, Portion Picker, and success toast with undo, so product, design, and engineering share a single source of truth for the logging flow.
+
+---
+
+## 2025-12-17
+
+### Research & Problem Framing
+- Added `docs/CHAT251216-food-search-problem-framing.md` to reframe food search drop-offs (recognition vs recall) with risk-assessed assumptions and six solution approaches.
+- Highlights high-risk hypotheses (meal repetition, consistent naming, near-mealtime logging) to validate before committing to build.
+
+### Competitive Landscape
+- Simplified `docs/researches/competitor-overview.md` by removing CTA footer to keep the competitive scan focused on facts and sources.
+
+---
+
 ## 2025-12-12
 
 ### Design System Integration

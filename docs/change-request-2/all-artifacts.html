@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calo Tracker - Design Artifacts</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Navigation */
+        .sidebar {
+            width: 260px;
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 16px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .nav-section {
+            padding: 0 12px;
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            padding: 8px 12px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 12px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: #2a2a4e;
+            color: #fff;
+        }
+
+        .nav-link.active {
+            background-color: #4a4a8e;
+            color: #fff;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: #5a5a9e;
+            border-radius: 4px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            padding: 32px 48px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .diagram-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .diagram-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Legend */
+        .legend {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+
+        .legend h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-color.discover { background-color: #bb3e03; }
+        .legend-color.log { background-color: #ca6702; }
+        .legend-color.track { background-color: #ee9b00; }
+        .legend-color.review { background-color: #94d2bd; }
+
+        /* Risk Colors */
+        :root {
+            --risk-high: #dc2626;
+            --risk-medium: #f59e0b;
+            --risk-low: #22c55e;
+        }
+
+        /* Risk Matrix Grid */
+        .matrix-container {
+            position: relative;
+        }
+
+        .matrix-axes {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .quadrant {
+            padding: 20px;
+            border-radius: 12px;
+            min-height: 220px;
+        }
+
+        .quadrant h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .quadrant-validate {
+            background: #fef2f2;
+            border: 2px solid var(--risk-high);
+        }
+
+        .quadrant-monitor {
+            background: #fefce8;
+            border: 2px solid var(--risk-medium);
+        }
+
+        .quadrant-investigate {
+            background: #fff7ed;
+            border: 2px dashed var(--risk-medium);
+        }
+
+        .quadrant-park {
+            background: #f0fdf4;
+            border: 2px solid var(--risk-low);
+        }
+
+        /* Assumption Items with Tooltips */
+        .assumption-item {
+            position: relative;
+            padding: 10px 14px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assumption-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .assumption-item .tooltip {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 12px;
+            padding: 12px 16px;
+            background: #1a1a2e;
+            color: white;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            width: 280px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .assumption-item .tooltip::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: #1a1a2e;
+            border-left: none;
+        }
+
+        .assumption-item:hover .tooltip {
+            display: block;
+        }
+
+        /* Heat Map Table */
+        .heat-map-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .heat-map-table th {
+            text-align: left;
+            padding: 14px 16px;
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .heat-map-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+
+        .heat-map-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .category-header td {
+            background: #1a1a2e !important;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 16px;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-badge.high {
+            background: var(--risk-high);
+            color: white;
+        }
+
+        .risk-badge.medium {
+            background: var(--risk-medium);
+            color: white;
+        }
+
+        .risk-badge.low {
+            background: var(--risk-low);
+            color: white;
+        }
+
+        /* Bubble Chart */
+        .bubble-chart-container {
+            position: relative;
+            padding: 40px 40px 60px 60px;
+        }
+
+        .bubble-chart {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, #fef2f2 0%, #fefce8 50%, #f0fdf4 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .bubble-chart .axis-label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+        }
+
+        .bubble-chart .x-label {
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bubble-chart .y-label {
+            left: -45px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+        }
+
+        .bubble-chart .axis-marker {
+            position: absolute;
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .bubble:hover {
+            transform: scale(1.15);
+            z-index: 10;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        }
+
+        .bubble.high {
+            background: rgba(220, 38, 38, 0.85);
+            color: white;
+        }
+
+        .bubble.medium {
+            background: rgba(245, 158, 11, 0.85);
+            color: white;
+        }
+
+        .bubble.low {
+            background: rgba(34, 197, 94, 0.85);
+            color: white;
+        }
+
+        .bubble-label {
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1.3;
+            padding: 4px;
+        }
+
+        .bubble .tooltip {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            background: #1a1a2e;
+            color: white;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+            width: 220px;
+            text-align: left;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .bubble .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a2e;
+            border-bottom: none;
+        }
+
+        .bubble:hover .tooltip {
+            display: block;
+        }
+
+        /* Chart Legend */
+        .chart-legend {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .chart-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .chart-legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .chart-legend-dot.high { background: var(--risk-high); }
+        .chart-legend-dot.medium { background: var(--risk-medium); }
+        .chart-legend-dot.low { background: var(--risk-low); }
+
+        /* ========================================
+           Smart Favorites Grid - Mobile Web App
+           ======================================== */
+
+        .mobile-app-container {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .mobile-app {
+            width: 375px;
+            background: #f8fafc;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+
+        /* Daily Summary */
+        .daily-summary {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px;
+            background: #fff;
+        }
+
+        .calorie-ring {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .calorie-ring svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .calorie-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calorie-text .current {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            line-height: 1;
+        }
+
+        .calorie-text .goal {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 10px;
+        }
+
+        /* Search Bar */
+        .app-search {
+            display: flex;
+            align-items: center;
+            margin: 16px 20px;
+            padding: 14px 16px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            gap: 10px;
+        }
+
+        .app-search .search-icon {
+            font-size: 16px;
+        }
+
+        .app-search input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #64748b;
+            background: transparent;
+        }
+
+        /* Section Label */
+        .section-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 20px 12px;
+        }
+
+        .section-label span {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .section-label .edit-btn {
+            border: none;
+            background: none;
+            color: #94d2bd;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .section-label .edit-btn:hover {
+            color: #065f46;
+        }
+
+        /* ========================================
+           Visual Meal Timeline Styles
+           ======================================== */
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 16px;
+            overflow-x: auto;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            border-color: #94d2bd;
+            color: #065f46;
+        }
+
+        .filter-tab.active {
+            background: #1a1a2e;
+            border-color: #1a1a2e;
+            color: #fff;
+        }
+
+        /* Timeline */
+        .meal-timeline {
+            padding: 0 20px 24px;
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 12px;
+            padding-top: 8px;
+        }
+
+        .timeline-date:first-child {
+            padding-top: 0;
+        }
+
+        /* Meal Card */
+        .meal-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: #fff;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.2s;
+        }
+
+        .meal-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .meal-card .meal-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .meal-card .meal-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .meal-card .meal-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 2px;
+        }
+
+        .meal-card .meal-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .meal-card .meal-meta .meal-type {
+            padding: 2px 8px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .meal-card .log-again-btn {
+            padding: 10px 16px;
+            background: #ecfdf5;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #065f46;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .meal-card .log-again-btn:hover {
+            background: #94d2bd;
+            color: #fff;
+        }
+
+        .meal-card.logged .log-again-btn {
+            background: #94d2bd;
+            color: #fff;
+        }
+
+        /* ========================================
+           Meal Templates Styles
+           ======================================== */
+
+        .templates-list {
+            padding: 0 20px 24px;
+        }
+
+        .template-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .template-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .template-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .template-meta .calories {
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .template-actions .edit-btn {
+            padding: 8px 12px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-actions .edit-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .template-actions .log-btn {
+            padding: 8px 16px;
+            background: #1a1a2e;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-actions .log-btn:hover {
+            background: #2a2a4e;
+        }
+
+        .template-card.logged .log-btn {
+            background: #94d2bd;
+        }
+
+        .template-items {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .template-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .template-item .item-emoji {
+            font-size: 18px;
+        }
+
+        .template-item .item-name {
+            color: #334155;
+        }
+
+        .template-item .item-cal {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* Suggested Combos */
+        .suggested-section {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .suggested-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding: 0 20px;
+        }
+
+        .suggested-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            border: 1px dashed #94d2bd;
+        }
+
+        .suggested-card .template-header::before {
+            content: '✨';
+            margin-right: 8px;
+        }
+
+        /* Add Template Button */
+        .add-template-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 16px;
+            background: #f8fafc;
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+        }
+
+        .add-template-btn:hover {
+            border-color: #94d2bd;
+            color: #065f46;
+            background: #f0fdf4;
+        }
+
+        /* Favorites Grid */
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 20px 24px;
+        }
+
+        /* Food Card */
+        .food-card {
+            aspect-ratio: 1;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .food-card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border-color: #94d2bd;
+            z-index: 10;
+        }
+
+        .food-card:active {
+            transform: scale(0.95);
+        }
+
+        .food-card .emoji {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .food-card .name {
+            font-size: 10px;
+            font-weight: 600;
+            color: #334155;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .food-card .calories {
+            font-size: 9px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        /* Frequency Badge */
+        .frequency-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #94d2bd;
+            color: #065f46;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 8px;
+        }
+
+        /* Logged Animation */
+        .food-card.logged::after {
+            content: '✓ Logged!';
+            position: absolute;
+            inset: 0;
+            background: rgba(148, 210, 189, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #065f46;
+            animation: fadeOut 1.5s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            0%, 70% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
+        }
+
+        /* Portion Overlay */
+        .portion-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(26, 26, 46, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-radius: 16px;
+        }
+
+        .food-card.show-portions .portion-overlay {
+            display: flex;
+        }
+
+        .portion-btn {
+            background: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            min-width: 60px;
+        }
+
+        .portion-btn:hover {
+            background: #94d2bd;
+            transform: scale(1.05);
+        }
+
+        .portion-btn span {
+            display: block;
+            font-size: 8px;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* Empty State Card */
+        .food-card.empty {
+            border: 2px dashed #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .food-card.empty:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #94a3b8;
+        }
+
+        .food-card.empty .emoji {
+            font-size: 20px;
+            opacity: 0.3;
+        }
+
+        .food-card.empty .name {
+            color: #94a3b8;
+            font-size: 9px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>Calo Tracker</h1>
+                <p>Design Artifacts</p>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">UX Artifact</div>
+                <a href="#user-journey" class="nav-link active" data-page="user-journey">User Journey Map <span class="tag">before</span></a>
+                <a href="#bubble-chart" class="nav-link" data-page="bubble-chart">Assumption Map</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Solution Approaches</div>
+                <a href="#cross-industry" class="nav-link" data-page="cross-industry">Cross-Industry Patterns</a>
+                <a href="#persona-fit" class="nav-link" data-page="persona-fit">Persona Solution Fit</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">UI Mockups</div>
+                <a href="#solution-landscape" class="nav-link" data-page="solution-landscape">Solution Space Landscape</a>
+                <a href="#smart-favorites" class="nav-link" data-page="smart-favorites">Approach #1</a>
+                <a href="#meal-timeline" class="nav-link" data-page="meal-timeline">Approach #2</a>
+                <a href="#meal-templates" class="nav-link" data-page="meal-templates">Approach #3</a>
+                <a href="#favorites-demo" class="nav-link" data-page="favorites-demo">3in1-approach</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- User Journey Map Page -->
+            <section id="user-journey" class="page active">
+                <div class="page-header">
+                    <h2>User Journey Map</h2>
+                    <p>How users interact with Calo Tracker to log meals and track their nutrition</p>
+                </div>
+
+                <div class="diagram-card">
+                    <h3>Journey Timeline</h3>
+                    <div class="mermaid">
+timeline
+    title User Journey Map - Calo Tracker
+
+    section Discover
+        Browse food menu
+        : View 7 categories
+        : Find familiar dishes
+        : Check calorie info
+
+    section Log
+        Tap food card
+        : Select portion S/M/L
+        : See confirmation
+        : Undo if needed
+
+    section Track
+        View calorie ring
+        : Check nutrition bars
+        : See remaining goal
+
+    section Review
+        View meal history
+        : Expand full list
+        : Delete entries
+                    </div>
+
+                    <div class="legend">
+                        <h4>Stages</h4>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <span class="legend-color discover"></span>
+                                <span>Discover - Find your food</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color log"></span>
+                                <span>Log - Record your meal</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color track"></span>
+                                <span>Track - Check progress</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color review"></span>
+                                <span>Review - See history</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Persona Solution Fit Map Page -->
+            <section id="persona-fit" class="page">
+                <div class="page-header">
+                    <h2>Persona → Solution Fit Map</h2>
+                    <p>How each solution approach serves different user personas</p>
+                </div>
+
+                <div class="diagram-card">
+                    <h3>Solution Fit Matrix</h3>
+                    <table class="heat-map-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 22%;">Approach</th>
+                                <th style="width: 19.5%;">👩‍💼 Young<br/>Professional</th>
+                                <th style="width: 19.5%;">📚 Health-Conscious<br/>Student</th>
+                                <th style="width: 19.5%;">💪 Fitness<br/>Enthusiast</th>
+                                <th style="width: 19.5%;">📊 Data<br/>Optimizer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="category-header">
+                                <td colspan="5">MVP SCOPE — Primary Target: Young Professional</td>
+                            </tr>
+                            <tr>
+                                <td><strong>⚡ Smart Favorites Grid</strong></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>🔍 Search + Personal Boost</strong></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📅 Visual Meal Timeline</strong></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="5">FUTURE — Extended Personas</td>
+                            </tr>
+                            <tr>
+                                <td><strong>🤖 Contextual Suggestions</strong></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                                <td style="background: #fee2e2; text-align: center;"><span style="font-size: 20px;">★☆☆</span><br/><span style="font-size: 11px;">Weak fit</span></td>
+                                <td style="background: #fee2e2; text-align: center;"><span style="font-size: 20px;">★☆☆</span><br/><span style="font-size: 11px;">Weak fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📦 Meal Templates</strong></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📚 Personal Food Library</strong></td>
+                                <td style="background: #fee2e2; text-align: center;"><span style="font-size: 20px;">★☆☆</span><br/><span style="font-size: 11px;">Weak fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #fef9c3; text-align: center;"><span style="font-size: 20px;">★★☆</span><br/><span style="font-size: 11px;">Good fit</span></td>
+                                <td style="background: #dcfce7; text-align: center;"><span style="font-size: 20px;">★★★</span><br/><span style="font-size: 11px;">Perfect fit</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="legend" style="margin-top: 24px;">
+                        <h4>Fit Legend</h4>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #dcfce7;"></span>
+                                <span>★★★ Perfect fit — Primary use case for this persona</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #fef9c3;"></span>
+                                <span>★★☆ Good fit — Works well, secondary benefit</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #fee2e2;"></span>
+                                <span>★☆☆ Weak fit — Limited value for this persona</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bubble Chart Page -->
+            <section id="bubble-chart" class="page">
+                <div class="page-header">
+                    <h2>Impact vs Certainty Chart</h2>
+                    <p>Assumptions plotted by how certain we are and how much impact they have on the solution</p>
+                </div>
+
+                <div class="diagram-card">
+                    <h3>Assumption Landscape</h3>
+                    <div class="bubble-chart-container">
+                        <div class="bubble-chart">
+                            <span class="axis-label x-label">Certainty →</span>
+                            <span class="axis-label y-label">Impact →</span>
+
+                            <!-- High Impact, Low Certainty (top-left) - RED -->
+                            <div class="bubble high" style="top: 8%; left: 12%; width: 90px; height: 90px;">
+                                <span class="bubble-label">Repetitive eating</span>
+                                <span class="tooltip"><strong>Users eat from &lt;30 items</strong><br>High impact on entire approach. Varies by culture and lifestyle.</span>
+                            </div>
+
+                            <div class="bubble high" style="top: 15%; left: 28%; width: 80px; height: 80px;">
+                                <span class="bubble-label">Same = same</span>
+                                <span class="tooltip"><strong>Same item = truly same</strong><br>Portions and preparations vary. Critical for favorites feature.</span>
+                            </div>
+
+                            <div class="bubble high" style="top: 25%; left: 8%; width: 75px; height: 75px;">
+                                <span class="bubble-label">Log timing</span>
+                                <span class="tooltip"><strong>Logging near mealtime</strong><br>If delayed, recognition advantage lost. Affects core value prop.</span>
+                            </div>
+
+                            <div class="bubble high" style="top: 5%; left: 42%; width: 70px; height: 70px;">
+                                <span class="bubble-label">DB consistency</span>
+                                <span class="tooltip"><strong>Database has consistent IDs</strong><br>Duplicates and variations undermine matching.</span>
+                            </div>
+
+                            <!-- High Impact, High Certainty (top-right) - GREEN -->
+                            <div class="bubble low" style="top: 12%; left: 75%; width: 85px; height: 85px;">
+                                <span class="bubble-label">Recognition > Recall</span>
+                                <span class="tooltip"><strong>Recognition faster than recall</strong><br>Well-supported by cognitive psychology research.</span>
+                            </div>
+
+                            <!-- Medium Impact, Medium Certainty (center) - YELLOW -->
+                            <div class="bubble medium" style="top: 40%; left: 45%; width: 70px; height: 70px;">
+                                <span class="bubble-label">Memory accuracy</span>
+                                <span class="tooltip"><strong>Users remember what they ate</strong><br>Degrades with delay. Medium risk depending on behavior.</span>
+                            </div>
+
+                            <div class="bubble medium" style="top: 50%; left: 60%; width: 65px; height: 65px;">
+                                <span class="bubble-label">Predictable times</span>
+                                <span class="tooltip"><strong>Predictable eating times</strong><br>True for office workers, less for shift workers.</span>
+                            </div>
+
+                            <div class="bubble medium" style="top: 35%; left: 25%; width: 68px; height: 68px;">
+                                <span class="bubble-label">Foods consistent</span>
+                                <span class="tooltip"><strong>Frequent foods stay consistent</strong><br>Seasonal and lifestyle changes affect this.</span>
+                            </div>
+
+                            <div class="bubble medium" style="top: 55%; left: 35%; width: 60px; height: 60px;">
+                                <span class="bubble-label">Adopt favorites</span>
+                                <span class="tooltip"><strong>Users adopt favorites feature</strong><br>Feature discovery not guaranteed.</span>
+                            </div>
+
+                            <!-- Low Impact, High Certainty (bottom-right) - GREEN -->
+                            <div class="bubble low" style="top: 75%; left: 80%; width: 60px; height: 60px;">
+                                <span class="bubble-label">Device storage</span>
+                                <span class="tooltip"><strong>Device supports caching</strong><br>Standard mobile capability.</span>
+                            </div>
+
+                            <div class="bubble low" style="top: 82%; left: 65%; width: 55px; height: 55px;">
+                                <span class="bubble-label">UI patterns</span>
+                                <span class="tooltip"><strong>UI fits nav patterns</strong><br>Recent/favorites is a common pattern.</span>
+                            </div>
+
+                            <div class="bubble low" style="top: 70%; left: 72%; width: 58px; height: 58px;">
+                                <span class="bubble-label">Track frequent</span>
+                                <span class="tooltip"><strong>Can track frequent items</strong><br>Technical implementation straightforward.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-legend">
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot high"></span>
+                            <span>High Risk — Validate immediately</span>
+                        </div>
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot medium"></span>
+                            <span>Medium Risk — Monitor closely</span>
+                        </div>
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot low"></span>
+                            <span>Low Risk — Safe to proceed</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Solution Space Landscape Page -->
+            <section id="solution-landscape" class="page">
+                <div class="page-header">
+                    <h2>Solution Space Landscape</h2>
+                    <p>6 solution approaches mapped by Speed vs Setup complexity, clustered by primary optimization</p>
+                </div>
+
+                <div class="diagram-card">
+                    <h3>Approach Positioning (Speed × Setup)</h3>
+                    <div class="bubble-chart-container">
+                        <div class="bubble-chart" style="height: 400px;">
+                            <span class="axis-label x-label">Speed →</span>
+                            <span class="axis-label y-label">Setup Required →</span>
+
+                            <!-- Cluster labels -->
+                            <span style="position: absolute; top: 8px; left: 10%; font-size: 11px; color: #94a3b8; font-weight: 600;">ZERO SETUP</span>
+                            <span style="position: absolute; bottom: 8px; left: 10%; font-size: 11px; color: #94a3b8; font-weight: 600;">HIGH SETUP</span>
+
+                            <!-- Smart Favorites Grid - High Speed, No Setup -->
+                            <div class="bubble" style="top: 8%; right: 8%; width: 100px; height: 100px; background: #94d2bd; border: 3px solid #065f46;">
+                                <span class="bubble-label" style="font-size: 11px; color: #065f46;">⚡ Smart<br/>Favorites<br/><b>★★★★★</b></span>
+                                <span class="tooltip"><strong>Smart Favorites Grid</strong><br/>One-tap logging of top foods<br/><b>Optimizes:</b> Speed<br/><b>Setup:</b> None</span>
+                            </div>
+
+                            <!-- Search with Personal Boost - High Speed, No Setup -->
+                            <div class="bubble" style="top: 15%; right: 25%; width: 85px; height: 85px; background: #94d2bd; border: 3px solid #065f46;">
+                                <span class="bubble-label" style="font-size: 10px; color: #065f46;">🔍 Boosted<br/>Search<br/><b>★★★★☆</b></span>
+                                <span class="tooltip"><strong>Search with Personal Boost</strong><br/>Personalized ranking in search<br/><b>Optimizes:</b> Trust<br/><b>Setup:</b> None</span>
+                            </div>
+
+                            <!-- Visual Meal Timeline - Medium Speed, No Setup -->
+                            <div class="bubble" style="top: 25%; left: 35%; width: 80px; height: 80px; background: #94d2bd; border: 3px solid #065f46;">
+                                <span class="bubble-label" style="font-size: 10px; color: #065f46;">📅 Meal<br/>Timeline<br/><b>★★★☆☆</b></span>
+                                <span class="tooltip"><strong>Visual Meal Timeline</strong><br/>Scrollable history with photos<br/><b>Optimizes:</b> Clarity<br/><b>Setup:</b> None</span>
+                            </div>
+
+                            <!-- Contextual Suggestions - High Speed, Learning time -->
+                            <div class="bubble medium" style="top: 45%; right: 15%; width: 85px; height: 85px;">
+                                <span class="bubble-label" style="font-size: 10px;">🤖 Context<br/>Suggestions<br/><b>★★★★☆</b></span>
+                                <span class="tooltip"><strong>Contextual Suggestions</strong><br/>Predict meals by time/location<br/><b>Optimizes:</b> Effort<br/><b>Setup:</b> Learning time</span>
+                            </div>
+
+                            <!-- Meal Templates - High Speed, Medium Setup -->
+                            <div class="bubble medium" style="top: 60%; right: 30%; width: 80px; height: 80px;">
+                                <span class="bubble-label" style="font-size: 10px;">📦 Meal<br/>Templates<br/><b>★★★★☆</b></span>
+                                <span class="tooltip"><strong>Meal Templates & Combos</strong><br/>Save multi-item meals<br/><b>Optimizes:</b> Accuracy<br/><b>Setup:</b> Medium</span>
+                            </div>
+
+                            <!-- Personal Food Library - Low Speed, High Setup -->
+                            <div class="bubble high" style="top: 75%; left: 20%; width: 90px; height: 90px;">
+                                <span class="bubble-label" style="font-size: 10px;">📚 Personal<br/>Library<br/><b>★★★☆☆</b></span>
+                                <span class="tooltip"><strong>Personal Food Library</strong><br/>User-curated food collection<br/><b>Optimizes:</b> Control<br/><b>Setup:</b> High</span>
+                            </div>
+
+                            <!-- MVP Selection highlight box -->
+                            <div style="position: absolute; top: 5%; right: 5%; bottom: 55%; left: 25%; border: 2px dashed #065f46; border-radius: 12px; pointer-events: none;"></div>
+                            <span style="position: absolute; top: 3%; right: 8%; font-size: 10px; color: #065f46; font-weight: 600; background: #ecfdf5; padding: 2px 8px; border-radius: 4px;">MVP SCOPE</span>
+                        </div>
+                    </div>
+
+                    <div class="chart-legend">
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot" style="background: #94d2bd; border: 2px solid #065f46;"></span>
+                            <span>MVP Scope — No setup required</span>
+                        </div>
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot medium"></span>
+                            <span>Future — Medium setup/learning</span>
+                        </div>
+                        <div class="chart-legend-item">
+                            <span class="chart-legend-dot high"></span>
+                            <span>Deferred — High setup burden</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cross-Industry Pattern Mapping Page -->
+            <section id="cross-industry" class="page">
+                <div class="page-header">
+                    <h2>Cross-Industry Pattern Mapping</h2>
+                    <p>How other domains solve similar problems — patterns we can steal</p>
+                </div>
+
+                <div class="diagram-card">
+                    <h3>Domain Inspiration Matrix</h3>
+                    <table class="heat-map-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">Approach</th>
+                                <th style="width: 25%;">Domain Inspiration</th>
+                                <th style="width: 35%;">Key Pattern</th>
+                                <th style="width: 20%;">What to Steal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="category-header">
+                                <td colspan="4">MVP SCOPE — In This Release</td>
+                            </tr>
+                            <tr>
+                                <td><strong>⚡ Smart Favorites Grid</strong></td>
+                                <td>🎵 Music Streaming<br/><span style="color: #64748b; font-size: 12px;">Spotify</span></td>
+                                <td>"Recently played" as default home state</td>
+                                <td><span class="risk-badge low">Familiarity-first UI</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>🔍 Search with Personal Boost</strong></td>
+                                <td>🛒 E-commerce<br/><span style="color: #64748b; font-size: 12px;">Amazon</span></td>
+                                <td>Purchase history shapes search ranking</td>
+                                <td><span class="risk-badge low">Personalized results</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📅 Visual Meal Timeline</strong></td>
+                                <td>📷 Photo Management<br/><span style="color: #64748b; font-size: 12px;">Google Photos</span></td>
+                                <td>Time-based visual browsing</td>
+                                <td><span class="risk-badge low">Temporal navigation</span></td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="4">FUTURE — Next Releases</td>
+                            </tr>
+                            <tr>
+                                <td><strong>🤖 Contextual Suggestions</strong></td>
+                                <td>🏠 Smart Home<br/><span style="color: #64748b; font-size: 12px;">Nest / HomeKit</span></td>
+                                <td>Predictive automation from context signals</td>
+                                <td><span class="risk-badge medium">Context-aware UX</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📦 Meal Templates</strong></td>
+                                <td>💻 Developer Tools<br/><span style="color: #64748b; font-size: 12px;">VS Code</span></td>
+                                <td>Snippets/macros for repetitive sequences</td>
+                                <td><span class="risk-badge medium">Composable actions</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>📚 Personal Food Library</strong></td>
+                                <td>🔐 Password Managers<br/><span style="color: #64748b; font-size: 12px;">1Password</span></td>
+                                <td>User-curated vault with full control</td>
+                                <td><span class="risk-badge high">User ownership</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="legend" style="margin-top: 24px;">
+                        <h4>Pattern Adoption Strategy</h4>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: var(--risk-low);"></span>
+                                <span>Low complexity — Can adopt directly</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: var(--risk-medium);"></span>
+                                <span>Medium complexity — Needs adaptation</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: var(--risk-high);"></span>
+                                <span>High complexity — Requires significant investment</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Favorites-First Demo Page -->
+            <section id="favorites-demo" class="page">
+                <div class="page-header">
+                    <h2>Favorites-First Logging Demo</h2>
+                    <p>Interactive prototype showing the proposed hierarchy: Favorites → Search → History</p>
+                </div>
+
+                <style>
+                    /* Scoped styles for Favorites Demo */
+                    .fd-layout { display: flex; justify-content: center; }
+                    .fd-app { background: #fafaf8; border-radius: 16px; padding: 24px; border: 1px solid #e8e8e8; max-width: 480px; width: 100%; }
+                    .fd-header { text-align: center; margin-bottom: 24px; }
+                    .fd-header-icon { font-size: 36px; margin-bottom: 8px; }
+                    .fd-header h3 { font-size: 16px; font-weight: 500; color: #5c5c5c; margin: 0 0 4px 0; }
+                    .fd-header p { font-size: 13px; color: #888; margin: 0; }
+                    .fd-section { margin-bottom: 24px; }
+                    .fd-section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+                    .fd-section-title { font-size: 15px; font-weight: 600; color: #3d3d3d; }
+                    .fd-section-badge { font-size: 10px; font-weight: 600; color: #fff; background: #8b9a6b; padding: 3px 8px; border-radius: 10px; margin-left: auto; }
+                    .fd-favorites { background: linear-gradient(135deg, #f8f9f5 0%, #f0f2eb 100%); border-radius: 12px; padding: 16px; border: 2px solid #d4dbc4; }
+                    .fd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+                    .fd-card { display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 10px; padding: 12px 14px; cursor: pointer; border: 1px solid #e8e8e8; transition: all 0.2s ease; }
+                    .fd-card:hover { border-color: #8b9a6b; box-shadow: 0 2px 8px rgba(139, 154, 107, 0.15); transform: translateY(-1px); }
+                    .fd-card h4 { font-size: 13px; font-weight: 500; color: #3d3d3d; margin: 0 0 2px 0; }
+                    .fd-card span { font-size: 11px; color: #888; }
+                    .fd-card-add { width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; color: #8b9a6b; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+                    .fd-card:hover .fd-card-add { background: #8b9a6b; color: #fff; }
+                    .fd-search { display: flex; align-items: center; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px 14px; gap: 10px; margin-top: 16px; }
+                    .fd-search input { flex: 1; border: none; background: transparent; font-size: 13px; outline: none; color: #3d3d3d; }
+                    .fd-search input::placeholder { color: #aaa; }
+                    .fd-search-icon { color: #aaa; font-size: 14px; }
+                    .fd-hint { font-size: 11px; color: #888; text-align: center; margin-top: 8px; }
+                    .fd-history { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e8e8e8; }
+                    .fd-filters { display: flex; gap: 6px; margin-bottom: 12px; }
+                    .fd-filter { padding: 6px 12px; border-radius: 16px; border: 1px solid #e0e0e0; font-size: 11px; cursor: pointer; background: #fff; color: #666; }
+                    .fd-filter.active { background: #3d3d3d; color: #fff; border-color: #3d3d3d; }
+                    .fd-empty { text-align: center; padding: 24px; color: #888; font-size: 13px; }
+                    .fd-panel { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e8e8e8; height: fit-content; }
+                    .fd-panel h3 { font-size: 14px; font-weight: 700; margin: 0 0 16px 0; color: #3d3d3d; }
+                    .fd-comparison { width: 100%; font-size: 11px; border-collapse: collapse; margin-bottom: 16px; }
+                    .fd-comparison th { text-align: left; padding: 6px 4px; border-bottom: 2px solid #e8e8e8; font-weight: 600; color: #666; }
+                    .fd-comparison td { padding: 6px 4px; border-bottom: 1px solid #f0f0f0; }
+                    .fd-badge-current { background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+                    .fd-badge-proposed { background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+                    .fd-item { display: flex; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+                    .fd-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+                    .fd-num { width: 20px; height: 20px; background: #8b9a6b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+                    .fd-item-content h4 { font-size: 12px; font-weight: 600; color: #3d3d3d; margin: 0 0 2px 0; }
+                    .fd-item-content p { font-size: 10px; color: #888; line-height: 1.3; margin: 0; }
+                    .fd-percent { font-size: 10px; font-weight: 600; color: #8b9a6b; margin-top: 2px; }
+                    .fd-hypothesis { background: #f8f9f5; border: 1px solid #d4dbc4; border-radius: 10px; padding: 12px; margin-top: 16px; }
+                    .fd-hypothesis h4 { font-size: 10px; font-weight: 600; color: #5c6b3a; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+                    .fd-hypothesis p { font-size: 10px; color: #5c6b3a; line-height: 1.4; margin: 0; }
+                    .fd-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #3d3d3d; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px; opacity: 0; transition: all 0.3s ease; z-index: 1001; }
+                    .fd-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+                    @media (max-width: 900px) { .fd-layout { grid-template-columns: 1fr; } }
+                </style>
+
+                <div class="diagram-card">
+                    <div class="fd-layout">
+                        <!-- Main App -->
+                        <div class="fd-app">
+                            <div class="fd-header">
+                                <div class="fd-header-icon">🍜</div>
+                                <h3>Hãy thêm món đầu tiên...</h3>
+                                <p>Tap a food below to start tracking</p>
+                            </div>
+
+                            <!-- 1. PRIMARY: Favorites -->
+                            <div class="fd-section fd-favorites">
+                                <div class="fd-section-header">
+                                    <span>❤️</span>
+                                    <span class="fd-section-title">Quick Start</span>
+                                    <span class="fd-section-badge">1-tap logging</span>
+                                </div>
+                                <div class="fd-grid">
+                                    <div class="fd-card" onclick="fdLog('Phở bò tái', 420)">
+                                        <div><h4>Phở bò tái</h4><span>420 kcal</span></div>
+                                        <button class="fd-card-add">+</button>
+                                    </div>
+                                    <div class="fd-card" onclick="fdLog('Cơm tấm sườn', 780)">
+                                        <div><h4>Cơm tấm sườn</h4><span>780 kcal</span></div>
+                                        <button class="fd-card-add">+</button>
+                                    </div>
+                                    <div class="fd-card" onclick="fdLog('Bánh mì thịt', 520)">
+                                        <div><h4>Bánh mì thịt</h4><span>520 kcal</span></div>
+                                        <button class="fd-card-add">+</button>
+                                    </div>
+                                    <div class="fd-card" onclick="fdLog('Bún bò Huế', 540)">
+                                        <div><h4>Bún bò Huế</h4><span>540 kcal</span></div>
+                                        <button class="fd-card-add">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. SECONDARY: Search -->
+                            <div class="fd-section">
+                                <div class="fd-search">
+                                    <span class="fd-search-icon">🔍</span>
+                                    <input type="text" placeholder="Search meals...">
+                                </div>
+                                <p class="fd-hint">Your foods appear first in results</p>
+                            </div>
+
+                            <!-- 3. TERTIARY: History -->
+                            <div class="fd-section fd-history">
+                                <div class="fd-section-header">
+                                    <span class="fd-section-title">Meal History</span>
+                                </div>
+                                <div class="fd-filters">
+                                    <button class="fd-filter active">Today</button>
+                                    <button class="fd-filter">Week</button>
+                                    <button class="fd-filter">Month</button>
+                                </div>
+                                <div class="fd-empty">🍽️ No meals logged yet</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fd-toast" id="fdToast"></div>
+
+                <script>
+                    function fdLog(name, cal) {
+                        const toast = document.getElementById('fdToast');
+                        toast.textContent = '✓ Logged: ' + name + ' - ' + cal + ' kcal';
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 2500);
+                    }
+                    document.querySelectorAll('.fd-filter').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.fd-filter').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                </script>
+            </section>
+
+            <!-- Smart Favorites Grid Page -->
+            <section id="smart-favorites" class="page">
+                <div class="page-header">
+                    <h2>Smart Favorites Grid</h2>
+                    <p>Quick Add screen for logging frequent meals</p>
+                </div>
+
+                <div class="diagram-card">
+                    <div class="mobile-app-container">
+                        <!-- Mobile Web App -->
+                        <div class="mobile-app">
+                            <!-- Daily Summary -->
+                            <div class="daily-summary">
+                                <div class="calorie-ring">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#94d2bd" stroke-width="8"
+                                                stroke-dasharray="188" stroke-dashoffset="75" stroke-linecap="round"
+                                                transform="rotate(-90 50 50)"/>
+                                    </svg>
+                                    <div class="calorie-text">
+                                        <span class="current">1,245</span>
+                                        <span class="goal">/ 2,000</span>
+                                    </div>
+                                </div>
+                                <div class="summary-label">kcal remaining</div>
+                            </div>
+
+                            <!-- Search Bar -->
+                            <div class="app-search">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" placeholder="Search foods..." readonly>
+                            </div>
+
+                            <!-- Section Label -->
+                            <div class="section-label">
+                                <span>Favorites</span>
+                                <button class="edit-btn">Edit</button>
+                            </div>
+
+                            <!-- Favorites Grid -->
+                            <div id="filled-grid" class="favorites-grid">
+                                <div class="food-card" data-calories="120">
+                                    <span class="frequency-badge">15x</span>
+                                    <span class="emoji">☕</span>
+                                    <span class="name">Cà phê sữa</span>
+                                    <span class="calories">120 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">S <span>80 kcal</span></button>
+                                        <button class="portion-btn">M <span>120 kcal</span></button>
+                                        <button class="portion-btn">L <span>160 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="450">
+                                    <span class="frequency-badge">12x</span>
+                                    <span class="emoji">🍜</span>
+                                    <span class="name">Phở</span>
+                                    <span class="calories">450 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">S <span>350 kcal</span></button>
+                                        <button class="portion-btn">M <span>450 kcal</span></button>
+                                        <button class="portion-btn">L <span>550 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="150">
+                                    <span class="frequency-badge">10x</span>
+                                    <span class="emoji">🍳</span>
+                                    <span class="name">Trứng ốp la</span>
+                                    <span class="calories">150 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">1 <span>75 kcal</span></button>
+                                        <button class="portion-btn">2 <span>150 kcal</span></button>
+                                        <button class="portion-btn">3 <span>225 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="650">
+                                    <span class="frequency-badge">8x</span>
+                                    <span class="emoji">🍚</span>
+                                    <span class="name">Cơm tấm</span>
+                                    <span class="calories">650 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">S <span>500 kcal</span></button>
+                                        <button class="portion-btn">M <span>650 kcal</span></button>
+                                        <button class="portion-btn">L <span>800 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="180">
+                                    <span class="frequency-badge">7x</span>
+                                    <span class="emoji">🥤</span>
+                                    <span class="name">Trà đào</span>
+                                    <span class="calories">180 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">S <span>120 kcal</span></button>
+                                        <button class="portion-btn">M <span>180 kcal</span></button>
+                                        <button class="portion-btn">L <span>240 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="350">
+                                    <span class="frequency-badge">6x</span>
+                                    <span class="emoji">🥖</span>
+                                    <span class="name">Bánh mì</span>
+                                    <span class="calories">350 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">S <span>250 kcal</span></button>
+                                        <button class="portion-btn">M <span>350 kcal</span></button>
+                                        <button class="portion-btn">L <span>450 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="520">
+                                    <span class="frequency-badge">5x</span>
+                                    <span class="emoji">🍲</span>
+                                    <span class="name">Bún bò</span>
+                                    <span class="calories">520 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">S <span>400 kcal</span></button>
+                                        <button class="portion-btn">M <span>520 kcal</span></button>
+                                        <button class="portion-btn">L <span>640 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="180">
+                                    <span class="frequency-badge">4x</span>
+                                    <span class="emoji">🥗</span>
+                                    <span class="name">Gỏi cuốn</span>
+                                    <span class="calories">180 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">2pc <span>90 kcal</span></button>
+                                        <button class="portion-btn">4pc <span>180 kcal</span></button>
+                                        <button class="portion-btn">6pc <span>270 kcal</span></button>
+                                    </div>
+                                </div>
+                                <div class="food-card" data-calories="90">
+                                    <span class="frequency-badge">3x</span>
+                                    <span class="emoji">🍌</span>
+                                    <span class="name">Chuối</span>
+                                    <span class="calories">90 kcal</span>
+                                    <div class="portion-overlay">
+                                        <button class="portion-btn">1 <span>90 kcal</span></button>
+                                        <button class="portion-btn">2 <span>180 kcal</span></button>
+                                        <button class="portion-btn">3 <span>270 kcal</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visual Meal Timeline Page -->
+            <section id="meal-timeline" class="page">
+                <div class="page-header">
+                    <h2>Visual Meal Timeline</h2>
+                    <p>History screen for browsing and re-logging past meals</p>
+                </div>
+
+                <div class="diagram-card">
+                    <div class="mobile-app-container">
+                        <div class="mobile-app">
+                            <!-- Search Bar -->
+                            <div class="app-search" style="margin-top: 20px;">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" placeholder="Search your history..." readonly>
+                            </div>
+
+                            <!-- Filter Tabs -->
+                            <div class="filter-tabs">
+                                <button class="filter-tab active">All</button>
+                                <button class="filter-tab">Breakfast</button>
+                                <button class="filter-tab">Lunch</button>
+                                <button class="filter-tab">Dinner</button>
+                                <button class="filter-tab">Snacks</button>
+                            </div>
+
+                            <!-- Meal Timeline -->
+                            <div class="meal-timeline">
+                                <!-- Today -->
+                                <div class="timeline-date">Today</div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">🍜</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Phở bò</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Lunch</span>
+                                            <span>450 kcal</span>
+                                            <span>12:30</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">☕</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Cà phê sữa đá</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Breakfast</span>
+                                            <span>120 kcal</span>
+                                            <span>08:15</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+
+                                <!-- Yesterday -->
+                                <div class="timeline-date">Yesterday</div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">🍚</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Cơm tấm sườn</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Dinner</span>
+                                            <span>650 kcal</span>
+                                            <span>19:00</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">🥖</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Bánh mì thịt</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Lunch</span>
+                                            <span>350 kcal</span>
+                                            <span>12:00</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">🍳</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Trứng ốp la</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Breakfast</span>
+                                            <span>150 kcal</span>
+                                            <span>07:30</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+
+                                <!-- Dec 15 -->
+                                <div class="timeline-date">Sun, Dec 15</div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">🍲</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Bún bò Huế</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Lunch</span>
+                                            <span>520 kcal</span>
+                                            <span>12:45</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+
+                                <div class="meal-card">
+                                    <div class="meal-image">🥗</div>
+                                    <div class="meal-info">
+                                        <div class="meal-name">Gỏi cuốn</div>
+                                        <div class="meal-meta">
+                                            <span class="meal-type">Snacks</span>
+                                            <span>180 kcal</span>
+                                            <span>15:30</span>
+                                        </div>
+                                    </div>
+                                    <button class="log-again-btn">Log again</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Meal Templates Page -->
+            <section id="meal-templates" class="page">
+                <div class="page-header">
+                    <h2>Meal Templates</h2>
+                    <p>Save and log entire meals in one tap</p>
+                </div>
+
+                <div class="diagram-card">
+                    <div class="mobile-app-container">
+                        <div class="mobile-app">
+                            <!-- Section Label -->
+                            <div class="section-label" style="padding-top: 20px;">
+                                <span>My Templates</span>
+                                <button class="edit-btn">Manage</button>
+                            </div>
+
+                            <!-- Templates List -->
+                            <div class="templates-list">
+                                <!-- Template 1: Usual Breakfast -->
+                                <div class="template-card">
+                                    <div class="template-header">
+                                        <div class="template-info">
+                                            <h3>Usual Breakfast</h3>
+                                            <div class="template-meta">
+                                                <span>3 items</span>
+                                                <span class="calories">420 kcal</span>
+                                            </div>
+                                        </div>
+                                        <div class="template-actions">
+                                            <button class="edit-btn">Edit</button>
+                                            <button class="log-btn">Log all</button>
+                                        </div>
+                                    </div>
+                                    <div class="template-items">
+                                        <div class="template-item">
+                                            <span class="item-emoji">☕</span>
+                                            <span class="item-name">Cà phê sữa</span>
+                                            <span class="item-cal">120</span>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="item-emoji">🍳</span>
+                                            <span class="item-name">Trứng ốp la</span>
+                                            <span class="item-cal">150</span>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="item-emoji">🥖</span>
+                                            <span class="item-name">Bánh mì</span>
+                                            <span class="item-cal">150</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Template 2: Office Lunch -->
+                                <div class="template-card">
+                                    <div class="template-header">
+                                        <div class="template-info">
+                                            <h3>Office Lunch</h3>
+                                            <div class="template-meta">
+                                                <span>2 items</span>
+                                                <span class="calories">630 kcal</span>
+                                            </div>
+                                        </div>
+                                        <div class="template-actions">
+                                            <button class="edit-btn">Edit</button>
+                                            <button class="log-btn">Log all</button>
+                                        </div>
+                                    </div>
+                                    <div class="template-items">
+                                        <div class="template-item">
+                                            <span class="item-emoji">🍚</span>
+                                            <span class="item-name">Cơm tấm</span>
+                                            <span class="item-cal">450</span>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="item-emoji">🥤</span>
+                                            <span class="item-name">Trà đào</span>
+                                            <span class="item-cal">180</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Template 3: Post-workout -->
+                                <div class="template-card">
+                                    <div class="template-header">
+                                        <div class="template-info">
+                                            <h3>Post-workout</h3>
+                                            <div class="template-meta">
+                                                <span>2 items</span>
+                                                <span class="calories">270 kcal</span>
+                                            </div>
+                                        </div>
+                                        <div class="template-actions">
+                                            <button class="edit-btn">Edit</button>
+                                            <button class="log-btn">Log all</button>
+                                        </div>
+                                    </div>
+                                    <div class="template-items">
+                                        <div class="template-item">
+                                            <span class="item-emoji">🍌</span>
+                                            <span class="item-name">Chuối</span>
+                                            <span class="item-cal">90</span>
+                                        </div>
+                                        <div class="template-item">
+                                            <span class="item-emoji">🥗</span>
+                                            <span class="item-name">Gỏi cuốn (4pc)</span>
+                                            <span class="item-cal">180</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Add Template Button -->
+                                <button class="add-template-btn">
+                                    <span>➕</span>
+                                    <span>Create new template</span>
+                                </button>
+                            </div>
+
+                            <!-- Suggested Combos -->
+                            <div class="suggested-section">
+                                <div class="suggested-label">Suggested based on your history</div>
+                                <div class="templates-list" style="padding-top: 0;">
+                                    <div class="template-card suggested-card">
+                                        <div class="template-header">
+                                            <div class="template-info">
+                                                <h3>Phở + Cà phê</h3>
+                                                <div class="template-meta">
+                                                    <span>2 items</span>
+                                                    <span class="calories">570 kcal</span>
+                                                    <span>Logged together 8x</span>
+                                                </div>
+                                            </div>
+                                            <div class="template-actions">
+                                                <button class="log-btn">Save</button>
+                                            </div>
+                                        </div>
+                                        <div class="template-items">
+                                            <div class="template-item">
+                                                <span class="item-emoji">🍜</span>
+                                                <span class="item-name">Phở</span>
+                                                <span class="item-cal">450</span>
+                                            </div>
+                                            <div class="template-item">
+                                                <span class="item-emoji">☕</span>
+                                                <span class="item-name">Cà phê sữa</span>
+                                                <span class="item-cal">120</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            timeline: {
+                diagramMarginX: 50,
+                diagramMarginY: 20,
+                sectionHeight: 70
+            }
+        });
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-page');
+
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Show corresponding page
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+
+                // Re-render Mermaid diagrams on newly visible page
+                mermaid.run();
+            });
+        });
+
+        // ========================================
+        // Smart Favorites Grid Interactions
+        // ========================================
+
+        // Food card interactions
+        document.querySelectorAll('.food-card:not(.empty)').forEach(card => {
+            let pressTimer;
+            let isLongPress = false;
+
+            // Click to log (quick tap)
+            card.addEventListener('click', (e) => {
+                if (isLongPress) {
+                    isLongPress = false;
+                    return;
+                }
+                if (e.target.classList.contains('portion-btn')) {
+                    // Portion button clicked
+                    card.classList.remove('show-portions');
+                    card.classList.add('logged');
+                    setTimeout(() => card.classList.remove('logged'), 1500);
+                    return;
+                }
+                if (!card.classList.contains('show-portions')) {
+                    card.classList.add('logged');
+                    setTimeout(() => card.classList.remove('logged'), 1500);
+                }
+            });
+
+            // Long press to show portions
+            card.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('portion-btn')) return;
+                pressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    card.classList.add('show-portions');
+                }, 500);
+            });
+
+            card.addEventListener('mouseup', () => {
+                clearTimeout(pressTimer);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                clearTimeout(pressTimer);
+                setTimeout(() => {
+                    card.classList.remove('show-portions');
+                }, 200);
+            });
+
+            // Touch events for mobile
+            card.addEventListener('touchstart', (e) => {
+                if (e.target.classList.contains('portion-btn')) return;
+                pressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    card.classList.add('show-portions');
+                }, 500);
+            });
+
+            card.addEventListener('touchend', () => {
+                clearTimeout(pressTimer);
+            });
+        });
+
+        // Close portion overlay when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.food-card')) {
+                document.querySelectorAll('.food-card.show-portions').forEach(card => {
+                    card.classList.remove('show-portions');
+                });
+            }
+        });
+
+        // ========================================
+        // Visual Meal Timeline Interactions
+        // ========================================
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Log again button
+        document.querySelectorAll('.log-again-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.meal-card');
+                btn.textContent = 'Logged!';
+                card.classList.add('logged');
+                setTimeout(() => {
+                    btn.textContent = 'Log again';
+                    card.classList.remove('logged');
+                }, 1500);
+            });
+        });
+
+        // ========================================
+        // Meal Templates Interactions
+        // ========================================
+
+        // Log all button
+        document.querySelectorAll('.template-card .log-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.template-card');
+                const originalText = btn.textContent;
+                btn.textContent = 'Logged!';
+                card.classList.add('logged');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    card.classList.remove('logged');
+                }, 1500);
+            });
+        });
+
+        // Add template button
+        document.querySelector('.add-template-btn')?.addEventListener('click', () => {
+            const btn = document.querySelector('.add-template-btn');
+            btn.style.borderColor = '#94d2bd';
+            btn.style.background = '#f0fdf4';
+            setTimeout(() => {
+                btn.style.borderColor = '#e2e8f0';
+                btn.style.background = '#f8fafc';
+            }, 300);
+        });
+    </script>
+</body>
+</html>
