@@ -2,6 +2,19 @@
 
 ## 2025-12-19
 
+### Documentation Reorganization
+- **Moved Product Documentation**: Relocated PRD, RMAP, and research synthesis files to `docs/requirements/` folder for better organization
+- **Deleted Redundant Files**: Removed duplicate strategic insights and user flow documentation that was superseded by newer versions
+- **Added Change Request Documentation**: Created `docs/change-request-2/` with food logging analysis, problem framings, and user flow documentation
+- **New Research Artifacts**: Added user journey map v0 and consolidated market research document
+- **Code Formatting**: Added trailing newlines to template-related components and repository files for consistency
+
+### Plan Updates
+- Simplified and cleaned up plan files for food search feature, quick-add enhancement, and favorites grid UI updates
+
+### Design Workflow Commands
+- Added new design workflow command structure in `.claude/commands/design-workflow-#1/` with reframing, assumptions, hypothesis formation, and solution approaches
+
 ### Quick Add User Flow Diagram Updates
 - **Separated Browse Sections**: Split the combined "Favourites · Timeline · Recent items" node into two distinct nodes: "Favourites" and "Timeline + Recent" to better represent the UI tabs
 - **Favourites Visibility Logic**: Added "Has favourites?" decision node to control which tab is shown by default when query is empty:

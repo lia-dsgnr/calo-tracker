@@ -58,6 +58,8 @@ flowchart TD
     PortionPicker -->|onConfirm| LogFood[createLog]
 ```
 
+
+
 ## Key Files to Modify/Create
 
 ### New Common Components
@@ -155,4 +157,3 @@ Returns grouped results with `logCount` for recently logged items.
 ### 6. Data Flow
 
 - Reuse existing `FoodItem` type for results
-- Convert `SystemFood` → `FoodItem` using existing `toFoodItem` mapper in [`useDatabaseStorage.ts`](src/hooks/useDatabaseStorage.ts)

@@ -1,7 +1,4 @@
-%%{init: {'theme': 'base', 'themeVariables': {
-  'fontFamily': 'Inter, system-ui',
-  'lineColor': '#64748B'
-}}%%
+
 ```mermaid
 
 flowchart TD

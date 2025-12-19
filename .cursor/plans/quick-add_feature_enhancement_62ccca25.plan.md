@@ -49,17 +49,7 @@ This brief details the implementation of an enhanced Quick-Add feature that comb
 
 ### Target Personas
 
-| Persona | Primary Need | Feature Focus |
-
-|---------|--------------|---------------|
-
-| Linh (Young Professional) | Speed, one-tap logging | Smart Favorites Grid |
-
-| My (Eat-Clean Student) | Accuracy, multi-item meals | Meal Templates |
-
-| Trang (Busy Intern) | Minimal friction | All features combined |
-
----
+| Persona | Primary Need | Feature Focus ||---------|--------------|---------------|| Linh (Young Professional) | Speed, one-tap logging | Smart Favorites Grid || My (Eat-Clean Student) | Accuracy, multi-item meals | Meal Templates || Trang (Busy Intern) | Minimal friction | All features combined |---
 
 ## 2. User Flow Overview
 
@@ -107,6 +97,8 @@ flowchart TB
     QuickLog --> Toast
 ```
 
+
+
 ### Flow Summary
 
 1. User opens Quick Add from Dashboard or FAB
@@ -121,21 +113,7 @@ flowchart TB
 
 ### 3.1 States
 
-| State | Trigger | Behaviour |
-
-|-------|---------|-----------|
-
-| **Normal** | User has >=1 favorite | Grid displays 4-12 tiles in 2x2 to 3x4 layout |
-
-| **Empty** | New user, no favorites | Placeholder: "Star foods to add them here" with illustration |
-
-| **Loading** | Initial data fetch | 4 skeleton tiles with shimmer animation |
-
-| **Error** | Database read failure | Inline error: "Couldn't load favorites" with retry button |
-
-| **Reordering** | Edit mode active | Tiles show drag handles, become draggable |
-
-| **Full** | 20 favorites reached | "Add favorite" CTA hidden; tooltip on attempt |
+| State | Trigger | Behaviour ||-------|---------|-----------|| **Normal** | User has >=1 favorite | Grid displays 4-12 tiles in 2x2 to 3x4 layout || **Empty** | New user, no favorites | Placeholder: "Star foods to add them here" with illustration || **Loading** | Initial data fetch | 4 skeleton tiles with shimmer animation || **Error** | Database read failure | Inline error: "Couldn't load favorites" with retry button || **Reordering** | Edit mode active | Tiles show drag handles, become draggable || **Full** | 20 favorites reached | "Add favorite" CTA hidden; tooltip on attempt |
 
 ### 3.2 Functional Requirements
 
@@ -187,21 +165,7 @@ flowchart TB
 
 ### 4.1 States
 
-| State | Trigger | Behaviour |
-
-|-------|---------|-----------|
-
-| **Normal** | Has logged meals | Chronological cards grouped by date |
-
-| **Empty** | No logs in last 7 days | Placeholder: "Your recent meals will appear here" |
-
-| **Loading** | Fetching log history | 3 skeleton cards with shimmer |
-
-| **Error** | Query failure | "Couldn't load history" with retry |
-
-| **Filtered** | Filter applied | Shows filtered results with clear filter button |
-
-| **Expanded** | Viewing older items | Infinite scroll loads 7 more days per page |
+| State | Trigger | Behaviour ||-------|---------|-----------|| **Normal** | Has logged meals | Chronological cards grouped by date || **Empty** | No logs in last 7 days | Placeholder: "Your recent meals will appear here" || **Loading** | Fetching log history | 3 skeleton cards with shimmer || **Error** | Query failure | "Couldn't load history" with retry || **Filtered** | Filter applied | Shows filtered results with clear filter button || **Expanded** | Viewing older items | Infinite scroll loads 7 more days per page |
 
 ### 4.2 Functional Requirements
 
@@ -252,23 +216,7 @@ flowchart TB
 
 ### 5.1 States
 
-| State | Trigger | Behaviour |
-
-|-------|---------|-----------|
-
-| **Normal** | Has >=1 template | Template cards displayed in horizontal scroll |
-
-| **Empty** | No templates created | CTA: "Create your first meal template" |
-
-| **Loading** | Fetching templates | 2 skeleton cards |
-
-| **Error** | Database failure | Inline error with retry |
-
-| **Creating** | "Create template" flow | Full-screen editor sheet |
-
-| **Editing** | Tap template "Edit" | Editor with pre-filled values |
-
-| **Logging** | Tap template to log | Confirmation sheet with editable items |
+| State | Trigger | Behaviour ||-------|---------|-----------|| **Normal** | Has >=1 template | Template cards displayed in horizontal scroll || **Empty** | No templates created | CTA: "Create your first meal template" || **Loading** | Fetching templates | 2 skeleton cards || **Error** | Database failure | Inline error with retry || **Creating** | "Create template" flow | Full-screen editor sheet || **Editing** | Tap template "Edit" | Editor with pre-filled values || **Logging** | Tap template to log | Confirmation sheet with editable items |
 
 ### 5.2 Functional Requirements
 
@@ -357,6 +305,8 @@ CREATE TABLE IF NOT EXISTS template_item (
 );
 ```
 
+
+
 ### 6.2 Schema Updates
 
 Add to `favorite` table:
@@ -367,6 +317,8 @@ ALTER TABLE favorite ADD COLUMN default_portion TEXT DEFAULT 'M';
 ALTER TABLE favorite ADD COLUMN use_count INTEGER DEFAULT 0;
 ALTER TABLE favorite ADD COLUMN last_used_at INTEGER;
 ```
+
+
 
 ### 6.3 Indexes
 
@@ -383,6 +335,8 @@ CREATE INDEX IF NOT EXISTS idx_food_log_user_food_date
 ON food_log(user_id, food_id, logged_date);
 ```
 
+
+
 ### 6.4 New DB Limits
 
 ```typescript
@@ -395,19 +349,11 @@ export const DB_LIMITS = {
 } as const
 ```
 
+
+
 ### 6.5 Validation Rules
 
-| Field | Rule |
-
-|-------|------|
-
-| Template name | Required, 1-50 characters, trim whitespace |
-
-| Template items | Minimum 2 items, maximum 8 items |
-
-| Item portion | Must be valid: S, M, L, or single (for custom foods) |
-
-| Nutrition values | Non-negative integers/floats |
+| Field | Rule ||-------|------|| Template name | Required, 1-50 characters, trim whitespace || Template items | Minimum 2 items, maximum 8 items || Item portion | Must be valid: S, M, L, or single (for custom foods) || Nutrition values | Non-negative integers/floats |
 
 ### 6.6 Data Retention
 
@@ -421,33 +367,11 @@ export const DB_LIMITS = {
 
 ### 7.1 Component List
 
-| Component | Type | Location |
-
-|-----------|------|----------|
-
-| `FavoritesGrid` | Section | Quick Add screen, top |
-
-| `FavoriteTile` | Card | Within FavoritesGrid |
-
-| `TimelineSection` | Section | Quick Add screen, below favorites |
-
-| `TimelineCard` | Card | Within TimelineSection |
-
-| `TemplatesSection` | Section | Quick Add screen, horizontal scroll |
-
-| `TemplateCard` | Card | Within TemplatesSection |
-
-| `TemplateEditorSheet` | Bottom sheet | Full-screen on mobile |
-
-| `TemplateConfirmSheet` | Bottom sheet | Half-screen modal |
-
-| `FavoriteToggle` | Icon button | Food tiles, search results |
-
-| `EmptyStateIllustration` | SVG | Empty states |
+| Component | Type | Location ||-----------|------|----------|| `FavoritesGrid` | Section | Quick Add screen, top || `FavoriteTile` | Card | Within FavoritesGrid || `TimelineSection` | Section | Quick Add screen, below favorites || `TimelineCard` | Card | Within TimelineSection || `TemplatesSection` | Section | Quick Add screen, horizontal scroll || `TemplateCard` | Card | Within TemplatesSection || `TemplateEditorSheet` | Bottom sheet | Full-screen on mobile || `TemplateConfirmSheet` | Bottom sheet | Half-screen modal || `FavoriteToggle` | Icon button | Food tiles, search results || `EmptyStateIllustration` | SVG | Empty states |
 
 ### 7.2 Layout Specification
 
-```
+```javascript
 ┌─────────────────────────────────────────────┐
 │ Quick Add                      [Search 🔍]  │
 │ ██████████░░░░ 1,245 / 1,800 kcal           │
@@ -478,6 +402,8 @@ export const DB_LIMITS = {
 └─────────────────────────────────────────────┘
 ```
 
+
+
 ### 7.3 Component Behaviours
 
 **FavoriteTile**
@@ -504,29 +430,7 @@ export const DB_LIMITS = {
 
 ### 7.4 Interaction Patterns (Web-Optimised)
 
-| Gesture | Component | Action |
-
-|---------|-----------|--------|
-
-| Click/Tap | FavoriteTile body | Open PortionPicker |
-
-| Click/Tap | FavoriteTile ⚡ icon | Log with default portion |
-
-| Drag | FavoriteTile (Edit mode only) | Reorder grid |
-
-| Click/Tap | TimelineCard body | Expand/collapse card |
-
-| Click/Tap | TimelineCard "Log Again" | Open PortionPicker |
-
-| Click/Tap | TimelineCard "Delete" (expanded) | Soft delete with undo |
-
-| Click/Tap | TemplateCard | Open confirmation modal |
-
-| Click/Tap | Refresh icon button | Reload data |
-
-| Hover | FavoriteTile (desktop) | Show elevation shadow |
-
-| Keyboard | All interactive elements | Tab navigation, Enter to activate |
+| Gesture | Component | Action ||---------|-----------|--------|| Click/Tap | FavoriteTile body | Open PortionPicker || Click/Tap | FavoriteTile ⚡ icon | Log with default portion || Drag | FavoriteTile (Edit mode only) | Reorder grid || Click/Tap | TimelineCard body | Expand/collapse card || Click/Tap | TimelineCard "Log Again" | Open PortionPicker || Click/Tap | TimelineCard "Delete" (expanded) | Soft delete with undo || Click/Tap | TemplateCard | Open confirmation modal || Click/Tap | Refresh icon button | Reload data || Hover | FavoriteTile (desktop) | Show elevation shadow || Keyboard | All interactive elements | Tab navigation, Enter to activate |
 
 ### 7.5 Typography and Colours
 
@@ -571,19 +475,7 @@ export const DB_LIMITS = {
 
 ### 8.1 Performance
 
-| Metric | Target | Measurement |
-
-|--------|--------|-------------|
-
-| Time to Interactive | < 1.5s | Lighthouse CI |
-
-| Favorites grid render | < 100ms | React profiler |
-
-| Template logging | < 200ms | Console timing |
-
-| Search response | < 50ms | Debounced, client-side |
-
-| Scroll performance | 60fps | Chrome DevTools |
+| Metric | Target | Measurement ||--------|--------|-------------|| Time to Interactive | < 1.5s | Lighthouse CI || Favorites grid render | < 100ms | React profiler || Template logging | < 200ms | Console timing || Search response | < 50ms | Debounced, client-side || Scroll performance | 60fps | Chrome DevTools |
 
 ### 8.2 Offline Support
 
@@ -599,17 +491,7 @@ export const DB_LIMITS = {
 
 ### 8.4 Localisation
 
-| Element | Approach |
-
-|---------|----------|
-
-| Food names | Bilingual: `name_vi` primary, `name_en` secondary |
-
-| UI strings | Hardcoded Vietnamese for MVP (future: i18n) |
-
-| Date formats | Vietnamese locale (`date-fns/locale/vi`) |
-
-| Number formats | Vietnamese (dot as thousands separator) |
+| Element | Approach ||---------|----------|| Food names | Bilingual: `name_vi` primary, `name_en` secondary || UI strings | Hardcoded Vietnamese for MVP (future: i18n) || Date formats | Vietnamese locale (`date-fns/locale/vi`) || Number formats | Vietnamese (dot as thousands separator) |
 
 ### 8.5 Accessibility (Web-Specific)
 
@@ -628,23 +510,7 @@ export const DB_LIMITS = {
 
 ### 9.1 Quantitative Metrics
 
-| Metric | Target | Measurement |
-
-|--------|--------|-------------|
-
-| Favorites adoption | 40% of users add >=1 favorite in week 1 | Analytics |
-
-| Grid tap ratio | 50% of logs via favorites grid | Log source tracking |
-
-| Template creation | 15% of users create >=1 template | Analytics |
-
-| Template usage | Templates account for 20% of logs by power users | Log source |
-
-| Time to log (repeat meal) | < 5 seconds via favorites | Session timing |
-
-| Time to log (template) | < 8 seconds | Session timing |
-
-| Week 1 retention | +10% vs control | Cohort analysis |
+| Metric | Target | Measurement ||--------|--------|-------------|| Favorites adoption | 40% of users add >=1 favorite in week 1 | Analytics || Grid tap ratio | 50% of logs via favorites grid | Log source tracking || Template creation | 15% of users create >=1 template | Analytics || Template usage | Templates account for 20% of logs by power users | Log source || Time to log (repeat meal) | < 5 seconds via favorites | Session timing || Time to log (template) | < 8 seconds | Session timing || Week 1 retention | +10% vs control | Cohort analysis |
 
 ### 9.2 Qualitative Criteria
 
@@ -698,31 +564,7 @@ export const DB_LIMITS = {
 
 ### 10.1 Event Definitions
 
-| Event | Parameters | Success Signal |
-
-|-------|------------|----------------|
-
-| `favorite_added` | `food_id`, `food_type`, `source` | Engagement |
-
-| `favorite_removed` | `food_id`, `food_type` | N/A |
-
-| `favorite_logged` | `food_id`, `portion`, `method` (tap/longpress) | Core KPI |
-
-| `favorite_reordered` | `from_position`, `to_position` | Engagement |
-
-| `timeline_log_again` | `food_id`, `days_ago` | Feature utility |
-
-| `timeline_scrolled` | `depth_days` | Engagement |
-
-| `template_created` | `item_count`, `total_kcal` | Adoption |
-
-| `template_logged` | `template_id`, `items_logged`, `items_skipped` | Core KPI |
-
-| `template_edited` | `template_id`, `change_type` | Iteration |
-
-| `template_deleted` | `template_id` | Churn signal |
-
-| `quickadd_section_visible` | `section` (favorites/timeline/templates) | Exposure |
+| Event | Parameters | Success Signal ||-------|------------|----------------|| `favorite_added` | `food_id`, `food_type`, `source` | Engagement || `favorite_removed` | `food_id`, `food_type` | N/A || `favorite_logged` | `food_id`, `portion`, `method` (tap/longpress) | Core KPI || `favorite_reordered` | `from_position`, `to_position` | Engagement || `timeline_log_again` | `food_id`, `days_ago` | Feature utility || `timeline_scrolled` | `depth_days` | Engagement || `template_created` | `item_count`, `total_kcal` | Adoption || `template_logged` | `template_id`, `items_logged`, `items_skipped` | Core KPI || `template_edited` | `template_id`, `change_type` | Iteration || `template_deleted` | `template_id` | Churn signal || `quickadd_section_visible` | `section` (favorites/timeline/templates) | Exposure |
 
 ### 10.2 Success Signals
 
@@ -744,23 +586,7 @@ export const DB_LIMITS = {
 
 ### 11.1 Dependencies
 
-| Dependency | Status | Impact |
-
-|------------|--------|--------|
-
-| SQLite database setup | Complete | Schema migrations needed |
-
-| Existing PortionPicker | Complete | Refactor to use BottomSheet |
-
-| Existing Toast component | Complete | Reuse |
-
-| Favorite repository | Complete | Extend for new columns |
-
-| Log repository | Complete | Add frequency queries |
-
-| **@radix-ui/react-dialog** | **To install** | Required for BottomSheet primitive |
-
-| **@dnd-kit/core** | **To install** | Required for drag-and-drop reordering |
+| Dependency | Status | Impact ||------------|--------|--------|| SQLite database setup | Complete | Schema migrations needed || Existing PortionPicker | Complete | Refactor to use BottomSheet || Existing Toast component | Complete | Reuse || Favorite repository | Complete | Extend for new columns || Log repository | Complete | Add frequency queries || **@radix-ui/react-dialog** | **To install** | Required for BottomSheet primitive || **@dnd-kit/core** | **To install** | Required for drag-and-drop reordering |
 
 ### 11.2 Required Migrations
 
@@ -780,19 +606,11 @@ ALTER TABLE favorite ADD COLUMN last_used_at INTEGER;
 -- Create indexes
 ```
 
+
+
 ### 11.3 Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-
-|------|------------|--------|------------|
-
-| Cold start (empty favorites) | High for new users | High | Seed with popular foods from region |
-
-| Template complexity confuses users | Medium | High | Progressive disclosure; hide until user has 5+ logs |
-
-| Grid feels stale | Medium | Medium | Decay algorithm; "Refresh" prompt after 2 weeks |
-
-| Performance on low-end devices | Low | Medium | Virtualise timeline list; lazy load templates |
+| Risk | Likelihood | Impact | Mitigation ||------|------------|--------|------------|| Cold start (empty favorites) | High for new users | High | Seed with popular foods from region || Template complexity confuses users | Medium | High | Progressive disclosure; hide until user has 5+ logs || Grid feels stale | Medium | Medium | Decay algorithm; "Refresh" prompt after 2 weeks || Performance on low-end devices | Low | Medium | Virtualise timeline list; lazy load templates |
 
 ### 11.4 Blockers
 
@@ -804,7 +622,7 @@ ALTER TABLE favorite ADD COLUMN last_used_at INTEGER;
 
 ### 12.1 File Structure
 
-```
+```javascript
 src/
 ├── components/
 │   ├── common/                        # Design system primitives
@@ -835,6 +653,8 @@ src/
     └── useTemplates.ts                # New
 ```
 
+
+
 ### 12.2 Design System Components (Tier 1)
 
 **Dependency:** `@radix-ui/react-dialog` for BottomSheet
@@ -859,6 +679,8 @@ interface BottomSheetProps {
 // - Built-in: focus trap, escape key, backdrop click, body scroll lock
 ```
 
+
+
 #### Card
 
 ```typescript
@@ -877,6 +699,8 @@ interface CardProps {
 // - expandable: + collapsible content area with animation
 ```
 
+
+
 #### IconButton
 
 ```typescript
@@ -893,6 +717,8 @@ interface IconButtonProps {
 // new Quick-log icon, Favorite heart toggle
 ```
 
+
+
 #### Migration: PortionPicker → BottomSheet
 
 ```typescript
@@ -908,6 +734,8 @@ interface IconButtonProps {
   <PortionButtons food={food} onSelect={onSelect} />
 </BottomSheet>
 ```
+
+
 
 ### 12.2 Key Implementation Details
 
@@ -968,69 +796,19 @@ const [isEditMode, setIsEditMode] = useState(false)
 // Keyboard: Arrow keys to move, Enter/Space to drop
 ```
 
+
+
 ### 12.3 Testing Strategy
 
-| Type | Coverage | Tools |
-
-|------|----------|-------|
-
-| Unit | Repository functions, score calculation | Vitest |
-
-| Component | Tile interactions, modal states | React Testing Library |
-
-| E2E | Full logging flows, keyboard navigation | Playwright |
-
-| Accessibility | ARIA labels, focus management | axe-core, manual |
-
-| Responsive | Mobile/tablet/desktop breakpoints | Playwright viewports |
-
-| Cross-browser | Chrome, Safari, Firefox, Edge | Playwright |
-
----
+| Type | Coverage | Tools ||------|----------|-------|| Unit | Repository functions, score calculation | Vitest || Component | Tile interactions, modal states | React Testing Library || E2E | Full logging flows, keyboard navigation | Playwright || Accessibility | ARIA labels, focus management | axe-core, manual || Responsive | Mobile/tablet/desktop breakpoints | Playwright viewports || Cross-browser | Chrome, Safari, Firefox, Edge | Playwright |---
 
 ## 13. Out of Scope
 
-| Item | Rationale |
-
-|------|-----------|
-
-| Cloud sync | No backend; local-first architecture |
-
-| Template sharing | Single-user app; no social features |
-
-| AI-powered suggestions | Complexity; algorithm-based for MVP |
-
-| Photo attachment to meals | Separate feature initiative |
-
-| Meal time categories (Breakfast/Lunch) | Not MVP; time-inference too error-prone |
-
-| Voice logging | Separate accessibility initiative |
-
-| Barcode scanning | Separate feature (CR #3) |
-
-| Nutritional details beyond kcal/protein/carbs/fat | MVP focuses on core metrics |
-
-| Template scheduling/reminders | Future enhancement |
-
-| Favorites folders/categories | Flat list for MVP; iterate based on feedback |
-
----
+| Item | Rationale ||------|-----------|| Cloud sync | No backend; local-first architecture || Template sharing | Single-user app; no social features || AI-powered suggestions | Complexity; algorithm-based for MVP || Photo attachment to meals | Separate feature initiative || Meal time categories (Breakfast/Lunch) | Not MVP; time-inference too error-prone || Voice logging | Separate accessibility initiative || Barcode scanning | Separate feature (CR #3) || Nutritional details beyond kcal/protein/carbs/fat | MVP focuses on core metrics || Template scheduling/reminders | Future enhancement || Favorites folders/categories | Flat list for MVP; iterate based on feedback |---
 
 ## 14. Open Questions
 
-| Question | Default if Unresolved |
-
-|----------|----------------------|
-
-| Should templates show thumbnail previews? | No - use emoji list instead |
-
-| Should we animate favorites grid reorder? | Yes - subtle scale animation |
-
-| What happens when logging template at daily limit? | Log as many as possible, show warning |
-
-| Should timeline show photos if available? | Defer to Phase 2 |
-
----
+| Question | Default if Unresolved ||----------|----------------------|| Should templates show thumbnail previews? | No - use emoji list instead || Should we animate favorites grid reorder? | Yes - subtle scale animation || What happens when logging template at daily limit? | Log as many as possible, show warning || Should timeline show photos if available? | Defer to Phase 2 |---
 
 ## Summary
 
@@ -1038,6 +816,3 @@ This implementation adds three complementary features to Quick-Add:
 
 1. **Smart Favorites Grid**: Zero-friction logging for repeat meals (covers ~50% of logs)
 2. **Visual Meal Timeline**: Time-based browsing for "what did I eat?" queries (~30% of logs)
-3. **Meal Templates**: Multi-item logging for complex meals (~20% of logs by power users)
-
-The features share common patterns (SQLite storage, PortionPicker reuse, Toast feedback) and can be implemented incrementally. Priority order: Favorites Grid → Timeline → Templates.

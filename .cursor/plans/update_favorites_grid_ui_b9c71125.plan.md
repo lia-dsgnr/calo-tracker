@@ -24,64 +24,59 @@ Transform the favorites section from a vertical list to a grid layout showing fo
 **File:** `src/components/QuickAdd/FavoritesGrid.tsx`
 
 - **Grid Layout**: Change from vertical list (`flex flex-col gap-2`) to responsive grid:
-  - 2 columns on mobile screens
-  - 3 columns on larger screens (tablet+)
-  - Use `grid grid-cols-2 md:grid-cols-3 gap-3` or similar
-
+- 2 columns on mobile screens
+- 3 columns on larger screens (tablet+)
+- Use `grid grid-cols-2 md:grid-cols-3 gap-3` or similar
 - **Edit Mode State**: Add `isEditMode` state to toggle edit functionality
-
 - **Header Section**: Update header to include:
-  - Title "Favorites" with heart emoji (existing)
-  - "Edit" button when not in edit mode
-  - "Save" and "Remove All" buttons when in edit mode (positioned next to each other)
-
+- Title "Favorites" with heart emoji (existing)
+- "Edit" button when not in edit mode
+- "Save" and "Remove All" buttons when in edit mode (positioned next to each other)
 - **Remove All Functionality**: 
-  - Create `handleRemoveAll` function that:
+- Create `handleRemoveAll` function that:
     - Iterates through all valid favorites
     - Calls `removeFavorite` for each
     - Shows confirmation dialog before removing (per user preference)
     - Refreshes the list after completion
-
 - **Pass Edit Mode to Cards**: Pass `isEditMode` prop to favorite cards so they can show/hide remove buttons
 
 ### 2. Create New FavoriteCard Component
 
-**File:** `src/components/QuickAdd/FavoriteCard.tsx` (new file)
-
-Create a new card component optimized for grid display:
+**File:** `src/components/QuickAdd/FavoriteCard.tsx` (new file)Create a new card component optimized for grid display:
 
 - **Layout**: Card-based design showing:
-  - Category emoji/icon at top (centered or top-left)
-  - Food name (Vietnamese name)
-  - Calories (M portion as default)
-  - Usage count badge (e.g., "3x", "10x") in top-right corner
-  - Remove IconButton (only visible in edit mode)
-
+- Category emoji/icon at top (centered or top-left)
+- Food name (Vietnamese name)
+- Calories (M portion as default)
+- Usage count badge (e.g., "3x", "10x") in top-right corner
+- Remove IconButton (only visible in edit mode)
 - **Props**:
   ```typescript
-  interface FavoriteCardProps {
-    food: FoodItem
-    useCount: number
-    defaultPortion: PortionSize
-    isEditMode: boolean
-    onSelect: (food: FoodItem) => void
-    onQuickLog: (food: FoodItem, portion: PortionSize) => void
-    onRemove?: (food: FoodItem) => void
-  }
+    interface FavoriteCardProps {
+      food: FoodItem
+      useCount: number
+      defaultPortion: PortionSize
+      isEditMode: boolean
+      onSelect: (food: FoodItem) => void
+      onQuickLog: (food: FoodItem, portion: PortionSize) => void
+      onRemove?: (food: FoodItem) => void
+    }
   ```
 
-- **Styling**:
-  - Card with rounded corners, shadow
-  - Usage count badge: small, green background, positioned top-right
-  - Category emoji: larger size, prominent display
-  - Food name: medium weight, truncate if too long
-  - Calories: smaller text, muted color
-  - Remove button: only visible when `isEditMode === true`
 
+
+
+- **Styling**:
+- Card with rounded corners, shadow
+- Usage count badge: small, green background, positioned top-right
+- Category emoji: larger size, prominent display
+- Food name: medium weight, truncate if too long
+- Calories: smaller text, muted color
+- Remove button: only visible when `isEditMode === true`
 - **Interactions**:
-  - Card click: opens portion picker (when not in edit mode)
-  - Remove button: calls `onRemove` callback
-  - In edit mode: clicking card removes it (per user preference)
+- Card click: opens portion picker (when not in edit mode)
+- Remove button: calls `onRemove` callback
+- In edit mode: clicking card removes it (per user preference)
 
 ### 3. Update FavoriteTile Component (Optional)
 
@@ -115,6 +110,8 @@ Create a new card component optimized for grid display:
 </div>
 ```
 
+
+
 ### Edit Mode Toggle
 
 ```tsx
@@ -130,6 +127,8 @@ const [isEditMode, setIsEditMode] = useState(false)
   </>
 )}
 ```
+
+
 
 ### Usage Count Display
 
@@ -158,6 +157,8 @@ const handleRemoveAll = useCallback(async () => {
 }, [currentUser, validFavorites, refresh])
 ```
 
+
+
 ## Files to Modify
 
 1. `src/components/QuickAdd/FavoritesGrid.tsx` - Main grid component with edit mode
@@ -173,4 +174,3 @@ const handleRemoveAll = useCallback(async () => {
 - Test "Remove All" with confirmation
 - Verify category emojis display correctly
 - Ensure cards remain clickable when not in edit mode
-- In edit mode, clicking card should remove it (per user preference)
